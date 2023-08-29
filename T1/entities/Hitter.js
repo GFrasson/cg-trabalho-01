@@ -1,0 +1,4 @@
+class Hitter {
+    constructor() {
+    }
+}
