@@ -10,6 +10,8 @@ import {
     createGroundPlaneXZ
 } from "../libs/util/util.js";
 
+import { Ball } from './entities/Ball.js';
+
 const scene = new THREE.Scene();    // Create main scene
 const renderer = initRenderer();    // Init a basic renderer
 const camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
@@ -28,10 +30,9 @@ scene.add(axesHelper);
 const plane = createGroundPlaneXZ(20, 20)
 scene.add(plane);
 
-const cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-const cube = new THREE.Mesh(cubeGeometry, material);
-cube.position.set(0.0, 2.0, 0.0);
-scene.add(cube);
+const ball = new Ball(material);
+scene.add(ball.sphere);
+
 
 // Use this to show information onscreen
 (
