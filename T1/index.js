@@ -2,25 +2,30 @@ import * as THREE from 'three';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
     initRenderer,
-    initCamera,
     initDefaultBasicLight,
     setDefaultMaterial,
     InfoBox,
-    onWindowResize,
     createGroundPlaneXZ
 } from "../libs/util/util.js";
 
 import { Ball } from './entities/Ball.js';
+import { Camera } from './entities/Camera.js';
 
 const scene = new THREE.Scene();    // Create main scene
 const renderer = initRenderer();    // Init a basic renderer
-const camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+const camera = new Camera();
 const material = setDefaultMaterial(); // create a basic material
 const light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-const orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+
+renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
 // Listen window size changes
-window.addEventListener('resize', () => onWindowResize(camera, renderer), false);
+window.addEventListener(
+    'resize',
+    () => camera.onWindowResize(renderer, window.innerHeight * camera.aspectRatio, window.innerHeight),
+    false
+);
 
 // Show axes (parameter is size of each axis)
 const axesHelper = new THREE.AxesHelper(12);
@@ -51,5 +56,5 @@ scene.add(ball.sphere);
 render();
 function render() {
     requestAnimationFrame(render);
-    renderer.render(scene, camera) // Render scene
+    renderer.render(scene, camera.getTHREECamera()) // Render scene
 }
