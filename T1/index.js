@@ -29,6 +29,40 @@ window.addEventListener(
     false
 );
 
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+// Mapeando teclado
+window.addEventListener('keydown', (event) => {  
+    switch (event.key) {
+        case 'Enter':
+            toggleFullScreen();
+            break;
+        case 'r':
+            alert("REINICIAR JOGO!");
+            break;
+        case ' ': // Space
+            alert("PAUSAR JOGO!");
+            break;
+        default:
+            break;
+    }
+});
+
+// Mapeando botão do mouse
+window.addEventListener('mousedown', (event) => {
+    if (event.button === 0) {
+        alert('INICIAR JOGO');
+    }
+});
+
 // Show axes (parameter is size of each axis)
 const axesHelper = new THREE.AxesHelper(12);
 scene.add(axesHelper);
