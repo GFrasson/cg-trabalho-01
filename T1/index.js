@@ -10,6 +10,8 @@ import {
 
 import { Ball } from './entities/Ball.js';
 import { Camera } from './entities/Camera.js';
+import { Hitter } from './entities/Hitter.js';
+import { Background } from './entities/Background.js';
 
 const scene = new THREE.Scene();    // Create main scene
 const renderer = initRenderer();    // Init a basic renderer
@@ -38,6 +40,15 @@ scene.add(plane);
 const ball = new Ball(material);
 scene.add(ball.sphere);
 
+const hitter = new Hitter(material);
+scene.add(hitter.cube);
+
+const background = new Background();
+scene.add(background.plane);
+window.addEventListener('mousemove', (event) => {
+    background.onMouseMove(event, camera, hitter);
+});
+
 
 // Use this to show information onscreen
 (
@@ -52,6 +63,7 @@ scene.add(ball.sphere);
         controls.show();
     }
 )();
+
 
 render();
 function render() {

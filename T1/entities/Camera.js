@@ -17,6 +17,8 @@ export class Camera {
         this.camera = new THREE.OrthographicCamera(this.left, this.right, this.top, this.bottom, this.near, this.far);
         this.camera.position.copy(this.initialPosition);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        
+        this.camera.layers.enable( 0 );
     }
 
     getTHREECamera() {
