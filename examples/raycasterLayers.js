@@ -12,7 +12,7 @@ import {
 
 let scene, renderer, camera, light, orbit;
 scene = new THREE.Scene();    
-   scene.background = new THREE.Color("black"); //0xf0f0f0);
+scene.background = new THREE.Color("black"); //0xf0f0f0);
 renderer = initRenderer();
 camera = initCamera(new THREE.Vector3(10, 10, 15)); 
 light = initDefaultBasicLight(scene, true, new THREE.Vector3(25, 20, 15));

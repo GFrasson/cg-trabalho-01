@@ -12,6 +12,8 @@ import { Ball } from './entities/Ball.js';
 import { Camera } from './entities/Camera.js';
 import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
+import { Brick } from './entities/Brick.js';
+import { BrickArea } from './entities/BrickArea.js';
 
 const scene = new THREE.Scene();    // Create main scene
 const renderer = initRenderer();    // Init a basic renderer
@@ -64,15 +66,15 @@ window.addEventListener('mousedown', (event) => {
 });
 
 // Show axes (parameter is size of each axis)
-const axesHelper = new THREE.AxesHelper(12);
-scene.add(axesHelper);
+// const axesHelper = new THREE.AxesHelper(12);
+// scene.add(axesHelper);
 
 // create the ground plane
-const plane = createGroundPlaneXZ(20, 20)
-scene.add(plane);
+// const plane = createGroundPlaneXZ(20, 20)
+// scene.add(plane);
 
-const ball = new Ball(material);
-scene.add(ball.sphere);
+// const ball = new Ball(material);
+// scene.add(ball.sphere);
 
 const hitter = new Hitter(material);
 scene.add(hitter.cube);
@@ -82,6 +84,12 @@ scene.add(background.plane);
 window.addEventListener('mousemove', (event) => {
     background.onMouseMove(event, camera, hitter);
 });
+
+const brick = new Brick(material);
+scene.add(brick.block);
+
+const brickArea = new BrickArea(material);
+scene.add(brickArea.blockArea);
 
 
 // Use this to show information onscreen

@@ -21,7 +21,7 @@ export class Background {
         const gameWidth = window.innerHeight * camera.aspectRatio;
 
         pointer.x = (event.clientX - centerX) / gameWidth * 2;
-        console.log("pointerx", pointer.x)
+        //console.log("pointerx", pointer.x)
         this.raycaster.setFromCamera(pointer, camera.camera);
         let intersects = this.raycaster.intersectObjects([this.plane]);
         if (intersects.length > 0) 
@@ -33,7 +33,7 @@ export class Background {
             if(point.x < -21) {
                 point.x = -21;
             }
-            console.log("point = ", point)
+            //console.log("point = ", point)
             hitter.move(point.x);
         }
     };
