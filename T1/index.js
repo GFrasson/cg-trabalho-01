@@ -18,7 +18,7 @@ const renderer = initRenderer();    // Init a basic renderer
 const camera = new Camera();
 const material = setDefaultMaterial(); // create a basic material
 const light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+//const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
 
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
