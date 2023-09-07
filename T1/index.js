@@ -21,6 +21,9 @@ const camera = new Camera();
 const material = setDefaultMaterial(); // create a basic material
 const light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 //const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+let pausedGame = false;
+let startGame = false;
+let bricksList = [];
 
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
@@ -41,6 +44,29 @@ function toggleFullScreen() {
     }
 }
 
+function togglePauseGame() {
+    pausedGame = !pausedGame; // Pausando Raycaster
+    if(pausedGame == true) {
+        alert("Jogo pausado!");
+    }else {
+        alert("De volta ao jogo!");
+    }
+    // Travar movimento da bola também
+}
+
+function toggleStartGame() {
+    if(pausedGame == false) {
+        startGame = true;
+        alert("Jogo iniciado!");  
+    }
+}
+
+function toggleRestartGame() {
+    // alterar posicao do rebatedor
+    // alterar posicao da bola
+    // 
+}
+
 // Mapeando teclado
 window.addEventListener('keydown', (event) => {  
     switch (event.key) {
@@ -51,7 +77,7 @@ window.addEventListener('keydown', (event) => {
             alert("REINICIAR JOGO!");
             break;
         case ' ': // Space
-            alert("PAUSAR JOGO!");
+            togglePauseGame();
             break;
         default:
             break;
@@ -61,7 +87,9 @@ window.addEventListener('keydown', (event) => {
 // Mapeando botão do mouse
 window.addEventListener('mousedown', (event) => {
     if (event.button === 0) {
-        alert('INICIAR JOGO');
+        if(startGame == false) {
+            toggleStartGame();
+        }
     }
 });
 
@@ -82,29 +110,31 @@ scene.add(hitter.cube);
 const background = new Background();
 scene.add(background.plane);
 window.addEventListener('mousemove', (event) => {
-    background.onMouseMove(event, camera, hitter);
+    if(pausedGame == false && startGame == true) {
+        background.onMouseMove(event, camera, hitter);
+    }
 });
 
-const brick = new Brick(material);
-scene.add(brick.block);
-
-const brickArea = new BrickArea(material);
-scene.add(brickArea.blockArea);
-
+const brickArea = new BrickArea();
+for(let i = 0; i < 6; i++) {
+    for(let j = 0; j < 13; j++) {
+        scene.add(brickArea.bricks[i][j]);
+    } 
+}
 
 // Use this to show information onscreen
-(
-    function buildInterface() {
-        const controls = new InfoBox();
-        controls.add("Basic Scene");
-        controls.addParagraph();
-        controls.add("Use mouse to interact:");
-        controls.add("* Left button to rotate");
-        controls.add("* Right button to translate (pan)");
-        controls.add("* Scroll to zoom in/out.");
-        controls.show();
-    }
-)();
+// (
+//     function buildInterface() {
+//         const controls = new InfoBox();
+//         controls.add("Basic Scene");
+//         controls.addParagraph();
+//         controls.add("Use mouse to interact:");
+//         controls.add("* Left button to rotate");
+//         controls.add("* Right button to translate (pan)");
+//         controls.add("* Scroll to zoom in/out.");
+//         controls.show();
+//     }
+// )();
 
 
 render();

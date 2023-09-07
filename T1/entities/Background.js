@@ -7,12 +7,12 @@ export class Background {
         this.planeMaterial = new THREE.MeshLambertMaterial();
         this.planeMaterial.side = THREE.DoubleSide;
         this.planeMaterial.transparent = true;
-        this.planeMaterial.opacity = 0.6;
+        // this.planeMaterial.opacity = 0.6;
         this.plane = new THREE.Mesh(this.planeGeometry, this.planeMaterial);
         this.plane.translateZ(6);
         this.plane.rotation.x = -Math.PI / 2; 
         this.plane.layers.set(0);  
-        this.plane.material.color.set("blue"); 
+        // this.plane.material.color.set("blue"); 
     }
 
     onMouseMove(event, camera, hitter) {
@@ -33,7 +33,7 @@ export class Background {
             if(point.x < -21) {
                 point.x = -21;
             }
-            //console.log("point = ", point)
+            console.log("point = ", point)
             hitter.move(point.x);
         }
     };
