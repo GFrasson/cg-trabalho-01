@@ -1,20 +1,34 @@
 import * as THREE from 'three';
+import {
+    setDefaultMaterial
+} from "../../libs/util/util.js";
 export class Hitter {
     constructor(material) {
-        this.cubeGeometry = new THREE.BoxGeometry(8, 2, 2);
-        this.cube = new THREE.Mesh(this.cubeGeometry, material);
-        this.width = 40.0;
-        this.height = 2.0;
-        this.cube.position.set(0.0, this.height, this.width);
-        this.boundingBox = new THREE.Box3().setFromObject(this.cube);
+        this.cubes = [];
+        this.boundingBoxes = [];
+        this.colors = ["gray", "red", "yellow", "blue", "purple"];
+        for(let i = 0; i < 5; i++) {
+            let cubeGeometry = new THREE.BoxGeometry(1.6, 2, 2);
+            let material = setDefaultMaterial(this.colors[i]);
+            let cube = new THREE.Mesh(cubeGeometry, material);
+            let boundingBox = new THREE.Box3().setFromObject(cube);
+            cube.position.set(i*1.6, 2.0, 40.0);
+            this.cubes[i] = cube;
+            this.boundingBoxes[i] = boundingBox;
+        }
     }
 
     move(pointX) {
-        this.cube.position.set(pointX, this.height, this.width);
-        this.boundingBox.setFromObject(this.cube);
+        for (let i = 0; i < 5; i++) {
+            this.cubes[i].position.set(pointX + (i - 2) * 1.6, 2.0, 40.0);
+            this.boundingBoxes[i].setFromObject(this.cubes[i]);
+        }
     }
 
     resetPosition() {
-        this.cube.position.set(0.0, this.height, this.width);
+        for(let i = 0; i < 5; i++ ) {
+            this.cubes[i].position.set(i*1.6, 2.0, 40.0);
+            this.boundingBoxes[i].setFromObject(this.cubes[i]);
+        }
     }
 }

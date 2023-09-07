@@ -10,14 +10,13 @@ export class BrickArea {
         let brickIndex = 0;
         this.colors = ["gray", "red", "yellow", "blue", "purple", "green"];
         this.bricks = [];
-        this.hitBricksList = [];
         let linha = -38;
         for(let i = 0; i < 6; i++) {
             let material = setDefaultMaterial(this.colors[i]);
             let coluna = -21;
             let arrayLinha = [];
             for(let j = 0; j < 13; j++) {
-                let brick = new Brick(material, coluna, linha, brickIndex++);
+                let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i]);
                 arrayLinha.push(brick);
                 coluna = coluna + 3.5; 
             }
@@ -33,21 +32,13 @@ export class BrickArea {
             } 
         }
     }
-
-    hitBrick(brick) {
-        if (this.hitBricksList.indexOf(brick.id) === -1) {
-            this.hitBricksList.push(brick.id);
-            brick.setVisible = false;
-        }
-    }
     
     resetBrickArea() {
         for(let i = 0; i < 6; i++) {
             for(let j = 0; j < 13; j++) {
-                this.bricks[i][j].setVisible(false);
+                this.bricks[i][j].setVisible(true);
             }
         }
-        this.hitBricksList = [];
     }
 
 }

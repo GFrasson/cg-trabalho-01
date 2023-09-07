@@ -68,10 +68,14 @@ window.addEventListener('keydown', (event) => {
             toggleFullScreen();
             break;
         case 'r':
-            toggleRestartGame();
+            if(startGame == true) {
+                toggleRestartGame();
+            }
             break;
         case ' ': // Space
-            togglePauseGame();
+            if(startGame == true) {
+                togglePauseGame();
+            }
             break;
         default:
             break;
@@ -91,11 +95,10 @@ window.addEventListener('mousedown', (event) => {
 // const axesHelper = new THREE.AxesHelper(12);
 // scene.add(axesHelper);
 
-// const ball = new Ball(material);
-// scene.add(ball.sphere);
-
 const hitter = new Hitter(material);
-scene.add(hitter.cube);
+for(let i = 0; i < 5; i++) {
+    scene.add(hitter.cubes[i]);
+}
 
 const background = new Background();
 scene.add(background.plane);
@@ -112,7 +115,8 @@ function toggleRestartGame() {
     alert("Jogo reiniciado!");
     hitter.resetPosition();
     brickArea.resetBrickArea();
-    // alterar posicao da bola
+    ball.resetPosition();
+    pausedGame = false;
 }
 const plane = createGroundPlaneXZ(20, 20);
 scene.add(plane);
@@ -160,18 +164,23 @@ function createBBHelper(boundingBox, color = 'white') {
 
 render();
 function render() {
-    ball.move();
+    if(pausedGame == false && startGame == true) {
+        ball.move();
+    }
+
     ball.updateBoundingSphere();
     
     walls.forEach(wall => {
-        ball.bounceWhenCollide(wall.boundingBox);
+        ball.bounceWhenCollide(wall.boundingBox, null, null);
     });
 
-    ball.bounceWhenCollide(hitter.boundingBox);
+    for(let i = 0; i < 5; i++) {
+        ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null);
+    }
 
     for(let i = 0; i < 6; i++) {
         for(let j = 0; j < 13; j++) {
-            ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox);
+            ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox, null, brickArea.bricks[i][j]);
         } 
     }
 
