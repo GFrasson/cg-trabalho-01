@@ -24,11 +24,11 @@ export class Background {
         if (intersects.length > 0) 
         {
             let point = intersects[0].point;
-            if(point.x > 21) {
-                point.x = 21;
+            if(point.x > 19) {
+                point.x = 19;
             }
-            if(point.x < -21) {
-                point.x = -21;
+            if(point.x < -19) {
+                point.x = -19;
             }
             hitter.move(point.x);
         }

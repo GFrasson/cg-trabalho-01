@@ -14,6 +14,7 @@ import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
 import { Brick } from './entities/Brick.js';
 import { BrickArea } from './entities/BrickArea.js';
+import { Wall } from './entities/Wall.js';
 
 const scene = new THREE.Scene();    // Create main scene
 const renderer = initRenderer();    // Init a basic renderer
@@ -90,10 +91,6 @@ window.addEventListener('mousedown', (event) => {
 // const axesHelper = new THREE.AxesHelper(12);
 // scene.add(axesHelper);
 
-// create the ground plane
-// const plane = createGroundPlaneXZ(20, 20)
-// scene.add(plane);
-
 // const ball = new Ball(material);
 // scene.add(ball.sphere);
 
@@ -117,6 +114,26 @@ function toggleRestartGame() {
     brickArea.resetBrickArea();
     // alterar posicao da bola
 }
+const plane = createGroundPlaneXZ(20, 20);
+scene.add(plane);
+
+const ball = new Ball();
+scene.add(ball.getTHREEObject());
+
+const walls = [
+    Wall.createLeftWall(),
+    Wall.createRightWall(),
+    Wall.createTopWall(),
+    new Wall(50, 2, 2, new THREE.Vector3(0, 1, 49)),
+    // new Wall(3.2, 2, 2, new THREE.Vector3(0, 1, 10)),
+    // new Wall(3.2, 2, 2, new THREE.Vector3(0, 1, 27)),
+    // new Wall(3.2, 2, 2, new THREE.Vector3(14, 1, 18)),
+    //new Wall(3.2, 2, 2, new THREE.Vector3(10, 1, 38)),
+];
+
+walls.forEach(wall => {
+    scene.add(wall.getTHREEObject());
+});
 
 // Use this to show information onscreen
 // (
@@ -133,8 +150,31 @@ function toggleRestartGame() {
 // )();
 
 
+function createBBHelper(boundingBox, color = 'white') {
+    const helper = new THREE.Box3Helper(boundingBox, color);
+    scene.add(helper);
+    return helper;
+}
+
+// createBBHelper(ball.boundingBox);
+
 render();
 function render() {
+    ball.move();
+    ball.updateBoundingSphere();
+    
+    walls.forEach(wall => {
+        ball.bounceWhenCollide(wall.boundingBox);
+    });
+
+    ball.bounceWhenCollide(hitter.boundingBox);
+
+    for(let i = 0; i < 6; i++) {
+        for(let j = 0; j < 13; j++) {
+            ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox);
+        } 
+    }
+
     requestAnimationFrame(render);
     renderer.render(scene, camera.getTHREECamera()) // Render scene
 }

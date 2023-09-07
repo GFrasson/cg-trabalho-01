@@ -6,6 +6,8 @@ export class Brick {
         this.block = new THREE.Mesh(this.cubeGeometry, material);
         this.block.position.set(posX, 2.0, posY);
         this.visible = true;
+        this.boundingBox = new THREE.Box3().setFromObject(this.block);
+        //console.log("this.boundingBox = ", this.boundingBox)
     }
 
     setVisible(visible) {
