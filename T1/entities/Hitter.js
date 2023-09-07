@@ -10,6 +10,9 @@ export class Hitter {
 
     move(pointX) {
         this.cube.position.set(pointX, this.height, this.width);
-        //console.log("this.cube.position = ", this.cube.position)
+    }
+
+    resetPosition() {
+        this.cube.position.set(0.0, this.height, this.width);
     }
 }

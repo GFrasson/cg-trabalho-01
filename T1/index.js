@@ -23,7 +23,6 @@ const light = initDefaultBasicLight(scene); // Create a basic light to illuminat
 //const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
 let pausedGame = false;
 let startGame = false;
-let bricksList = [];
 
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
@@ -61,12 +60,6 @@ function toggleStartGame() {
     }
 }
 
-function toggleRestartGame() {
-    // alterar posicao do rebatedor
-    // alterar posicao da bola
-    // 
-}
-
 // Mapeando teclado
 window.addEventListener('keydown', (event) => {  
     switch (event.key) {
@@ -74,7 +67,7 @@ window.addEventListener('keydown', (event) => {
             toggleFullScreen();
             break;
         case 'r':
-            alert("REINICIAR JOGO!");
+            toggleRestartGame();
             break;
         case ' ': // Space
             togglePauseGame();
@@ -116,10 +109,13 @@ window.addEventListener('mousemove', (event) => {
 });
 
 const brickArea = new BrickArea();
-for(let i = 0; i < 6; i++) {
-    for(let j = 0; j < 13; j++) {
-        scene.add(brickArea.bricks[i][j]);
-    } 
+brickArea.buildBrickArea(scene);
+
+function toggleRestartGame() {
+    alert("Jogo reiniciado!");
+    hitter.resetPosition();
+    brickArea.resetBrickArea();
+    // alterar posicao da bola
 }
 
 // Use this to show information onscreen

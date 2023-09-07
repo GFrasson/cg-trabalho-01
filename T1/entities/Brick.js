@@ -10,5 +10,12 @@ export class Brick {
 
     setVisible(visible) {
         this.visible = visible;
+        if(visible) {
+            this.block.material.transparent = false;
+            this.block.material.opacity = 1;
+        }else {
+            this.block.material.transparent = true;
+            this.block.material.opacity = 0;
+        }
     }
 }
