@@ -12,7 +12,6 @@ import { Ball } from './entities/Ball.js';
 import { Camera } from './entities/Camera.js';
 import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
-import { Brick } from './entities/Brick.js';
 import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
 
@@ -21,7 +20,7 @@ const renderer = initRenderer();    // Init a basic renderer
 const camera = new Camera();
 const material = setDefaultMaterial(); // create a basic material
 const light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-//const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+// const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement); // Enable mouse rotation, pan, zoom etc.
 let pausedGame = false;
 let startGame = false;
 
@@ -46,34 +45,34 @@ function toggleFullScreen() {
 
 function togglePauseGame() {
     pausedGame = !pausedGame; // Pausando Raycaster
-    if(pausedGame == true) {
+    if (pausedGame === true) {
         alert("Jogo pausado!");
-    }else {
+    } else {
         alert("De volta ao jogo!");
     }
     // Travar movimento da bola também
 }
 
 function toggleStartGame() {
-    if(pausedGame == false) {
+    if (pausedGame === false) {
         startGame = true;
-        alert("Jogo iniciado!");  
+        alert("Jogo iniciado!");
     }
 }
 
 // Mapeando teclado
-window.addEventListener('keydown', (event) => {  
+window.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'Enter':
             toggleFullScreen();
             break;
         case 'r':
-            if(startGame == true) {
+            if (startGame == true) {
                 toggleRestartGame();
             }
             break;
         case ' ': // Space
-            if(startGame == true) {
+            if (startGame == true) {
                 togglePauseGame();
             }
             break;
@@ -85,7 +84,7 @@ window.addEventListener('keydown', (event) => {
 // Mapeando botão do mouse
 window.addEventListener('mousedown', (event) => {
     if (event.button === 0) {
-        if(startGame == false) {
+        if (startGame === false) {
             toggleStartGame();
         }
     }
@@ -95,15 +94,15 @@ window.addEventListener('mousedown', (event) => {
 // const axesHelper = new THREE.AxesHelper(12);
 // scene.add(axesHelper);
 
-const hitter = new Hitter(material);
-for(let i = 0; i < 5; i++) {
-    scene.add(hitter.cubes[i]);
+const hitter = new Hitter();
+for (let i = 0; i < 5; i++) {
+    scene.add(hitter.segments[i].getTHREEObject());
 }
 
 const background = new Background();
 scene.add(background.plane);
 window.addEventListener('mousemove', (event) => {
-    if(pausedGame == false && startGame == true) {
+    if (pausedGame == false && startGame == true) {
         background.onMouseMove(event, camera, hitter);
     }
 });
@@ -164,24 +163,26 @@ function createBBHelper(boundingBox, color = 'white') {
 
 render();
 function render() {
-    if(pausedGame == false && startGame == true) {
+    if (pausedGame === false && startGame === true) {
         ball.move();
     }
 
     ball.updateBoundingSphere();
-    
+
     walls.forEach(wall => {
         ball.bounceWhenCollide(wall.boundingBox, null, null);
     });
 
-    for(let i = 0; i < 5; i++) {
-        ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null);
+    for (let i = 0; i < 5; i++) {
+        // ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null);
+        const hitterSegment = hitter.segments[i];
+        ball.bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
     }
 
-    for(let i = 0; i < 6; i++) {
-        for(let j = 0; j < 13; j++) {
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 13; j++) {
             ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox, null, brickArea.bricks[i][j]);
-        } 
+        }
     }
 
     requestAnimationFrame(render);
