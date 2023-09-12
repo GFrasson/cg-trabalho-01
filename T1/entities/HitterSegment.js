@@ -12,7 +12,7 @@ export class HitterSegment {
     }
 
     createTHREEObject() {
-        this.cubeGeometry = new THREE.BoxGeometry(1.6, 2, 2);
+        this.cubeGeometry = new THREE.BoxGeometry(2.5, 2, 2);
         this.material = setDefaultMaterial(this.color);
         this.cube = new THREE.Mesh(this.cubeGeometry, this.material);
         this.cube.position.set(this.initialXPosition, this.yPosition, this.zPosition);
