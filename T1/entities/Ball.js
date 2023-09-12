@@ -31,7 +31,7 @@ export class Ball {
         this.boundingSphere.center.copy(this.sphere.position);
     }
 
-    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick, brickArea) {
+    bounceWhenCollide(collidedObjectBoundingBox, brick = null) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
         if (!collisionWithBoundingBox) {
             return

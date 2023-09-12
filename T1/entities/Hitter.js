@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 import { HitterSegment } from './HitterSegment.js';
 
 export class Hitter {
