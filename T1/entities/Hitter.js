@@ -24,7 +24,7 @@ export class Hitter {
 
             const hitterSegmentNormalAngle = startAngleInDeg - i * angleOffsetInDeg;
             console.log(hitterSegmentNormalAngle);
-            const hitterSegment = new HitterSegment(this.colors[i], i * 1.6, hitterSegmentNormalAngle);
+            const hitterSegment = new HitterSegment(this.colors[i], i * 1.6 - 3.2, hitterSegmentNormalAngle);
             this.segments.push(hitterSegment);
             // this.threeObject.add(hitterSegment.getTHREEObject());
         }
