@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
-import { BrickArea } from './BrickArea.js';
 
 export class Ball {
     constructor() {
@@ -32,35 +31,7 @@ export class Ball {
         this.boundingSphere.center.copy(this.sphere.position);
     }
 
-    bounceWhenCollideNormal(boundingBox, normalVector) {
-        const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(boundingBox);
-        if (!collisionWithBoundingBox) {
-            return;
-        }
-
-        const hasReflected = this.hasReflectedToNormalVector(normalVector);
-        if (hasReflected) {
-            return;
-        }
-
-        if (this.lastReflectionNormalVector !== null && normalVector.equals(this.lastReflectionNormalVector)) {
-            return;
-        }
-
-        this.bounce(normalVector);
-
-        if (this.direction.z > -0.5) {
-            const angle = this.direction.x < 0 ? 150 : 30;
-            const angleRad = THREE.MathUtils.degToRad(angle);
-            
-            this.direction.z = Math.round(Math.sin(angleRad) * -1 * 100) / 100;
-            this.direction.x = Math.round(Math.cos(angleRad) * 100) / 100;
-        }
-
-        console.log(this.direction);
-    }
-
-    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick, brickArea) {
+    bounceWhenCollide(collidedObjectBoundingBox, brick = null) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
         if (!collisionWithBoundingBox) {
             return
@@ -80,23 +51,6 @@ export class Ball {
             return;
         }
 
-        if (hitterIndex !== null) {
-            let angle = 1;
-            let newNormalVector = normalVectorFromCollidedFace;
-            if (hitterIndex === 0) {
-                angle = 135 * (Math.PI / 180);
-            } else if (hitterIndex === 1) {
-                angle = 120 * (Math.PI / 180);
-            } else if (hitterIndex === 3) {
-                angle = 60 * (Math.PI / 180);
-            } else if (hitterIndex === 4) {
-                angle = 45 * (Math.PI / 180);
-            }
-            newNormalVector = this.changeNormalAngle(normalVectorFromCollidedFace, angle);
-            this.bounce(newNormalVector);
-            return;
-        }
-
         if (brick !== null) {
             if (brick.visible) {
                 brick.setVisible(false);
@@ -106,6 +60,40 @@ export class Ball {
         }
 
         this.bounce(normalVectorFromCollidedFace);
+    }
+
+    
+    bounceWhenCollideNormal(boundingBox, normalVector) {
+        const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(boundingBox);
+        if (!collisionWithBoundingBox) {
+            return;
+        }
+
+        if (!this.isMovingDown()) {
+            return;
+        }
+
+        this.bounce(normalVector);
+        this.fixTrajectory();       
+    }
+
+    isMovingDown() {
+        return this.direction.z > 0;
+    }
+
+    fixTrajectory() {
+        const maxAngle = 160;
+        const minAngle = 180 - maxAngle;
+        const maxAngleRad = THREE.MathUtils.degToRad(maxAngle);
+        const directionMaxAngle = Math.round(Math.sin(maxAngleRad) * -1 * 100) / 100;
+
+        if (this.direction.z > directionMaxAngle) {
+            const angle = this.direction.x < 0 ? maxAngle : minAngle;
+            const angleRad = THREE.MathUtils.degToRad(angle);
+            
+            this.direction.z = Math.round(Math.sin(angleRad) * -1 * 100) / 100;
+            this.direction.x = Math.round(Math.cos(angleRad) * 100) / 100;
+        }
     }
 
     checkCollisionWithBoundingBox(boundingBox) {
@@ -157,7 +145,7 @@ export class Ball {
     }
 
     bounce(normalVector) {
-        this.direction = this.direction.reflect(normalVector);
+        this.direction = this.direction.reflect(normalVector); 
         this.lastReflectionNormalVector = normalVector;
     }
 
