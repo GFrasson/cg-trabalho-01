@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
+import { BrickArea } from './BrickArea.js';
 
 export class Ball {
     constructor() {
@@ -59,7 +60,7 @@ export class Ball {
         console.log(this.direction);
     }
 
-    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick) {
+    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick, brickArea) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
         if (!collisionWithBoundingBox) {
             return
@@ -170,7 +171,7 @@ export class Ball {
     }
 
     resetPosition() {
-        this.sphere.position.set(1.0, 2, -1.0);
-        this.direction.set(1.0, 0.0, -1.0);
+        this.sphere.position.set(0.0, 2.0, 0.0);
+        this.direction.set(0.0, 0.0, 1.0);
     }
 }

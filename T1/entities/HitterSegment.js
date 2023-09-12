@@ -5,7 +5,7 @@ export class HitterSegment {
     constructor(color, initialXPosition, normalVectorAngleInDeg) {
         this.color = color;
         this.initialXPosition = initialXPosition;
-        this.yPosition = 2.0;
+        this.yPosition = 1.0;
         this.zPosition = 40.0;
         this.setNormalVector(normalVectorAngleInDeg);
         this.createTHREEObject();

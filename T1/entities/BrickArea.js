@@ -8,6 +8,7 @@ import { Brick } from './Brick.js';
 export class BrickArea {
     constructor() {
         let brickIndex = 0;
+        this.noBricks = false;
         this.colors = ["gray", "red", "yellow", "blue", "purple", "green"];
         this.bricks = [];
         let linha = -38;
@@ -17,6 +18,12 @@ export class BrickArea {
             let arrayLinha = [];
             for(let j = 0; j < 13; j++) {
                 let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i]);
+                // Testar fim de jogo
+                // if(i == 3 && j == 6) {
+                //     brick.setVisible(true);
+                // }else {
+                //     brick.setVisible(false);
+                // }
                 arrayLinha.push(brick);
                 coluna = coluna + 3.5; 
             }
@@ -39,6 +46,27 @@ export class BrickArea {
                 this.bricks[i][j].setVisible(true);
             }
         }
+        this.noBricks = false;
     }
+
+    checkEndGame() {
+        let endGame = true;
+        for(let i = 0; i < 6; i++) {
+            for(let j = 0; j < 13; j++) {
+                if(this.bricks[i][j].visible === true) {
+                    endGame = false;
+                    break;
+                }
+            }
+            if(endGame === false) {
+                break;
+            }
+        }
+        if(endGame === true) {
+            this.noBricks = true;
+        }
+    }
+
+
 
 }
