@@ -1,12 +1,8 @@
 import * as THREE from 'three';
 export class Background {
     constructor() {
-        this.gameWidth = window.innerHeight * 0.5;
-        this.offsetX = (window.innerWidth - this.gameWidth) / 2;
-
         this.raycaster = new THREE.Raycaster();
         this.raycaster.layers.enable(0);
-
         this.createTHREEObject();
     }
 
@@ -26,17 +22,21 @@ export class Background {
     }
 
     onMouseMove(event, camera, hitter) {
+        let windowWidth = window.innerWidth;
+        let gameWidth = window.innerHeight * 0.5;
+        let offsetX = (windowWidth - gameWidth) / 2;
+
         let pointer = new THREE.Vector2();
-        pointer.x = ((event.clientX - this.offsetX) / this.gameWidth) * 2 - 1;
+        pointer.x = ((event.clientX - offsetX) / gameWidth) * 2 - 1;
         this.raycaster.setFromCamera(pointer, camera.camera);
         let intersects = this.raycaster.intersectObjects([this.plane]);
         if (intersects.length > 0) {
             let point = intersects[0].point;
-            if (point.x > 19) {
-                point.x = 19;
+            if (point.x > 16.7) {
+                point.x = 16.7;
             }
-            if (point.x < -19) {
-                point.x = -19;
+            if (point.x < -16.7) {
+                point.x = -16.7;
             }
             hitter.move(point.x);
         }
