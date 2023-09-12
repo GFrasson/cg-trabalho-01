@@ -85,8 +85,8 @@ function render() {
     game.getWalls().forEach(wall => {
         game.getBall().bounceWhenCollide(wall.boundingBox);
 
-        if(wall.direction === 'bottom') {
-            wall.collisionBottomWall(ball);
+        if (wall.direction === 'bottom') {
+            wall.collisionBottomWall(game.getBall());
         }
     });
 
