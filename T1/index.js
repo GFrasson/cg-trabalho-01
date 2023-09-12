@@ -187,7 +187,6 @@ function render() {
     });
 
     for (let i = 0; i < 5; i++) {
-        // ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null);
         const hitterSegment = hitter.segments[i];
         ball.bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
     }
