@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
+import { BrickArea } from './BrickArea.js';
 
 export class Ball {
     constructor() {
         this.radius = 1;
-        this.speed = 0.6;
-        this.direction = new THREE.Vector3(1.0, 0.0, -1.0);
+        this.speed = 1;
+        this.direction = new THREE.Vector3(0.0, 0.0, 1.0);
         this.lastReflectionNormalVector = null;
         this.createTHREEObject();
     }
@@ -19,7 +20,7 @@ export class Ball {
         this.sphereMaterial = setDefaultMaterial('teal');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.set(0.0, 1.0, 0.0);
-        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);        
+        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);     
     }
 
     move() {
@@ -40,7 +41,7 @@ export class Ball {
         this.bounce(normalVector);
     }
 
-    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick) {
+    bounceWhenCollide(collidedObjectBoundingBox, hitterIndex, brick, brickArea) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
         if (!collisionWithBoundingBox) {
             return
@@ -59,7 +60,7 @@ export class Ball {
         if (this.lastReflectionNormalVector !== null && normalVectorFromCollidedFace.equals(this.lastReflectionNormalVector)) {
             return;
         }
-
+        
         if(hitterIndex != null) {
             let angle = 1;
             let newNormalVector = normalVectorFromCollidedFace;
@@ -80,6 +81,7 @@ export class Ball {
         if(brick != null) {
             if(brick.visible) {
                 brick.setVisible(false);
+                brickArea.checkEndGame();
             }else {
                 return;
             }
@@ -151,7 +153,7 @@ export class Ball {
     }
 
     resetPosition() {
-        this.sphere.position.set(1.0, 2, -1.0);
-        this.direction.set(1.0, 0.0, -1.0);
+        this.sphere.position.set(0.0, 2.0, 0.0);
+        this.direction.set(0.0, 0.0, 1.0);
     }
 }

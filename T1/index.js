@@ -118,6 +118,15 @@ function toggleRestartGame() {
     ball.resetPosition();
     pausedGame = false;
 }
+
+function toggleEndGame() {
+    alert("FIM DE JOGO!");
+    hitter.resetPosition();
+    //brickArea.resetBrickArea();
+    ball.resetPosition();
+    pausedGame = true;
+}
+
 const plane = createGroundPlaneXZ(20, 20);
 scene.add(plane);
 
@@ -128,7 +137,8 @@ const walls = [
     Wall.createLeftWall(),
     Wall.createRightWall(),
     Wall.createTopWall(),
-    new Wall(50, 2, 2, new THREE.Vector3(0, 1, 49)),
+    Wall.createBottomWall()
+    //new Wall(50, 2, 2, new THREE.Vector3(0, 1, 49)),
     // new Wall(3.2, 2, 2, new THREE.Vector3(0, 1, 10)),
     // new Wall(3.2, 2, 2, new THREE.Vector3(0, 1, 27)),
     // new Wall(3.2, 2, 2, new THREE.Vector3(14, 1, 18)),
@@ -171,18 +181,24 @@ function render() {
     ball.updateBoundingSphere();
     
     walls.forEach(wall => {
-        ball.bounceWhenCollide(wall.boundingBox, null, null);
+        ball.bounceWhenCollide(wall.boundingBox, null, null, null);
     });
 
     for(let i = 0; i < 5; i++) {
-        ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null);
+        ball.bounceWhenCollide(hitter.boundingBoxes[i], i, null, null);
     }
 
     for(let i = 0; i < 6; i++) {
         for(let j = 0; j < 13; j++) {
-            ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox, null, brickArea.bricks[i][j]);
+            ball.bounceWhenCollide(brickArea.bricks[i][j].boundingBox, null, brickArea.bricks[i][j], brickArea);
         } 
     }
+
+    if(brickArea.noBricks === true && pausedGame === false) {
+        toggleEndGame();
+    }
+
+
 
     requestAnimationFrame(render);
     renderer.render(scene, camera.getTHREECamera()) // Render scene

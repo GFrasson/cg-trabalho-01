@@ -12,7 +12,7 @@ export class Hitter {
             let material = setDefaultMaterial(this.colors[i]);
             let cube = new THREE.Mesh(cubeGeometry, material);
             let boundingBox = new THREE.Box3().setFromObject(cube);
-            cube.position.set(i*1.6, 2.0, 40.0);
+            cube.position.set(i*1.6 - 3.2, 1.0, 35.0);
             this.cubes[i] = cube;
             this.boundingBoxes[i] = boundingBox;
         }
@@ -20,14 +20,16 @@ export class Hitter {
 
     move(pointX) {
         for (let i = 0; i < 5; i++) {
-            this.cubes[i].position.set(pointX + (i - 2) * 1.6, 2.0, 40.0);
+            this.cubes[i].position.set(pointX + (i - 2) * 1.6, 1.0, 40.0);
+            let cubeAux = 
             this.boundingBoxes[i].setFromObject(this.cubes[i]);
         }
     }
 
     resetPosition() {
-        for(let i = 0; i < 5; i++ ) {
-            this.cubes[i].position.set(i*1.6, 2.0, 40.0);
+        for(let i = 0; i < 5; i++) {
+            this.cubes[i].position.set(i*1.6 - 3.2, 1.0, 35.0);
+
             this.boundingBoxes[i].setFromObject(this.cubes[i]);
         }
     }
