@@ -32,11 +32,11 @@ export class Background {
         let intersects = this.raycaster.intersectObjects([this.plane]);
         if (intersects.length > 0) {
             let point = intersects[0].point;
-            if (point.x > 19) {
-                point.x = 19;
+            if (point.x > 16.7) {
+                point.x = 16.7;
             }
-            if (point.x < -19) {
-                point.x = -19;
+            if (point.x < -16.7) {
+                point.x = -16.7;
             }
             hitter.move(point.x);
         }
