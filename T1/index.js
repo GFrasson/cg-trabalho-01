@@ -181,6 +181,9 @@ function render() {
 
     walls.forEach(wall => {
         ball.bounceWhenCollide(wall.boundingBox, null, null, null);
+        if(wall.direction === 'bottom') {
+            wall.collisionBottomWall(ball);
+        }
     });
 
     for (let i = 0; i < 5; i++) {
@@ -198,8 +201,6 @@ function render() {
     if(brickArea.noBricks === true && pausedGame === false) {
         toggleEndGame();
     }
-
-
 
     requestAnimationFrame(render);
     renderer.render(scene, camera.getTHREECamera()) // Render scene

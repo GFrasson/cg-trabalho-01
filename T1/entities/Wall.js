@@ -5,7 +5,7 @@ export class Wall {
     constructor(width, height, depth, position, direction) {
         this.width = width;
         this.height = height,
-        this.depth = depth;
+            this.depth = depth;
         this.position = position;
         this.direction = direction;
         this.createTHREEObject();
@@ -40,7 +40,11 @@ export class Wall {
         return new Wall(50, 2, 2, new THREE.Vector3(0, 1, 51), 'bottom')
     }
 
-    collisionBottomWall() {
-        
+    collisionBottomWall(ball) {
+        if (ball.boundingSphere.intersectsBox(this.boundingBox)) {
+            console.log("ENTROU")
+            ball.resetPosition();
+        }
+
     }
 }

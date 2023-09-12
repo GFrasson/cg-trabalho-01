@@ -172,6 +172,6 @@ export class Ball {
 
     resetPosition() {
         this.sphere.position.set(0.0, 2.0, 0.0);
-        this.direction.set(0.0, 0.0, 1.0);
+        this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
     }
 }
