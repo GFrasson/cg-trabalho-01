@@ -43,7 +43,7 @@ export class EventHandler {
                     }
                     break;
                 case ' ': // Space
-                    if (this.game.startGame) {
+                    if (this.game.gameScreen) {
                         this.game.togglePauseGame();
                     }
                     break;

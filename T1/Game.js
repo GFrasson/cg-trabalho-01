@@ -27,7 +27,8 @@ export class Game {
             Wall.createTopWall(),
             Wall.createBottomWall()
         ];
-
+        
+        this.gameScreen = false;
         this.pausedGame = false;
         this.startGame = false;
         this.currentStage = 1;

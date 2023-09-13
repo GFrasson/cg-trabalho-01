@@ -7,7 +7,6 @@ export class ScreenHandler {
     listenScreenEvents() {
         this.listenStartGameButtonClick();
         this.listenRestartGameButtonClick();
-        this.listenQuitGameButtonClick();
         this.listenNextStageButtonClick();
     }
 
@@ -18,17 +17,14 @@ export class ScreenHandler {
     listenRestartGameButtonClick() {
         document.getElementById('restart-game').addEventListener('click', () => this.onRestartGameButtonClick());
     }
-
-    listenQuitGameButtonClick() {
-        document.getElementById('quit-game').addEventListener('click', () => this.onQuitGameButtonClick());
-    }
-
+    
     listenNextStageButtonClick() {
         document.getElementById('next-stage').addEventListener('click', () => this.onNextStageButtonClick());
     }
 
     onStartGameButtonClick() {
         this.game.eventHandler.listenMousedownEvent();
+        this.game.gameScreen = true;
     
         this.hideStartingScreen();
         this.renderCallback();
@@ -37,10 +33,6 @@ export class ScreenHandler {
     onRestartGameButtonClick() {
         this.hideGamePausedScreen();
         this.game.toggleRestartGame();
-    }
-
-    onQuitGameButtonClick() {
-        
     }
 
     onNextStageButtonClick() {
