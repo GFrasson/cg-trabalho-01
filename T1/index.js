@@ -59,22 +59,29 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-// Mapeando botão do mouse
-window.addEventListener('mousedown', (event) => {
-    if (event.button === 0) {
-        if (!game.startGame) {
-            game.toggleStartGame();
-        }
-    }
-});
-
 window.addEventListener('mousemove', (event) => {
     if (!game.pausedGame && game.startGame) {
         game.getBackground().onMouseMove(event, camera, game.getHitter());
     }
 });
 
-render();
+
+document.getElementById('startButton').addEventListener('click', startGame);
+function startGame(){
+    // Mapeando botão do mouse
+    window.addEventListener('mousedown', (event) => {
+    if (event.button === 0) {
+        if (!game.startGame) {
+            game.toggleStartGame();
+        }
+    }
+    });
+
+    const startingScreenDiv = document.getElementById('starting-screen');
+    startingScreenDiv.style.display = 'none';
+    render();
+}
+
 function render() {
     if (!game.pausedGame && game.startGame) {
         game.getBall().move();
