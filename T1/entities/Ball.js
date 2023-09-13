@@ -2,11 +2,13 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
 
 export class Ball {
-    constructor() {
+    constructor(initialPosition) {
+        this.initialPosition = initialPosition;
         this.radius = 1;
         this.speed = 0.6;
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
+        this.isLauched = false;
         this.createTHREEObject();
     }
 
@@ -18,7 +20,7 @@ export class Ball {
         this.sphereGeometry = new THREE.SphereGeometry(this.radius, 32, 16);
         this.sphereMaterial = setDefaultMaterial('teal');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
-        this.sphere.position.set(0.0, 1.0, 0.0);
+        this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
     }
 
@@ -31,7 +33,7 @@ export class Ball {
         this.boundingSphere.center.copy(this.sphere.position);
     }
 
-    bounceWhenCollide(collidedObjectBoundingBox, brick = null) {
+    bounceWhenCollide(collidedObjectBoundingBox, brick = null, brickArea = null) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
         if (!collisionWithBoundingBox) {
             return
@@ -48,12 +50,17 @@ export class Ball {
         }
 
         if (this.lastReflectionNormalVector !== null && normalVectorFromCollidedFace.equals(this.lastReflectionNormalVector)) {
+            console.log('d');
             return;
         }
 
         if (brick !== null) {
             if (brick.visible) {
                 brick.setVisible(false);
+
+                if (brickArea !== null) {
+                    brickArea.checkEndGame();
+                }
             } else {
                 return;
             }
@@ -114,14 +121,14 @@ export class Ball {
         const collidedObjectTopWallZ = collidedObjectCenter.z - (collidedObjectSize.z / 2);
         const collidedObjectBottomWallZ = collidedObjectCenter.z + (collidedObjectSize.z / 2);
 
-        if (sphereCenter.x <= collidedObjectLeftWallX && this.direction.x > 0) {
-            return new THREE.Vector3(-1, 0, 0);
-        } else if (sphereCenter.x >= collidedObjectRightWallX && this.direction.x < 0) {
-            return new THREE.Vector3(1, 0, 0);
-        } else if (sphereCenter.z <= collidedObjectTopWallZ && this.direction.z > 0) {
+        if (sphereCenter.z <= collidedObjectTopWallZ && this.direction.z > 0) {
             return new THREE.Vector3(0, 0, -1);
         } else if (sphereCenter.z >= collidedObjectBottomWallZ && this.direction.z < 0) {
             return new THREE.Vector3(0, 0, 1);
+        } else if (sphereCenter.x <= collidedObjectLeftWallX && this.direction.x > 0) {
+            return new THREE.Vector3(-1, 0, 0);
+        } else if (sphereCenter.x >= collidedObjectRightWallX && this.direction.x < 0) {
+            return new THREE.Vector3(1, 0, 0);
         }
     }
 
@@ -159,7 +166,11 @@ export class Ball {
     }
 
     resetPosition() {
-        this.sphere.position.set(0.0, 2.0, 0.0);
+        this.sphere.position.copy(this.initialPosition);
+        this.updateBoundingSphere();
+
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
+        this.isLauched = false;
+        this.lastReflectionNormalVector = null;
     }
 }

@@ -59,22 +59,30 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
+
 window.addEventListener('mousemove', (event) => {
-    if (!game.pausedGame && game.startGame) {
+    if (!game.pausedGame) {
         game.getBackground().onMouseMove(event, camera, game.getHitter());
+
+        const ball = game.getBall();
+        if (!ball.isLauched) {
+            const hitterPosition = game.getHitter().getPosition();
+            const ballTHREEObject = ball.getTHREEObject();
+            ballTHREEObject.position.copy(hitterPosition);
+            ballTHREEObject.position.z -= 2;
+        }
     }
 });
 
-
 document.getElementById('startButton').addEventListener('click', startGame);
-function startGame(){
+function startGame() {
     // Mapeando botão do mouse
     window.addEventListener('mousedown', (event) => {
-    if (event.button === 0) {
-        if (!game.startGame) {
-            game.toggleStartGame();
+        if (event.button === 0) {
+            if (!game.startGame) {
+                game.toggleStartGame();
+            }
         }
-    }
     });
 
     const startingScreenDiv = document.getElementById('starting-screen');
@@ -84,32 +92,38 @@ function startGame(){
 
 function render() {
     if (!game.pausedGame && game.startGame) {
-        game.getBall().move();
-    }
+        if (game.getBall().isLauched) {
+            // move
+            game.getBall().move();
 
-    game.getBall().updateBoundingSphere();
+            // boundingSphere
+            game.getBall().updateBoundingSphere();
 
-    game.getWalls().forEach(wall => {
-        game.getBall().bounceWhenCollide(wall.boundingBox);
+            // detect collisions
+            game.getWalls().forEach(wall => {
+                game.getBall().bounceWhenCollide(wall.boundingBox);
 
-        if (wall.direction === 'bottom') {
-            wall.collisionBottomWall(game.getBall());
+                if (wall.direction === 'bottom') {
+                    wall.collisionBottomWall(game.getBall());
+                }
+            });
+
+            game.getHitter().segments.forEach(hitterSegment => {
+                game.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
+            });
+
+            for (let i = 0; i < 6; i++) {
+                for (let j = 0; j < 13; j++) {
+                    const brick = game.getBrickArea().bricks[i][j];
+                    game.getBall().bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
+                }
+            }
+
+            // check end game
+            if (game.getBrickArea().noBricks && !game.pausedGame) {
+                game.toggleEndGame();
+            }
         }
-    });
-
-    game.getHitter().segments.forEach(hitterSegment => {
-        game.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
-    });
-
-    for (let i = 0; i < 6; i++) {
-        for (let j = 0; j < 13; j++) {
-            const brick = game.getBrickArea().bricks[i][j];
-            game.getBall().bounceWhenCollide(brick.boundingBox, brick);
-        }
-    }
-
-    if (game.getBrickArea().noBricks && !game.pausedGame) {
-        game.toggleEndGame();
     }
 
     requestAnimationFrame(render);

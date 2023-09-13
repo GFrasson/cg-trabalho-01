@@ -15,8 +15,8 @@ export class Hitter {
         }
     }
 
-    getTHREEObject() {
-        return this.threeObject;
+    getPosition() {
+        return this.segments[2].getTHREEObject().position;
     }
 
     move(pointX) {
