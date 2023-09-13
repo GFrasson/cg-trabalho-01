@@ -5,9 +5,13 @@ import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
 import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
+import { EventHandler } from './EventHandler.js';
+import { ScreenHandler } from './ScreenHandler.js';
 
 export class Game {
-    constructor() {
+    constructor(camera, renderCallback) {
+        this.camera = camera;
+        this.renderCallback = renderCallback;
         this.hitter = new Hitter();
         this.background = new Background();
         this.brickArea = new BrickArea();
@@ -27,6 +31,13 @@ export class Game {
         this.pausedGame = false;
         this.startGame = false;
         this.currentStage = 1;
+        
+        this.eventHandler = new EventHandler(this);
+        this.screenHandler = new ScreenHandler(this, this.renderCallback);
+    }
+
+    getCamera() {
+        return this.camera;
     }
 
     getHitter() {
@@ -49,6 +60,65 @@ export class Game {
         return this.walls;
     }
 
+    executeStep() {
+        if (!this.pausedGame && this.startGame) {
+            if (this.getBall().isLauched) {
+                // move
+                this.getBall().move();
+    
+                // boundingSphere
+                this.getBall().updateBoundingSphere();
+    
+                // detect collisions
+                this.getWalls().forEach(wall => {
+                    this.getBall().bounceWhenCollide(wall.boundingBox);
+    
+                    if (wall.direction === 'bottom') {
+                        const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
+                        
+                        if (isCollidingBottomWall) {
+                            const hitterPosition = this.hitter.getPosition();
+                            const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
+                            this.getBall().resetPosition(ballOverHitterPosition);
+                        }
+                    }
+                });
+    
+                this.getHitter().segments.forEach(hitterSegment => {
+                    this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
+                });
+    
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 13; j++) {
+                        const brick = this.getBrickArea().bricks[i][j];
+                        this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
+                    }
+                }
+    
+                // check end game
+                if (this.getBrickArea().noBricks && !this.pausedGame) {
+                    this.toggleEndGame();
+                }
+            }
+        }
+    }
+
+    addObjectsToScene(scene) {
+        this.getHitter().segments.forEach(segment => {
+            scene.add(segment.getTHREEObject());
+        });
+
+        scene.add(this.getBackground().getTHREEObject());
+        
+        this.getBrickArea().buildBrickArea(scene);
+        
+        scene.add(this.getBall().getTHREEObject());
+        
+        this.getWalls().forEach(wall => {
+            scene.add(wall.getTHREEObject());
+        });
+    }
+
     toggleFullScreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
@@ -62,11 +132,9 @@ export class Game {
     togglePauseGame() {
         this.pausedGame = !this.pausedGame; // Pausando Raycaster
         if (this.pausedGame === true) {
-            const gamePausedScreen = document.querySelector('#game-paused-screen');
-            gamePausedScreen.style.display = 'flex';
+            this.screenHandler.showGamePausedScreen();
         } else {
-            const gamePausedScreen = document.querySelector('#game-paused-screen');
-            gamePausedScreen.style.display = 'none';
+            this.screenHandler.hideGamePausedScreen();
         }
         // Travar movimento da bola também
     }
@@ -75,12 +143,10 @@ export class Game {
         if (this.pausedGame === false) {
             this.startGame = true;
             this.ball.isLauched = true;
-            alert("Jogo iniciado!");
         }
     }
 
     toggleRestartGame() {
-        alert("Jogo reiniciado!");
         this.hitter.resetPosition();
         this.brickArea.resetBrickArea();
         this.ball.resetPosition();
@@ -89,10 +155,14 @@ export class Game {
     }
     
     toggleEndGame() {
-        alert("FIM DE JOGO!");
+        this.screenHandler.showStageCompleteScreen();
         this.hitter.resetPosition();
         //brickArea.resetBrickArea();
         this.ball.resetPosition();
         this.pausedGame = true;
+    }
+
+    nextStage() {
+        this.currentStage += 1;
     }
 }

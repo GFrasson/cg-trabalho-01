@@ -165,8 +165,15 @@ export class Ball {
         return newNormal;
     }
 
-    resetPosition() {
-        this.sphere.position.copy(this.initialPosition);
+    getOverHitterPosition(hitterPosition) {
+        const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
+        ballOverHitterPosition.z -= 2;
+
+        return ballOverHitterPosition;
+    }
+
+    resetPosition(newPosition = null) {
+        this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();

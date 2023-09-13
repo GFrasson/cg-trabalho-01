@@ -42,9 +42,7 @@ export class Wall {
 
     collisionBottomWall(ball) {
         if (ball.boundingSphere.intersectsBox(this.boundingBox)) {
-            console.log("ENTROU")
-            ball.resetPosition();
+            return true;
         }
-
     }
 }
