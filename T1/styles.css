@@ -71,7 +71,7 @@ button:hover {
 }
 
 #starting-screen .game-title,
-#game-over-screen .game-over-content .game-over-title {
+#game-paused-screen .game-paused-content .game-paused-title {
     color: #FFFFFF;
     text-transform: uppercase;
     font-size: 2.5rem;
@@ -211,18 +211,23 @@ button:hover {
     margin-bottom: 0.4rem;
 }
 
-#game-over-screen {
+#game-paused-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 1;
-    position: fixed;
 
     width: 100%;
     height: 100%;
 }
 
-#game-over-screen .game-over-content {
+#game-paused-screen .game-paused-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -237,7 +242,7 @@ button:hover {
     border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-#game-over-screen .game-over-content .buttons-container {
+#game-paused-screen .game-paused-content .buttons-container {
     width: 100%;
     height: auto;
     display: flex;
@@ -245,6 +250,6 @@ button:hover {
     align-items: center;
 }
 
-#game-over-screen .game-over-content .buttons-container #restart-game {
+#game-paused-screen .game-paused-content .buttons-container #restart-game {
     margin-right: 1rem;
 }

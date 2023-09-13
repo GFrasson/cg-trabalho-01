@@ -39,10 +39,17 @@
             </div>
             <button class="start-game" id="startButton">Start</button>
          </div>
-         <div id="gamerContainer"></div>
       </div>
+      <div id="game-paused-screen">
+         <div class="game-over-content">
+             <h1 class="game-paused-title">GAME PAUSED</h1>
+             <div class="buttons-container">
+                 <button id="restart-game" onclick="restartGame();">Restart</button>
+                 <button id="quit-game" onclick="quitGame();">Quit</button>
+             </div>
+         </div>
+     </div>
 
-      
    </div>
 </body>
 

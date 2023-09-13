@@ -55,9 +55,11 @@ export class Game {
     togglePauseGame() {
         this.pausedGame = !this.pausedGame; // Pausando Raycaster
         if (this.pausedGame === true) {
-            alert("Jogo pausado!");
+            const gamePausedScreen = document.querySelector('#game-paused-screen');
+            gamePausedScreen.style.display = 'flex';
         } else {
-            alert("De volta ao jogo!");
+            const gamePausedScreen = document.querySelector('#game-paused-screen');
+            gamePausedScreen.style.display = 'none';
         }
         // Travar movimento da bola também
     }
