@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 import { Ball } from './entities/Ball.js';
 import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
@@ -9,7 +11,12 @@ export class Game {
         this.hitter = new Hitter();
         this.background = new Background();
         this.brickArea = new BrickArea();
-        this.ball = new Ball();
+        
+        const hitterInitialPosition = this.hitter.getPosition();
+        const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
+        ballInitialPosition.z -= 2;
+
+        this.ball = new Ball(ballInitialPosition);
         this.walls = [
             Wall.createLeftWall(),
             Wall.createRightWall(),
@@ -65,6 +72,7 @@ export class Game {
     toggleStartGame() {
         if (this.pausedGame === false) {
             this.startGame = true;
+            this.ball.isLauched = true;
             alert("Jogo iniciado!");
         }
     }
@@ -75,6 +83,7 @@ export class Game {
         this.brickArea.resetBrickArea();
         this.ball.resetPosition();
         this.pausedGame = false;
+        this.startGame = false;
     }
     
     toggleEndGame() {

@@ -19,11 +19,11 @@ export class BrickArea {
             for(let j = 0; j < 13; j++) {
                 let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i]);
                 // Testar fim de jogo
-                // if(i == 3 && j == 6) {
-                //     brick.setVisible(true);
-                // }else {
-                //     brick.setVisible(false);
-                // }
+                if(i == 3 && j == 6) {
+                    brick.setVisible(true);
+                }else {
+                    brick.setVisible(false);
+                }
                 arrayLinha.push(brick);
                 coluna = coluna + 3.5; 
             }
