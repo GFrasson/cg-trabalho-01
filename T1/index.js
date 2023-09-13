@@ -12,7 +12,6 @@ const scene = new THREE.Scene();
 const renderer = initRenderer();
 const camera = new Camera();
 const light = initDefaultBasicLight(scene);
-// const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement);
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
 const game = new Game(camera, render);
