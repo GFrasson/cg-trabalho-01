@@ -1,0 +1,135 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: linear-gradient(45deg, rgb(26, 57, 84), rgb(49, 28, 69));
+    font-family: 'Spartan', sans-serif;
+}
+
+button {
+    margin-top: 1rem;
+    width: 7.6rem;
+    height: 2.5rem;
+
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.12);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+#starting-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 60%;
+    height: 60%;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 32px 0 rgba(21, 103, 128, 0.25);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 768px) {
+    #starting-screen {
+      width: 80%; 
+    }
+    #starting-screen #configurations {
+      flex-direction: column; 
+    }     
+}
+
+#starting-screen .game-title,
+#game-paused-screen .game-paused-content .game-paused-title,
+#stage-complete-screen .stage-complete-content .stage-complete-title {
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-size: 2.5rem;
+
+    margin-bottom: 2rem;
+}
+
+#starting-screen #configurations {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 60%;
+    height: auto;
+    padding: 1rem;
+}
+
+#game-paused-screen,
+#stage-complete-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+
+    width: 100%;
+    height: 100%;
+}
+
+#game-paused-screen .game-paused-content,
+#stage-complete-screen .stage-complete-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 40%;
+    height: 50%;
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(3.5px);
+    -webkit-backdrop-filter: blur(3.5px);
+    border-radius: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+#game-paused-screen .game-paused-content .buttons-container,
+#stage-complete-screen .stage-complete-content .buttons-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-paused-screen .game-paused-content .buttons-container #restart-game {
+    margin-right: 1rem;
+}
