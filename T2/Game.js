@@ -9,12 +9,12 @@ import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 
 export class Game {
-    constructor(camera, renderCallback) {
+    constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.hitter = new Hitter();
         this.background = new Background();
-        this.brickArea = new BrickArea();
+        this.brickArea = new BrickArea(scene);
         
         const hitterInitialPosition = this.hitter.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);

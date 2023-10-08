@@ -6,18 +6,19 @@ import {
 import { Brick } from './Brick.js';
 
 export class BrickArea {
-    constructor() {
+    constructor(scene) {
         let brickIndex = 0;
         this.noBricks = false;
         this.colors = ["gray", "red", "yellow", "blue", "purple", "green"];
         this.bricks = [];
+        this.scene = scene;
         let linha = -38;
         for(let i = 0; i < 6; i++) {
             let material = setDefaultMaterial(this.colors[i]);
             let coluna = -21;
             let arrayLinha = [];
             for(let j = 0; j < 13; j++) {
-                let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i]);
+                let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene);
                 arrayLinha.push(brick);
                 coluna = coluna + 3.5; 
             }

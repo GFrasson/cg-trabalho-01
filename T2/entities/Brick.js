@@ -3,8 +3,9 @@ import {
     setDefaultMaterial
 } from "../../libs/util/util.js";
 export class Brick {
-    constructor(material, posX, posY, index, color) {
+    constructor(material, posX, posY, index, color, scene) {
         this.id = index;
+        this.scene = scene;
         this.cubeGeometry = new THREE.BoxGeometry(3.2, 2, 2);
         this.block = new THREE.Mesh(this.cubeGeometry, material);
         this.block.position.set(posX, 1.0, posY);
@@ -16,17 +17,9 @@ export class Brick {
     setVisible(visible) {
         this.visible = visible;
         if(visible) {
-            let material = setDefaultMaterial(this.color);
-            material.opacity = 1;
-            material.transparent = false;
-            this.block.material = material;
-            this.block.material = material;
+            this.scene.add(this.block);
         }else {
-            let material = setDefaultMaterial();
-            material.opacity = 0;
-            material.transparent = true;
-            this.block.material = material;
-            this.block.material = material;
+            this.scene.remove(this.block);
         }
     }
 }
