@@ -7,6 +7,8 @@ import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
 import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
+import { HitterCSG } from './entities/HitterCSG.js';
+
 
 export class Game {
     constructor(camera, renderCallback) {
@@ -119,6 +121,8 @@ export class Game {
         this.getWalls().forEach(wall => {
             scene.add(wall.getTHREEObject());
         });
+
+        this.hitterCSG = new HitterCSG(scene);
     }
 
     toggleFullScreen() {

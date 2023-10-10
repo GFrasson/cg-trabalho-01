@@ -1,6 +1,7 @@
 import * as THREE from  'three';
 import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer,
         initCamera, 
@@ -17,6 +18,8 @@ var renderer = initRenderer();    // View function in util/utils
 renderer.setClearColor("rgb(30, 30, 40)");
 var camera = initCamera(new THREE.Vector3(4, -8, 8)); // Init camera in this position
    camera.up.set( 0, 0, 1 );
+
+//const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement);
 
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 initDefaultBasicLight(scene, true, new THREE.Vector3(12, -15, 20), 28, 1024) ;	
@@ -79,10 +82,10 @@ function buildInterface()
   };
 
   // GUI interface
-  var gui = new GUI();
-  gui.add(controls, 'wire', false)
-    .name("Wireframe")
-    .onChange(function(e) { controls.onWireframeMode() });
+//   var gui = new GUI();
+//   gui.add(controls, 'wire', false)
+//     .name("Wireframe")
+//     .onChange(function(e) { controls.onWireframeMode() });
 }
 
 function render()
