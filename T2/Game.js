@@ -14,11 +14,13 @@ export class Game {
     constructor(camera, renderCallback) {
         this.camera = camera;
         this.renderCallback = renderCallback;
-        this.hitter = new Hitter();
+        //this.hitter = new Hitter();
+        this.hitterCSG = new HitterCSG();
+
         this.background = new Background();
         this.brickArea = new BrickArea();
         
-        const hitterInitialPosition = this.hitter.getPosition();
+        const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
         ballInitialPosition.x += 2.5;
@@ -45,7 +47,7 @@ export class Game {
     }
 
     getHitter() {
-        return this.hitter;
+        return this.hitterCSG;
     }
 
     getBackground() {
@@ -81,16 +83,18 @@ export class Game {
                         const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
                         
                         if (isCollidingBottomWall) {
-                            const hitterPosition = this.hitter.getPosition();
+                            const hitterPosition = this.hitterCSG.getPosition();
                             const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
                             this.getBall().resetPosition(ballOverHitterPosition);
                         }
                     }
                 });
-    
-                this.getHitter().segments.forEach(hitterSegment => {
-                    this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
-                });
+                
+                this.getBall().bounceWhenCollideNormal(this.hitterCSG.boundingSphere);
+
+                // this.getHitter().segments.forEach(hitterSegment => {
+                //     this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
+                // });
     
                 for (let i = 0; i < 6; i++) {
                     for (let j = 0; j < 13; j++) {
@@ -108,9 +112,9 @@ export class Game {
     }
 
     addObjectsToScene(scene) {
-        this.getHitter().segments.forEach(segment => {
-            scene.add(segment.getTHREEObject());
-        });
+        // this.getHitter().segments.forEach(segment => {
+        //     scene.add(segment.getTHREEObject());
+        // });
 
         scene.add(this.getBackground().getTHREEObject());
         
@@ -122,7 +126,8 @@ export class Game {
             scene.add(wall.getTHREEObject());
         });
 
-        this.hitterCSG = new HitterCSG(scene);
+        scene.add(this.hitterCSG.hitterMesh);
+        scene.add(this.hitterCSG.sphere);
     }
 
     toggleFullScreen() {
@@ -153,7 +158,7 @@ export class Game {
     }
 
     toggleRestartGame() {
-        this.hitter.resetPosition();
+        this.hitterCSG.resetPosition();
         this.brickArea.resetBrickArea();
         this.ball.resetPosition();
         this.pausedGame = false;
@@ -162,7 +167,7 @@ export class Game {
     
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
-        this.hitter.resetPosition();
+        this.hitterCSG.resetPosition();
         //brickArea.resetBrickArea();
         this.ball.resetPosition();
         this.pausedGame = true;

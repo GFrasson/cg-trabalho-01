@@ -6,44 +6,57 @@ import {initRenderer,
 
 export class HitterCSG {
     constructor(scene) {
-        let auxMat = new THREE.Matrix4();
-        let material1 = setDefaultMaterial();
-        let cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 2, 12), material1)
-        let cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(6, 6, 2, 20))
-        let hitterMesh;
-        let csgObject, cubeCSG, cylinderCSG
+        this.auxMat = new THREE.Matrix4();
+        this.material1 = setDefaultMaterial();
+        this.cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 2, 16), this.material1)
+        this.cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(8, 8, 2, 20))
+        this.hitterMesh;
+        this.csgObject;
+        this.cubeCSG;
+        this.cylinderCSG;
 
         // cubeMesh.position.set(0, 0, 0)
-        scene.add(cubeMesh)
-        cylinderMesh.position.set(4, -0.5, 0.0)
-        cylinderMesh.matrixAutoUpdate = false;
-        cylinderMesh.updateMatrix();
-        scene.add(cylinderMesh)
-        cylinderCSG = CSG.fromMesh(cylinderMesh)
-        cubeCSG = CSG.fromMesh(cubeMesh)   
-        csgObject = cubeCSG.intersect(cylinderCSG) // Execute intersection
-        hitterMesh = CSG.toMesh(csgObject, auxMat)
-        hitterMesh.material = new THREE.MeshPhongMaterial({color: 'red'})
-        hitterMesh.position.set(0, 0, 2.0)
-        hitterMesh.rotation.y = Math.PI / -2;
-        hitterMesh.position.set(0, 2, 0.0)
-        //scene.add(hitterMesh)
+        //scene.add(cubeMesh)
+        this.cylinderMesh.position.set(7, -0.1, 0.0)
+        this.cylinderMesh.matrixAutoUpdate = false;
+        this.cylinderMesh.updateMatrix();
+        //scene.add(cylinderMesh)
+        this.cylinderCSG = CSG.fromMesh(this.cylinderMesh)
+        this.cubeCSG = CSG.fromMesh(this.cubeMesh)   
+        this.csgObject = this.cubeCSG.intersect(this.cylinderCSG) // Execute intersection
+        this.hitterMesh = CSG.toMesh(this.csgObject, this.auxMat)
+        this.hitterMesh.material = new THREE.MeshPhongMaterial({color: 'red'})
+        this.hitterMesh.position.set(0, 0, 2.0)
+        this.hitterMesh.rotation.y = Math.PI / -2;
+        this.hitterMesh.position.set(0, 2, 40)
+
+        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.hitterMesh.position), 8);
+        this.sphereGeometry = new THREE.SphereGeometry(8, 32, 16);
+        this.sphereMaterial = setDefaultMaterial('teal');
+        this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
+        this.sphere.position.set(0, 2, 46.5)
+        this.sphere.material.opacity = 0.5;
+        this.sphere.material.transparent = true;
+
+        // scene.add(hitterMesh)
+        // scene.add(sphere)
     }
 
-    // getPosition() {
-    //     return this.segments[2].getTHREEObject().position;
-    // }
+    getPosition() {
+        return this.hitterMesh.position;
+    }
 
-    // move(pointX) {
-    //     for (let i = 0; i < 5; i++) {
-    //         const hitterSegment = this.segments[i];
-    //         hitterSegment.move(pointX + (i - 2) * 2.5);
-    //     }
-    // }
+    move(pointX) {
+        this.hitterMesh.position.set(pointX, 2, 40);
+        this.sphere.position.set(pointX, 2, 46.5)
+        this.updateBoundingBox();
+    }
 
-    // resetPosition() {
-    //     this.segments.forEach(segment => {
-    //         segment.resetPosition();
-    //     });
-    // }
+    resetPosition() {
+       this.hitterMesh.position.set(0, 2, 40)
+    }
+
+    updateBoundingBox() {
+        this.boundingSphere.center.copy(this.sphere.position);
+    }
 }

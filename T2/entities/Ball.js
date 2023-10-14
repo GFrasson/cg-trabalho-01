@@ -69,10 +69,21 @@ export class Ball {
         this.bounce(normalVectorFromCollidedFace);
     }
 
+    calculateCollisionNormal(sphere1, sphere2) {
+        // Calcula a diferença entre os centros das esferas
+        const center1 = sphere1.center;
+        const center2 = sphere2.center;
+        const collisionNormal = center2.clone().sub(center1);
     
-    bounceWhenCollideNormal(boundingBox, normalVector) {
-        const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(boundingBox);
-        if (!collisionWithBoundingBox) {
+        collisionNormal.normalize();
+    
+        return collisionNormal;
+    }
+    
+    bounceWhenCollideNormal(boundingSphere) {
+        console.log("this.boundingSphere.center.x = ", this.boundingSphere.center.x)
+        const collisionWithBoundingSphere = this.checkCollisionWithBoundingSphere(boundingSphere);
+        if (!collisionWithBoundingSphere) {
             return;
         }
 
@@ -80,6 +91,13 @@ export class Ball {
             return;
         }
 
+        // if (this.boundingSphere.center.x < -10) {
+        //     return;
+        // }
+
+        // Calcula o vetor normal a superfície no ponto de colisão
+        const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
+        
         this.bounce(normalVector);
         this.fixTrajectory();       
     }
@@ -105,6 +123,10 @@ export class Ball {
 
     checkCollisionWithBoundingBox(boundingBox) {
         return this.boundingSphere.intersectsBox(boundingBox);
+    }
+
+    checkCollisionWithBoundingSphere(boundingSphere) {
+        return this.boundingSphere.intersectsSphere(boundingSphere);
     }
 
     getNormalVectorFromCollidedFace(collidedObjectBoundingBox) {
