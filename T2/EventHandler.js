@@ -9,7 +9,7 @@ export class EventHandler {
                 if (!this.game.startGame) {
                     this.game.toggleStartGame();
                 } else if (!this.game.getBall().isLauched) {
-                    this.game.getBall().isLauched = true;
+                    this.game.getBall().launch(() => this.game.startTimerToUpdateBallSpeed());
                 }
             }
         });

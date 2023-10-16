@@ -5,10 +5,18 @@ export class Ball {
     constructor(initialPosition) {
         this.initialPosition = initialPosition;
         this.radius = 1;
-        this.speed = 0.6;
+
+        this.baseSpeed = 0.6;
+        this.maxSpeed = this.baseSpeed * 2;
+        this.speed = this.baseSpeed;
+        this.timeToMaxSpeedInSeconds = 15;
+        this.timePassedFromLaunchInMilliseconds = 0;
+        this.timeIntervalId = null;
+
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
         this.isLauched = false;
+        this.launchedAt = null;
         this.createTHREEObject();
     }
 
@@ -178,12 +186,66 @@ export class Ball {
         return ballOverHitterPosition;
     }
 
+    launch(startTimerToUpdateBallSpeedCallback) {
+        this.isLauched = true;
+        startTimerToUpdateBallSpeedCallback();
+    }
+
+    updateSpeed(timePassedInMilliseconds, pausedGame, timeIntervalId) {
+        if (!this.isLauched || pausedGame) {
+            return;
+        }
+        
+        this.timeIntervalId = timeIntervalId;
+
+        this.timePassedFromLaunchInMilliseconds += timePassedInMilliseconds;
+        const timePassedFromLaunchInSeconds = this.timePassedFromLaunchInMilliseconds / 1000;
+
+        if (timePassedFromLaunchInSeconds >= this.timeToMaxSpeedInSeconds) {
+            this.speed = this.maxSpeed;
+            this.resetTimeIntervalToUpdateSpeed();
+            return;
+        }
+
+        const timePassedPercent = timePassedFromLaunchInSeconds / this.timeToMaxSpeedInSeconds;
+        const calculatedSpeed = this.baseSpeed + (timePassedPercent) * (this.maxSpeed - this.baseSpeed);
+        this.speed = Number(calculatedSpeed.toFixed(2));
+    }
+
+    updateSpeed2() {
+        if (!this.isLauched || !this.launchedAt || this.speed === this.maxSpeed) {
+            return;
+        }
+
+        const timePassedFromLaunchInSeconds = Math.abs(new Date() - this.launchedAt) / 1000;
+
+        if (timePassedFromLaunchInSeconds >= this.timeToMaxSpeedInSeconds) {
+            this.speed = this.maxSpeed;
+            return;
+        }
+
+        const timePassedPercent = timePassedFromLaunchInSeconds / this.timeToMaxSpeedInSeconds;
+        const calculatedSpeed = this.baseSpeed + (timePassedPercent) * (this.maxSpeed - this.baseSpeed);
+        this.speed = Number(calculatedSpeed.toFixed(2));
+    }
+
+    resetTimeIntervalToUpdateSpeed() {
+        if (this.timeIntervalId) {
+            clearInterval(this.timeIntervalId);
+            this.timeIntervalId = null;
+        }
+    }
+
     resetPosition(newPosition = null) {
         this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.isLauched = false;
+        this.timePassedFromLaunchInMilliseconds = 0;
+        this.resetTimeIntervalToUpdateSpeed();
+
+        this.speed = this.baseSpeed;
         this.lastReflectionNormalVector = null;
     }
 }

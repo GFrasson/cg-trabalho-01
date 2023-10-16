@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
     initRenderer,
-    initDefaultBasicLight
+    initDefaultBasicLight,
+    SecondaryBox
 } from "../libs/util/util.js";
 
 import { Camera } from './entities/Camera.js';
@@ -24,8 +25,13 @@ game.eventHandler.listenMousemoveEvent();
 
 game.screenHandler.listenScreenEvents();
 
+const ballSpeedSecondaryBox = new SecondaryBox();
+ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
+ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
+
 function render() {
     game.executeStep();
+    ballSpeedSecondaryBox.changeMessage(`Ball speed: ${game.getBall().speed}`);
 
     requestAnimationFrame(render);
     renderer.render(scene, camera.getTHREECamera());

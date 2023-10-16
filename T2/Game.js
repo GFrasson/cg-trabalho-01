@@ -34,6 +34,8 @@ export class Game {
         this.startGame = false;
         this.currentStage = 1;
         
+        this.timeIntervalIdToUpdateBallSpeed = null;
+
         this.eventHandler = new EventHandler(this);
         this.screenHandler = new ScreenHandler(this, this.renderCallback);
     }
@@ -119,6 +121,14 @@ export class Game {
         });
     }
 
+    startTimerToUpdateBallSpeed() {
+        const timeDelayToCheckSpeedUpdateInMilliseconds = 50;
+        const timeIntervalId = setInterval(
+            () => this.getBall().updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId), 
+            timeDelayToCheckSpeedUpdateInMilliseconds
+        );
+    }
+
     toggleFullScreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
@@ -142,7 +152,7 @@ export class Game {
     toggleStartGame() {
         if (this.pausedGame === false) {
             this.startGame = true;
-            this.ball.isLauched = true;
+            this.ball.launch(() => this.startTimerToUpdateBallSpeed());
         }
     }
 
