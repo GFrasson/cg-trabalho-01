@@ -9,9 +9,10 @@ import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 
 export class Game {
-    constructor(camera, renderCallback) {
+    constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
+        this.scene = scene;
         this.hitter = new Hitter();
         this.background = new Background();
         this.brickArea = new BrickArea();
@@ -28,6 +29,7 @@ export class Game {
             Wall.createTopWall(),
             Wall.createBottomWall()
         ];
+        this.powerUps = [];
         
         this.gameScreen = false;
         this.pausedGame = false;
@@ -69,6 +71,11 @@ export class Game {
             if (this.getBall().isLauched) {
                 // move
                 this.getBall().move(() => this.collisionsDetection());
+
+                // move power ups
+                this.powerUps.forEach(powerUp => {
+                    powerUp.move();
+                });
     
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
@@ -119,6 +126,11 @@ export class Game {
         this.getWalls().forEach(wall => {
             scene.add(wall.getTHREEObject());
         });
+    }
+
+    addPowerUp(powerUp) {
+        this.powerUps.push(powerUp);
+        this.scene.add(powerUp.getTHREEObject());
     }
 
     startTimerToUpdateBallSpeed() {

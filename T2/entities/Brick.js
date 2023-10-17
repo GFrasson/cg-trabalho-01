@@ -2,7 +2,13 @@ import * as THREE from 'three';
 import {
     setDefaultMaterial
 } from "../../libs/util/util.js";
+import { PowerUp } from './PowerUp.js';
+import { game } from '../index.js';
+
 export class Brick {
+    static bricksDestroyedAtCurrentStage = 0;
+    static spawnPowerUpOnBricksDestroyed = 10;
+
     constructor(material, posX, posY, index, color) {
         this.id = index;
         this.cubeGeometry = new THREE.BoxGeometry(3.2, 2, 2);
@@ -10,23 +16,33 @@ export class Brick {
         this.block.position.set(posX, 1.0, posY);
         this.visible = true;
         this.color = color;
-        this.boundingBox = new THREE.Box3().setFromObject(this.block);        
+        this.boundingBox = new THREE.Box3().setFromObject(this.block);
     }
 
     setVisible(visible) {
         this.visible = visible;
-        if(visible) {
+        if (visible) {
             let material = setDefaultMaterial(this.color);
             material.opacity = 1;
             material.transparent = false;
             this.block.material = material;
             this.block.material = material;
-        }else {
+        } else {
             let material = setDefaultMaterial();
             material.opacity = 0;
             material.transparent = true;
             this.block.material = material;
             this.block.material = material;
+
+            Brick.bricksDestroyedAtCurrentStage += 1;
+
+            if (
+                Brick.bricksDestroyedAtCurrentStage > 0 &&
+                Brick.bricksDestroyedAtCurrentStage % Brick.spawnPowerUpOnBricksDestroyed === 0
+            ) {
+                const powerUp = new PowerUp(this.block.position);
+                game.addPowerUp(powerUp);
+            }
         }
     }
 }

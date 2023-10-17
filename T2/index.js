@@ -15,7 +15,7 @@ const camera = new Camera();
 const light = initDefaultBasicLight(scene);
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
-const game = new Game(camera, render);
+export const game = new Game(camera, render, scene);
 
 game.addObjectsToScene(scene);
 
