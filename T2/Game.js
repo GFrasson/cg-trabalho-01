@@ -66,41 +66,39 @@ export class Game {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
                 // move
-                this.getBall().move();
-    
-                // boundingSphere
-                this.getBall().updateBoundingSphere();
-    
-                // detect collisions
-                this.getWalls().forEach(wall => {
-                    this.getBall().bounceWhenCollide(wall.boundingBox);
-    
-                    if (wall.direction === 'bottom') {
-                        const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
-                        
-                        if (isCollidingBottomWall) {
-                            const hitterPosition = this.hitter.getPosition();
-                            const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
-                            this.getBall().resetPosition(ballOverHitterPosition);
-                        }
-                    }
-                });
-    
-                this.getHitter().segments.forEach(hitterSegment => {
-                    this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
-                });
-    
-                for (let i = 0; i < 6; i++) {
-                    for (let j = 0; j < 13; j++) {
-                        const brick = this.getBrickArea().bricks[i][j];
-                        this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
-                    }
-                }
+                this.getBall().move(() => this.collisionsDetection());
     
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
                     this.toggleEndGame();
                 }
+            }
+        }
+    }
+
+    collisionsDetection() {
+        this.getWalls().forEach(wall => {
+            this.getBall().bounceWhenCollide(wall.boundingBox);
+
+            if (wall.direction === 'bottom') {
+                const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
+                
+                if (isCollidingBottomWall) {
+                    const hitterPosition = this.hitter.getPosition();
+                    const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
+                    this.getBall().resetPosition(ballOverHitterPosition);
+                }
+            }
+        });
+
+        this.getHitter().segments.forEach(hitterSegment => {
+            this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
+        });
+
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 13; j++) {
+                const brick = this.getBrickArea().bricks[i][j];
+                this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
             }
         }
     }
