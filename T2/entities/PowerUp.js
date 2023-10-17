@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { game } from '../index.js';
 
 export class PowerUp {
     constructor(initialPosition) {
@@ -30,5 +31,23 @@ export class PowerUp {
 
     move() {
         this.capsule.translateZ(this.direction.z * this.speed);
+    }
+
+    collectPowerUpWhenCollideHitter(hitterBoundingSphere) {
+        const isCollidingWithHitter = this.checkCollisionWithHitter(hitterBoundingSphere);
+        if (!isCollidingWithHitter) {
+            return;
+        }
+
+        this.collect();
+    }
+
+    collect() {
+        game.deletePowerUp(this);
+        game.duplicateBall();
+    }
+
+    checkCollisionWithHitter(hitterBoundingSphere) {
+        return this.boundingBox.intersectsBox(hitterBoundingSphere);
     }
 }

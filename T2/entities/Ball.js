@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
 
 export class Ball {
+    static timePassedFromLaunchInMilliseconds = 0;
+    static timeIntervalId = null;
+
     constructor(initialPosition) {
         this.initialPosition = initialPosition;
         this.radius = 1;
@@ -10,14 +13,23 @@ export class Ball {
         this.maxSpeed = this.baseSpeed * 2;
         this.speed = this.baseSpeed;
         this.timeToMaxSpeedInSeconds = 15;
-        this.timePassedFromLaunchInMilliseconds = 0;
-        this.timeIntervalId = null;
 
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
         this.isLauched = false;
-        this.launchedAt = null;
         this.createTHREEObject();
+    }
+
+    setSpeed(speed) {
+        this.speed = speed;
+    }
+
+    setDirection(direction) {
+        this.direction = direction;
+    }
+
+    setIsLaunched(isLaunched) {
+        this.isLauched = isLaunched;
     }
 
     getTHREEObject() {
@@ -196,31 +208,14 @@ export class Ball {
             return;
         }
         
-        this.timeIntervalId = timeIntervalId;
+        Ball.timeIntervalId = timeIntervalId;
 
-        this.timePassedFromLaunchInMilliseconds += timePassedInMilliseconds;
-        const timePassedFromLaunchInSeconds = this.timePassedFromLaunchInMilliseconds / 1000;
+        Ball.timePassedFromLaunchInMilliseconds += timePassedInMilliseconds;
+        const timePassedFromLaunchInSeconds = Ball.timePassedFromLaunchInMilliseconds / 1000;
 
         if (timePassedFromLaunchInSeconds >= this.timeToMaxSpeedInSeconds) {
             this.speed = this.maxSpeed;
             this.resetTimeIntervalToUpdateSpeed();
-            return;
-        }
-
-        const timePassedPercent = timePassedFromLaunchInSeconds / this.timeToMaxSpeedInSeconds;
-        const calculatedSpeed = this.baseSpeed + (timePassedPercent) * (this.maxSpeed - this.baseSpeed);
-        this.speed = Number(calculatedSpeed.toFixed(2));
-    }
-
-    updateSpeed2() {
-        if (!this.isLauched || !this.launchedAt || this.speed === this.maxSpeed) {
-            return;
-        }
-
-        const timePassedFromLaunchInSeconds = Math.abs(new Date() - this.launchedAt) / 1000;
-
-        if (timePassedFromLaunchInSeconds >= this.timeToMaxSpeedInSeconds) {
-            this.speed = this.maxSpeed;
             return;
         }
 

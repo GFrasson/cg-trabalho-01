@@ -22,7 +22,7 @@ export class Game {
         ballInitialPosition.z -= 2;
         ballInitialPosition.x += 2.5;
 
-        this.ball = new Ball(ballInitialPosition);
+        this.balls = [new Ball(ballInitialPosition)];
         this.walls = [
             Wall.createLeftWall(),
             Wall.createRightWall(),
@@ -59,7 +59,7 @@ export class Game {
     }
 
     getBall() {
-        return this.ball;
+        return this.balls[0];
     }
 
     getWalls() {
@@ -110,6 +110,10 @@ export class Game {
                 this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
             }
         }
+
+        this.powerUps.forEach(powerUp => {
+            powerUp.collectPowerUpWhenCollideHitter(this.getHitter().getBoundingSphere());
+        })
     }
 
     addObjectsToScene(scene) {
@@ -131,6 +135,29 @@ export class Game {
     addPowerUp(powerUp) {
         this.powerUps.push(powerUp);
         this.scene.add(powerUp.getTHREEObject());
+    }
+
+    deletePowerUp(powerUp) {
+        this.powerUps = this.powerUps.filter(currentPowerUp => currentPowerUp !== powerUp);
+        powerUp.getTHREEObject().parent.remove(powerUp);
+    }
+
+    duplicateBall() {
+        if (this.balls.length === 1) {
+            const originalBall = this.getBall();
+
+            const newBall = new Ball(originalBall.getTHREEObject().position);
+
+            newBall.setSpeed(originalBall.speed);
+            newBall.setIsLaunched(originalBall.isLauched);
+
+            const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
+            newBallDirection.x += 0.2;
+            newBallDirection.normalize();
+            newBall.setDirection(newBallDirection);
+            
+            this.balls.push(newBall);
+        }
     }
 
     startTimerToUpdateBallSpeed() {
@@ -164,14 +191,14 @@ export class Game {
     toggleStartGame() {
         if (this.pausedGame === false) {
             this.startGame = true;
-            this.ball.launch(() => this.startTimerToUpdateBallSpeed());
+            this.getBall().launch(() => this.startTimerToUpdateBallSpeed());
         }
     }
 
     toggleRestartGame() {
         this.hitter.resetPosition();
         this.brickArea.resetBrickArea();
-        this.ball.resetPosition();
+        this.getBall().resetPosition();
         this.pausedGame = false;
         this.startGame = false;
     }
@@ -180,7 +207,7 @@ export class Game {
         this.screenHandler.showStageCompleteScreen();
         this.hitter.resetPosition();
         //brickArea.resetBrickArea();
-        this.ball.resetPosition();
+        this.getBall().resetPosition();
         this.pausedGame = true;
     }
 
