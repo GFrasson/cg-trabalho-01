@@ -24,9 +24,15 @@ export class Ball {
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
     }
 
-    move() {
-        this.sphere.translateX(this.direction.x * this.speed);
-        this.sphere.translateZ(this.direction.z * this.speed);
+    move(collisionsDetectionCallback) {
+        const distanceToTranslate = 0.1;
+        for (let i = 0; i < this.speed * 10; i += distanceToTranslate * 10) {
+            this.sphere.translateX(this.direction.x * distanceToTranslate);
+            this.sphere.translateZ(this.direction.z * distanceToTranslate);
+            
+            this.updateBoundingSphere();
+            collisionsDetectionCallback();
+        }
     }
 
     updateBoundingSphere() {
@@ -50,7 +56,6 @@ export class Ball {
         }
 
         if (this.lastReflectionNormalVector !== null && normalVectorFromCollidedFace.equals(this.lastReflectionNormalVector)) {
-            console.log('d');
             return;
         }
 
