@@ -6,7 +6,7 @@ export class Ball {
         this.initialPosition = initialPosition;
         this.radius = 1;
         this.speed = 0.6;
-        this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
+        this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
         this.isLauched = false;
         this.createTHREEObject();
@@ -190,7 +190,7 @@ export class Ball {
     getOverHitterPosition(hitterPosition) {
         const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
         ballOverHitterPosition.z -= 2;
-        ballOverHitterPosition.x += 2.5;
+       // ballOverHitterPosition.x += 2.5;
 
         return ballOverHitterPosition;
     }
@@ -199,7 +199,7 @@ export class Ball {
         this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 
-        this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
+        this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();
         this.isLauched = false;
         this.lastReflectionNormalVector = null;
     }

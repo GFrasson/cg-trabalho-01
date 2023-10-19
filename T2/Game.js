@@ -23,7 +23,7 @@ export class Game {
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
-        ballInitialPosition.x += 2.5;
+        // ballInitialPosition.x += 2.5;
 
         this.ball = new Ball(ballInitialPosition);
         this.walls = [

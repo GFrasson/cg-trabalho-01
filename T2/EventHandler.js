@@ -26,7 +26,7 @@ export class EventHandler {
                     const ballTHREEObject = ball.getTHREEObject();
                     ballTHREEObject.position.copy(hitterPosition);
                     ballTHREEObject.position.z -= 2;
-                    ballTHREEObject.position.x += 2.5;
+                   // ballTHREEObject.position.x += 2.5;
                 }
             }
         });
