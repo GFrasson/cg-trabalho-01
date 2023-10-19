@@ -47,6 +47,10 @@ export class EventHandler {
                     if (this.game.gameScreen) {
                         this.game.togglePauseGame();
                     }
+                    case 'g':
+                    if (this.game.startGame) {
+                        this.game.nextStage();
+                    }
                     break;
                 default:
                     break;

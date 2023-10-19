@@ -175,5 +175,11 @@ export class Game {
 
     nextStage() {
         this.currentStage += 1;
+        this.hitterCSG.resetPosition();
+        this.ball.resetPosition();
+        // Precisa mudar para a BrickArea2 quando estiver pronta
+        this.brickArea.resetBrickArea();
+        this.pausedGame = false;
+        this.startGame = false;
     }
 }
