@@ -17,7 +17,7 @@ export class Wall {
 
     createTHREEObject() {
         this.boxGeometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
-        this.boxMaterial = setDefaultMaterial('gray');
+        this.boxMaterial =  new THREE.MeshLambertMaterial({color:"gray"});
         this.box = new THREE.Mesh(this.boxGeometry, this.boxMaterial);
         this.box.position.copy(this.position);
 

@@ -25,7 +25,7 @@ export class HitterCSG {
         this.cubeCSG = CSG.fromMesh(this.cubeMesh)   
         this.csgObject = this.cubeCSG.intersect(this.cylinderCSG) // Execute intersection
         this.hitterMesh = CSG.toMesh(this.csgObject, this.auxMat)
-        this.hitterMesh.material = new THREE.MeshPhongMaterial({color: 'red'})
+        this.hitterMesh.material = new THREE.MeshLambertMaterial({color: "darkcyan"});
         this.hitterMesh.position.set(0, 0, 2.0)
         this.hitterMesh.rotation.y = Math.PI / -2;
         this.hitterMesh.position.set(0, 2, 40)
@@ -54,6 +54,8 @@ export class HitterCSG {
 
     resetPosition() {
        this.hitterMesh.position.set(0, 2, 40)
+       this.sphere.position.set(0, 2, 46.5)
+       this.updateBoundingBox();
     }
 
     updateBoundingBox() {

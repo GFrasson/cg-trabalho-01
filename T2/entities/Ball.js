@@ -18,7 +18,12 @@ export class Ball {
 
     createTHREEObject() {
         this.sphereGeometry = new THREE.SphereGeometry(this.radius, 32, 16);
-        this.sphereMaterial = setDefaultMaterial('teal');
+        this.sphereMaterial = new THREE.MeshPhongMaterial
+        ({
+            color: "teal",
+            shininess:"200",
+            specular:"rgb(255,255,255)"
+        });
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);

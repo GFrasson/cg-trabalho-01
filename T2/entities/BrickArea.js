@@ -9,11 +9,12 @@ export class BrickArea {
     constructor() {
         let brickIndex = 0;
         this.noBricks = false;
-        this.colors = ["gray", "red", "yellow", "blue", "purple", "green"];
+        this.colors = ["gray", "red", "dodgerblue", "orange", "hotpink", "chartreuse","darkslategray"];
         this.bricks = [];
         let linha = -38;
         for(let i = 0; i < 6; i++) {
-            let material = setDefaultMaterial(this.colors[i]);
+            let material = new THREE.MeshLambertMaterial({color: "yellow"});
+           // let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
             let coluna = -21;
             let arrayLinha = [];
             for(let j = 0; j < 13; j++) {
