@@ -35,8 +35,8 @@ export class HitterCSG {
         this.sphereMaterial = setDefaultMaterial('red');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.set(0, 2, 47)
-        this.sphere.material.opacity = 0.5;
-        //this.sphere.material.opacity = 0;
+        //this.sphere.material.opacity = 0.5;
+        this.sphere.material.opacity = 0;
         this.sphere.material.transparent = true;
         // scene.add(hitterMesh)
         // scene.add(sphere)

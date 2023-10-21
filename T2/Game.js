@@ -11,14 +11,13 @@ import { HitterCSG } from './entities/HitterCSG.js';
 
 
 export class Game {
-    constructor(camera, renderCallback) {
+    constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
-        //this.hitter = new Hitter();
         this.hitterCSG = new HitterCSG();
 
         this.background = new Background();
-        this.brickArea = new BrickArea();
+        this.brickArea = new BrickArea(scene);
         
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
@@ -70,39 +69,8 @@ export class Game {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
                 // move
-                this.getBall().move();
-    
-                // boundingSphere
-                this.getBall().updateBoundingSphere();
-    
-                // detect collisions
-                this.getWalls().forEach(wall => {
-                    this.getBall().bounceWhenCollide(wall.boundingBox);
-    
-                    if (wall.direction === 'bottom') {
-                        const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
-                        
-                        if (isCollidingBottomWall) {
-                            const hitterPosition = this.hitterCSG.getPosition();
-                            const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
-                            this.getBall().resetPosition(ballOverHitterPosition);
-                        }
-                    }
-                });
+                this.getBall().move(() => this.collisionsDetection());
                 
-                this.getBall().bounceWhenCollideNormal(this.hitterCSG.boundingSphere);
-
-                // this.getHitter().segments.forEach(hitterSegment => {
-                //     this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
-                // });
-    
-                for (let i = 0; i < 6; i++) {
-                    for (let j = 0; j < 13; j++) {
-                        const brick = this.getBrickArea().bricks[i][j];
-                        this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
-                    }
-                }
-    
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
                     this.toggleEndGame();
@@ -111,11 +79,32 @@ export class Game {
         }
     }
 
-    addObjectsToScene(scene) {
-        // this.getHitter().segments.forEach(segment => {
-        //     scene.add(segment.getTHREEObject());
-        // });
+    collisionsDetection() {    
+        this.getWalls().forEach(wall => {
+            this.getBall().bounceWhenCollide(wall.boundingBox);
 
+            if (wall.direction === 'bottom') {
+                const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
+                
+                if (isCollidingBottomWall) {
+                    const hitterPosition = this.hitterCSG.getPosition();
+                    const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
+                    this.getBall().resetPosition(ballOverHitterPosition);
+                }
+            }
+        });
+        
+        this.getBall().bounceWhenCollideNormal(this.hitterCSG.boundingSphere);
+
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 13; j++) {
+                const brick = this.getBrickArea().bricks[i][j];
+                this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
+            }
+        }        
+    }
+
+    addObjectsToScene(scene) {
         scene.add(this.getBackground().getTHREEObject());
         
         this.getBrickArea().buildBrickArea(scene);
