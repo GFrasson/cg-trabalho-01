@@ -5,15 +5,14 @@ import { game } from '../index.js';
 export class Ball {
     static timePassedFromLaunchInMilliseconds = 0;
     static timeIntervalId = null;
+    static baseSpeed = 0.6;
+    static maxSpeed = Ball.baseSpeed * 2;
+    static speed = Ball.baseSpeed;
+    static timeToMaxSpeedInSeconds = 15;
 
     constructor(initialPosition) {
         this.initialPosition = initialPosition;
         this.radius = 1;
-
-        this.baseSpeed = 0.6;
-        this.maxSpeed = this.baseSpeed * 2;
-        this.speed = this.baseSpeed;
-        this.timeToMaxSpeedInSeconds = 15;
 
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
@@ -47,7 +46,11 @@ export class Ball {
 
     move() {
         const distanceToTranslate = 0.1;
-        for (let i = 0; i < this.speed * 10; i += distanceToTranslate * 10) {
+        for (let i = 0; i < Ball.speed * 10; i += distanceToTranslate * 10) {
+            if (!game.balls.includes(this)) {
+                break;
+            }
+
             this.sphere.translateX(this.direction.x * distanceToTranslate);
             this.sphere.translateZ(this.direction.z * distanceToTranslate);
             
@@ -62,18 +65,12 @@ export class Ball {
 
     collisionsDetection() {
         game.getWalls().forEach(wall => {
-            this.bounceWhenCollide(wall.boundingBox);
-
-            if (wall.direction === 'bottom') {
-                const isCollidingBottomWall = wall.collisionBottomWall(this);
-                
-                if (isCollidingBottomWall) {
-                    const hitterPosition = game.getHitter().getPosition();
-                    const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
-                    this.resetPosition(ballOverHitterPosition);
-                }
+            if (wall.direction !== 'bottom') {
+                this.bounceWhenCollide(wall.boundingBox);
             }
         });
+
+        this.resetWhenCollideBottomWall();
         
         this.bounceWhenCollideNormal(game.getHitter().boundingSphere);
 
@@ -153,6 +150,22 @@ export class Ball {
         this.fixTrajectory();       
     }
 
+    resetWhenCollideBottomWall() {
+        const isCollidingBottomWall = this.checkCollisionWithBottomWall();
+        if (!isCollidingBottomWall) {
+            return;
+        }
+
+        if (game.balls.length > 1) {
+            game.deleteBall(this);
+        } else {
+            const hitterPosition = game.getHitter().getPosition();
+            const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
+            this.resetPosition(ballOverHitterPosition);
+            game.deleteAllPowerUps();
+        }
+    }
+
     isMovingDown() {
         return this.direction.z > 0;
     }
@@ -178,6 +191,10 @@ export class Ball {
 
     checkCollisionWithBoundingSphere(boundingSphere) {
         return this.boundingSphere.intersectsSphere(boundingSphere);
+    }
+
+    checkCollisionWithBottomWall() {
+        return this.boundingSphere.intersectsBox(game.getBottomWall().getBoundingBox());
     }
 
     getNormalVectorFromCollidedFace(collidedObjectBoundingBox) {
@@ -251,8 +268,8 @@ export class Ball {
         startTimerToUpdateBallSpeedCallback();
     }
 
-    updateSpeed(timePassedInMilliseconds, pausedGame, timeIntervalId) {
-        if (!this.isLauched || pausedGame) {
+    static updateSpeed(timePassedInMilliseconds, pausedGame, timeIntervalId) {
+        if (pausedGame) {
             return;
         }
         
@@ -261,21 +278,21 @@ export class Ball {
         Ball.timePassedFromLaunchInMilliseconds += timePassedInMilliseconds;
         const timePassedFromLaunchInSeconds = Ball.timePassedFromLaunchInMilliseconds / 1000;
 
-        if (timePassedFromLaunchInSeconds >= this.timeToMaxSpeedInSeconds) {
-            this.speed = this.maxSpeed;
-            this.resetTimeIntervalToUpdateSpeed();
+        if (timePassedFromLaunchInSeconds >= Ball.timeToMaxSpeedInSeconds) {
+            Ball.speed = Ball.maxSpeed;
+            Ball.resetTimeIntervalToUpdateSpeed();
             return;
         }
 
-        const timePassedPercent = timePassedFromLaunchInSeconds / this.timeToMaxSpeedInSeconds;
-        const calculatedSpeed = this.baseSpeed + (timePassedPercent) * (this.maxSpeed - this.baseSpeed);
-        this.speed = Number(calculatedSpeed.toFixed(2));
+        const timePassedPercent = timePassedFromLaunchInSeconds / Ball.timeToMaxSpeedInSeconds;
+        const calculatedSpeed = Ball.baseSpeed + (timePassedPercent) * (Ball.maxSpeed - Ball.baseSpeed);
+        Ball.speed = Number(calculatedSpeed.toFixed(2));
     }
 
-    resetTimeIntervalToUpdateSpeed() {
-        if (this.timeIntervalId) {
-            clearInterval(this.timeIntervalId);
-            this.timeIntervalId = null;
+    static resetTimeIntervalToUpdateSpeed() {
+        if (Ball.timeIntervalId) {
+            clearInterval(Ball.timeIntervalId);
+            Ball.timeIntervalId = null;
         }
     }
 
@@ -285,10 +302,10 @@ export class Ball {
 
         this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
         this.isLauched = false;
-        this.timePassedFromLaunchInMilliseconds = 0;
-        this.resetTimeIntervalToUpdateSpeed();
+        Ball.timePassedFromLaunchInMilliseconds = 0;
+        Ball.resetTimeIntervalToUpdateSpeed();
 
-        this.speed = this.baseSpeed;
+        Ball.speed = Ball.baseSpeed;
         this.lastReflectionNormalVector = null;
     }
 }

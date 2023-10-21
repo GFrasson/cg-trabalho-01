@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { PowerUp } from './PowerUp.js';
 import { game } from '../index.js';
 
 export class Brick {
@@ -19,9 +18,9 @@ export class Brick {
 
     setVisible(visible) {
         this.visible = visible;
-        if(visible) {
+        if (visible) {
             this.scene.add(this.block);
-        }else {
+        } else {
             this.scene.remove(this.block);
 
             Brick.bricksDestroyedAtCurrentStage += 1;
@@ -30,8 +29,7 @@ export class Brick {
                 Brick.bricksDestroyedAtCurrentStage > 0 &&
                 Brick.bricksDestroyedAtCurrentStage % Brick.spawnPowerUpOnBricksDestroyed === 0
             ) {
-                const powerUp = new PowerUp(this.block.position);
-                game.addPowerUp(powerUp);
+                game.addPowerUp(this.block.position);
             }
         }
     }

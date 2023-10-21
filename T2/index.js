@@ -8,6 +8,7 @@ import {
 
 import { Camera } from './entities/Camera.js';
 import { Game } from './Game.js';
+import { Ball } from './entities/Ball.js';
 
 const scene = new THREE.Scene();
 const renderer = initRenderer();
@@ -31,7 +32,7 @@ ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
 
 function render() {
     game.executeStep();
-    ballSpeedSecondaryBox.changeMessage(`Ball speed: ${game.getBall().speed}`);
+    ballSpeedSecondaryBox.changeMessage(`Ball speed: ${Ball.speed}`);
 
     requestAnimationFrame(render);
     renderer.render(scene, camera.getTHREECamera());

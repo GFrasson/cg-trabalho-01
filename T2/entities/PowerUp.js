@@ -24,18 +24,24 @@ export class PowerUp {
     getTHREEObject() {
         return this.capsule;
     }
-
+    
+    move() {
+        this.capsule.translateZ(this.direction.z * this.speed);
+        this.updateBoundingBox();
+        this.collisionsDetection();
+    }
+    
     updateBoundingBox() {
         this.boundingBox.setFromObject(this.capsule);
     }
 
-    move() {
-        this.capsule.translateZ(this.direction.z * this.speed);
-        this.updateBoundingBox();
+    collisionsDetection() {
+        this.collectPowerUpWhenCollideHitter();
+        this.destroyPowerUpWhenCollideBottomWall();
     }
 
-    collectPowerUpWhenCollideHitter(hitterBoundingSphere) {
-        const isCollidingWithHitter = this.checkCollisionWithHitter(hitterBoundingSphere);
+    collectPowerUpWhenCollideHitter() {
+        const isCollidingWithHitter = this.checkCollisionWithHitter();
         if (!isCollidingWithHitter) {
             return;
         }
@@ -48,7 +54,20 @@ export class PowerUp {
         game.duplicateBall();
     }
 
-    checkCollisionWithHitter(hitterBoundingSphere) {
-        return this.boundingBox.intersectsSphere(hitterBoundingSphere);
+    destroyPowerUpWhenCollideBottomWall() {
+        const isCollidingBottomWall = this.checkCollisionWithBottomWall();
+        if (!isCollidingBottomWall) {
+            return;
+        }
+
+        game.deletePowerUp(this);
+    }
+
+    checkCollisionWithHitter() {
+        return this.boundingBox.intersectsSphere(game.getHitter().getBoundingSphere());
+    }
+
+    checkCollisionWithBottomWall() {
+        return this.boundingBox.intersectsBox(game.getBottomWall().getBoundingBox());
     }
 }

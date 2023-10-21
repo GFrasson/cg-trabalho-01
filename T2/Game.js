@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 
 import { Ball } from './entities/Ball.js';
-import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
 import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
 import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
+import { PowerUp } from './entities/PowerUp.js';
 
 
 export class Game {
@@ -69,6 +69,10 @@ export class Game {
         return this.walls;
     }
 
+    getBottomWall() {
+        return this.walls[this.walls.length - 1];
+    }
+
     executeStep() {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
@@ -80,10 +84,6 @@ export class Game {
                 // move power ups
                 this.powerUps.forEach(powerUp => {
                     powerUp.move();
-                });
-
-                this.powerUps.forEach(powerUp => {
-                    powerUp.collectPowerUpWhenCollideHitter(this.getHitter().getBoundingSphere());
                 });
                 
                 // check end game
@@ -109,7 +109,13 @@ export class Game {
         scene.add(this.hitterCSG.sphere);
     }
 
-    addPowerUp(powerUp) {
+    addPowerUp(position) {
+        if (this.balls.length > 1) {
+            return;
+        }
+        
+        const powerUp = new PowerUp(position);
+
         this.powerUps.push(powerUp);
         this.scene.add(powerUp.getTHREEObject());
     }
@@ -119,29 +125,42 @@ export class Game {
         this.scene.remove(powerUp.getTHREEObject());
     }
 
-    duplicateBall() {
-        if (this.balls.length === 1) {
-            const originalBall = this.getBall();
+    deleteAllPowerUps() {
+        this.powerUps.forEach(powerUp => {
+            this.scene.remove(powerUp.getTHREEObject());
+        });
+        this.powerUps = [];
+    }
 
-            const newBall = new Ball(originalBall.getTHREEObject().position);
-            
-            newBall.setSpeed(originalBall.speed);
-            newBall.setIsLaunched(originalBall.isLauched);
-            
-            const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
-            newBallDirection.x += 0.2;
-            newBallDirection.normalize();
-            newBall.setDirection(newBallDirection);
-            
-            this.balls.push(newBall);
-            this.scene.add(newBall.getTHREEObject());
+    duplicateBall() {
+        if (this.balls.length > 1) {
+            return;
         }
+        
+        const originalBall = this.getBall();
+
+        const newBall = new Ball(originalBall.getTHREEObject().position);
+        
+        newBall.setIsLaunched(originalBall.isLauched);
+        
+        const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
+        newBallDirection.x += 0.2;
+        newBallDirection.normalize();
+        newBall.setDirection(newBallDirection);
+        
+        this.balls.push(newBall);
+        this.scene.add(newBall.getTHREEObject());
+    }
+
+    deleteBall(ball) {
+        this.balls = this.balls.filter(currentBall => currentBall !== ball);
+        this.scene.remove(ball.getTHREEObject());
     }
 
     startTimerToUpdateBallSpeed() {
         const timeDelayToCheckSpeedUpdateInMilliseconds = 50;
         const timeIntervalId = setInterval(
-            () => this.getBall().updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId), 
+            () => Ball.updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId), 
             timeDelayToCheckSpeedUpdateInMilliseconds
         );
     }
