@@ -81,7 +81,6 @@ export class Ball {
     }
     
     bounceWhenCollideNormal(boundingSphere) {
-        console.log("this.boundingSphere.center.x = ", this.boundingSphere.center.x)
         const collisionWithBoundingSphere = this.checkCollisionWithBoundingSphere(boundingSphere);
         if (!collisionWithBoundingSphere) {
             return;
@@ -91,9 +90,9 @@ export class Ball {
             return;
         }
 
-        // if (this.boundingSphere.center.x < -10) {
-        //     return;
-        // }
+        if (this.boundingSphere.center.z > 42) {
+            return;
+        }
 
         // Calcula o vetor normal a superfície no ponto de colisão
         const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);

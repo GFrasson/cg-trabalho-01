@@ -9,7 +9,7 @@ export class HitterCSG {
         this.auxMat = new THREE.Matrix4();
         this.material1 = setDefaultMaterial();
         this.cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(4, 2, 16), this.material1)
-        this.cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(8, 8, 2, 20))
+        this.cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(8, 8, 2, 100))
         this.hitterMesh;
         this.csgObject;
         this.cubeCSG;
@@ -32,12 +32,12 @@ export class HitterCSG {
 
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.hitterMesh.position), 8);
         this.sphereGeometry = new THREE.SphereGeometry(8, 32, 16);
-        this.sphereMaterial = setDefaultMaterial('teal');
+        this.sphereMaterial = setDefaultMaterial('red');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
-        this.sphere.position.set(0, 2, 46.5)
+        this.sphere.position.set(0, 2, 47)
         this.sphere.material.opacity = 0.5;
+        //this.sphere.material.opacity = 0;
         this.sphere.material.transparent = true;
-
         // scene.add(hitterMesh)
         // scene.add(sphere)
     }
@@ -48,7 +48,7 @@ export class HitterCSG {
 
     move(pointX) {
         this.hitterMesh.position.set(pointX, 2, 40);
-        this.sphere.position.set(pointX, 2, 46.5)
+        this.sphere.position.set(pointX, 2, 47)
         this.updateBoundingBox();
     }
 
