@@ -19,14 +19,14 @@ export class EventHandler {
         window.addEventListener('mousemove', (event) => {
             if (!this.game.pausedGame) {
                 this.game.getBackground().onMouseMove(event, this.game.getCamera(), this.game.getHitter());
-        
+
                 const ball = this.game.getBall();
                 if (!ball.isLauched) {
                     const hitterPosition = this.game.getHitter().getPosition();
                     const ballTHREEObject = ball.getTHREEObject();
                     ballTHREEObject.position.copy(hitterPosition);
                     ballTHREEObject.position.z -= 2;
-                   // ballTHREEObject.position.x += 2.5;
+                    // ballTHREEObject.position.x += 2.5;
                 }
             }
         });
@@ -47,10 +47,8 @@ export class EventHandler {
                     if (this.game.gameScreen) {
                         this.game.togglePauseGame();
                     }
-                    case 'g':
-                    if (this.game.startGame) {
-                        this.game.nextStage();
-                    }
+                case 'g':
+                    this.game.nextStage();
                     break;
                 default:
                     break;

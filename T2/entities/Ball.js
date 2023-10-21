@@ -40,11 +40,11 @@ export class Ball {
     createTHREEObject() {
         this.sphereGeometry = new THREE.SphereGeometry(this.radius, 32, 16);
         this.sphereMaterial = new THREE.MeshPhongMaterial
-        ({
-            color: "white",
-            shininess:"200",
-            specular:"rgb(255,255,255)"
-        });
+            ({
+                color: "white",
+                shininess: "200",
+                specular: "rgb(255,255,255)"
+            });
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
@@ -59,7 +59,7 @@ export class Ball {
 
             this.sphere.translateX(this.direction.x * distanceToTranslate);
             this.sphere.translateZ(this.direction.z * distanceToTranslate);
-            
+
             this.updateBoundingSphere();
             this.collisionsDetection();
         }
@@ -77,7 +77,7 @@ export class Ball {
         });
 
         this.resetWhenCollideBottomWall();
-        
+
         this.bounceWhenCollideNormal(game.getHitter().boundingSphere);
 
         for (let i = 0; i < game.stage.rows; i++) {
@@ -85,10 +85,10 @@ export class Ball {
                 const brick = game.getBrickArea().bricks[i][j];
                 if (brick.visible)
                     this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
-                }
             }
         }
     }
+
 
     bounceWhenCollide(collidedObjectBoundingBox, brick = null, brickArea = null) {
         const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(collidedObjectBoundingBox);
@@ -133,12 +133,12 @@ export class Ball {
         const center1 = sphere1.center;
         const center2 = sphere2.center;
         const collisionNormal = center1.clone().sub(center2);
-    
+
         collisionNormal.normalize();
-    
+
         return collisionNormal;
     }
-    
+
     bounceWhenCollideNormal(boundingSphere) {
         const collisionWithBoundingSphere = this.checkCollisionWithBoundingSphere(boundingSphere);
         if (!collisionWithBoundingSphere) {
@@ -160,7 +160,7 @@ export class Ball {
         // Calcula o vetor normal a superfície no ponto de colisão
         const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
         this.bounce(normalVector, boundingSphere);
-        this.fixTrajectory();       
+        this.fixTrajectory();
     }
 
     resetWhenCollideBottomWall() {
@@ -193,7 +193,7 @@ export class Ball {
         if (this.direction.z > directionMaxAngle) {
             const angle = this.direction.x < 0 ? maxAngle : minAngle;
             const angleRad = THREE.MathUtils.degToRad(angle);
-            
+
             this.direction.z = Math.round(Math.sin(angleRad) * -1 * 100) / 100;
             this.direction.x = Math.round(Math.cos(angleRad) * 100) / 100;
         }
@@ -257,7 +257,7 @@ export class Ball {
 
     bounce(normalVector, boundingBoxObj) {
         this.lastReflectedObj = boundingBoxObj;
-        this.direction = this.direction.reflect(normalVector); 
+        this.direction = this.direction.reflect(normalVector);
         this.lastReflectionNormalVector = normalVector;
     }
 
@@ -273,7 +273,7 @@ export class Ball {
     getOverHitterPosition(hitterPosition) {
         const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
         ballOverHitterPosition.z -= 2;
-       // ballOverHitterPosition.x += 2.5;
+        // ballOverHitterPosition.x += 2.5;
 
         return ballOverHitterPosition;
     }
@@ -287,7 +287,7 @@ export class Ball {
         if (pausedGame) {
             return;
         }
-        
+
         Ball.timeIntervalId = timeIntervalId;
 
         Ball.timePassedFromLaunchInMilliseconds += timePassedInMilliseconds;
@@ -312,6 +312,7 @@ export class Ball {
     }
 
     resetPosition(newPosition = null) {
+        console.log("this.initialPosition = ", this.initialPosition)
         this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 

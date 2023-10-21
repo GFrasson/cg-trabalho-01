@@ -51,4 +51,12 @@ export class BrickArea {
             this.noBricks = true;
         }
     }
+
+    deleteBrickArea() {
+        for(let i = 0; i < this.stage.rows; i++) {
+            for(let j = 0; j < this.stage.columns; j++) {
+                this.scene.remove(this.bricks[i][j].block);
+            }
+        }
+    }
 }

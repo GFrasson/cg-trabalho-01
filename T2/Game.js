@@ -17,12 +17,12 @@ export class Game {
         this.renderCallback = renderCallback;
         this.scene = scene;
         this.hitterCSG = new HitterCSG();
-        this.currentStage = 2;
+        this.currentStage = 1;
         this.stage = new Stage(this.currentStage, scene);
 
         this.background = new Background();
         this.brickArea = new BrickArea(scene, this.stage);
-        
+
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
@@ -38,11 +38,11 @@ export class Game {
         this.powerUps = [];
 
         this.bricksAnimateDestruction = [];
-        
+
         this.gameScreen = false;
         this.pausedGame = false;
         this.startGame = false;
-        
+
         this.timeIntervalIdToUpdateBallSpeed = null;
 
         this.eventHandler = new EventHandler(this);
@@ -89,7 +89,7 @@ export class Game {
                 this.powerUps.forEach(powerUp => {
                     powerUp.move();
                 });
-                
+
                 this.bricksAnimateDestruction.forEach(brick => {
                     brick.animateDestructionStep();
                 });
@@ -104,11 +104,11 @@ export class Game {
 
     addObjectsToScene(scene) {
         scene.add(this.getBackground().getTHREEObject());
-        
+
         this.getBrickArea().buildBrickArea(scene);
-        
+
         scene.add(this.getBall().getTHREEObject());
-        
+
         this.getWalls().forEach(wall => {
             scene.add(wall.getTHREEObject());
         });
@@ -121,7 +121,7 @@ export class Game {
         if (this.balls.length > 1) {
             return;
         }
-        
+
         const powerUp = new PowerUp(position);
 
         this.powerUps.push(powerUp);
@@ -144,18 +144,18 @@ export class Game {
         if (this.balls.length > 1) {
             return;
         }
-        
+
         const originalBall = this.getBall();
 
         const newBall = new Ball(originalBall.getTHREEObject().position);
-        
+
         newBall.setIsLaunched(originalBall.isLauched);
-        
+
         const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
         newBallDirection.x += 0.2;
         newBallDirection.normalize();
         newBall.setDirection(newBallDirection);
-        
+
         this.balls.push(newBall);
         this.scene.add(newBall.getTHREEObject());
     }
@@ -184,7 +184,7 @@ export class Game {
     startTimerToUpdateBallSpeed() {
         const timeDelayToCheckSpeedUpdateInMilliseconds = 50;
         const timeIntervalId = setInterval(
-            () => Ball.updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId), 
+            () => Ball.updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId),
             timeDelayToCheckSpeedUpdateInMilliseconds
         );
     }
@@ -227,7 +227,7 @@ export class Game {
         this.pausedGame = false;
         this.startGame = false;
     }
-    
+
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
         this.getHitter().resetPosition();
@@ -237,11 +237,19 @@ export class Game {
     }
 
     nextStage() {
-        this.currentStage += 1;
-        this.hitterCSG.resetPosition();
-        this.ball.resetPosition();
-        // Precisa mudar para a BrickArea2 quando estiver pronta
-        this.brickArea.resetBrickArea();
+        if (this.currentStage !== 1) {
+            return;
+        }
+        this.currentStage = 2;
+        this.getBrickArea().deleteBrickArea();
+        this.bricksAnimateDestruction = [];
+        this.stage = new Stage(this.currentStage, this.scene);
+        this.brickArea = new BrickArea(this.scene, this.stage);
+        this.getBrickArea().buildBrickArea(this.scene);
+        this.getHitter().resetPosition();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
+        this.getBall().resetPosition();
         this.pausedGame = false;
         this.startGame = false;
     }

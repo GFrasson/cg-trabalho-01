@@ -3,9 +3,9 @@ import { game } from '../index.js';
 
 export class Brick {
     static bricksDestroyedAtCurrentStage = 0;
-    static spawnPowerUpOnBricksDestroyed = 10;
+    static spawnPowerUpOnBricksDestroyed = 2;
 
-    constructor(material, posX, posY, index, color, scene, secondColor) {
+    constructor(material, posX, posY, index, color, scene, secondColor, initialLife) {
         this.id = index;
         this.scene = scene;
         this.cubeGeometry = new THREE.BoxGeometry(3.6, 2, 2);
@@ -15,30 +15,22 @@ export class Brick {
         this.color = color;
         this.secondColor = secondColor;
         this.boundingBox = new THREE.Box3().setFromObject(this.block);
-        this.life = 2;
+        this.initialLife = initialLife;
+        this.life = this.initialLife;
         this.block.material.transparent = true;
     }
 
-    /*
-            this.collidable = false;
-            game.bricksAnimateDestruction.push(this);
-
-            Brick.bricksDestroyedAtCurrentStage += 1;
-
-            if (
-                Brick.bricksDestroyedAtCurrentStage > 0 &&
-                Brick.bricksDestroyedAtCurrentStage % Brick.spawnPowerUpOnBricksDestroyed === 0
-            ) {
-                game.addPowerUp(this.block.position);
-            }
-
-    */
+    getTHREEObject() {
+        return this.block;
+    }
 
     setVisible(visible) {
         if (visible == true) {
             this.scene.add(this.block);
             this.block.material.opacity = 1;
             this.visible = true;
+            this.life = this.initialLife;
+            this.block.material.color.set(this.color);
         } else {
             this.life -= 1;
             if (this.life <= 0) {

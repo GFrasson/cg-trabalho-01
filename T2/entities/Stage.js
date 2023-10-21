@@ -39,7 +39,7 @@ export class Stage {
             var arrayLinha = [];
             for(var j = 0; j < this.columns; j++) {
                 let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
-                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i]);
+                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i], 2);
                 arrayLinha.push(brick);
                 coluna = coluna + 4; 
             }
@@ -58,11 +58,11 @@ export class Stage {
             var coluna = -16;
             var arrayLinha = [];
             for(var j = 0; j < this.columns; j++) {
-                var material = setDefaultMaterial(this.colors[i]);
+                let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
                 if(j == 4) {
                     coluna = coluna + 4;  
                 }
-                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene);
+                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i], 2);
                 arrayLinha.push(brick);
                 coluna = coluna + 4; 
                 
