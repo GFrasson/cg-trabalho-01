@@ -38,7 +38,7 @@ export class Stage {
             var coluna = -20;
             var arrayLinha = [];
             for(var j = 0; j < this.columns; j++) {
-                var material = setDefaultMaterial(this.colors[i]);
+                let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
                 var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i]);
                 arrayLinha.push(brick);
                 coluna = coluna + 4; 

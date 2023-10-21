@@ -6,9 +6,10 @@ export class Ball {
         this.initialPosition = initialPosition;
         this.radius = 1;
         this.speed = 0.6;
-        this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
+        this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();
         this.lastReflectionNormalVector = null;
         this.isLauched = false;
+        this.lastReflectedObj = null;
         this.createTHREEObject();
     }
 
@@ -18,7 +19,12 @@ export class Ball {
 
     createTHREEObject() {
         this.sphereGeometry = new THREE.SphereGeometry(this.radius, 32, 16);
-        this.sphereMaterial = setDefaultMaterial('teal');
+        this.sphereMaterial = new THREE.MeshPhongMaterial
+        ({
+            color: "white",
+            shininess:"200",
+            specular:"rgb(255,255,255)"
+        });
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
@@ -59,6 +65,10 @@ export class Ball {
             return;
         }
 
+        if (this.lastReflectedObj === collidedObjectBoundingBox) {
+            return;
+        }
+
         if (brick !== null) {
             if (brick.visible) {
                 brick.setVisible(false);
@@ -70,15 +80,14 @@ export class Ball {
                 return;
             }
         }
-
-        this.bounce(normalVectorFromCollidedFace);
+        this.bounce(normalVectorFromCollidedFace, collidedObjectBoundingBox);
     }
 
     calculateCollisionNormal(sphere1, sphere2) {
         // Calcula a diferença entre os centros das esferas
         const center1 = sphere1.center;
         const center2 = sphere2.center;
-        const collisionNormal = center2.clone().sub(center1);
+        const collisionNormal = center1.clone().sub(center2);
     
         collisionNormal.normalize();
     
@@ -99,10 +108,13 @@ export class Ball {
             return;
         }
 
+        if (this.lastReflectedObj === boundingSphere) {
+            return;
+        }
+
         // Calcula o vetor normal a superfície no ponto de colisão
         const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
-        
-        this.bounce(normalVector);
+        this.bounce(normalVector, boundingSphere);
         this.fixTrajectory();       
     }
 
@@ -177,7 +189,8 @@ export class Ball {
         return hasReflected;
     }
 
-    bounce(normalVector) {
+    bounce(normalVector, boundingBoxObj) {
+        this.lastReflectedObj = boundingBoxObj;
         this.direction = this.direction.reflect(normalVector); 
         this.lastReflectionNormalVector = normalVector;
     }
@@ -194,7 +207,7 @@ export class Ball {
     getOverHitterPosition(hitterPosition) {
         const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
         ballOverHitterPosition.z -= 2;
-        ballOverHitterPosition.x += 2.5;
+       // ballOverHitterPosition.x += 2.5;
 
         return ballOverHitterPosition;
     }
@@ -203,8 +216,9 @@ export class Ball {
         this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 
-        this.direction = new THREE.Vector3(1.0, 0.0, -1.0).normalize();
+        this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();
         this.isLauched = false;
         this.lastReflectionNormalVector = null;
+        this.lastReflectedObj = null;
     }
 }

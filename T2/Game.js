@@ -15,8 +15,8 @@ export class Game {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.hitterCSG = new HitterCSG();
-        this.numberStage = 2;
-        this.stage = new Stage(this.numberStage, scene);
+        this.currentStage = 2;
+        this.stage = new Stage(this.currentStage, scene);
 
         this.background = new Background();
         this.brickArea = new BrickArea(scene, this.stage);
@@ -24,7 +24,7 @@ export class Game {
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
-        ballInitialPosition.x += 2.5;
+        // ballInitialPosition.x += 2.5;
 
         this.ball = new Ball(ballInitialPosition);
         this.walls = [
@@ -37,7 +37,6 @@ export class Game {
         this.gameScreen = false;
         this.pausedGame = false;
         this.startGame = false;
-        this.currentStage = 1;
         
         this.eventHandler = new EventHandler(this);
         this.screenHandler = new ScreenHandler(this, this.renderCallback);
@@ -166,5 +165,11 @@ export class Game {
 
     nextStage() {
         this.currentStage += 1;
+        this.hitterCSG.resetPosition();
+        this.ball.resetPosition();
+        // Precisa mudar para a BrickArea2 quando estiver pronta
+        this.brickArea.resetBrickArea();
+        this.pausedGame = false;
+        this.startGame = false;
     }
 }
