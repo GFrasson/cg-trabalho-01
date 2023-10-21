@@ -27,9 +27,11 @@ export class BrickArea {
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
                 this.bricks[i][j].setVisible(true);
+                this.bricks[i][j].getTHREEObject().scale.set(1, 1, 1);
             }
         }
         this.noBricks = false;
+        Brick.bricksDestroyedAtCurrentStage = 0;
     }
 
     checkEndGame() {

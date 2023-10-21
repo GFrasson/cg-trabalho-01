@@ -46,6 +46,10 @@ export class HitterCSG {
         return this.hitterMesh.position;
     }
 
+    getBoundingSphere() {
+        return this.boundingSphere;
+    }
+
     move(pointX) {
         this.hitterMesh.position.set(pointX, 2, 40);
         this.sphere.position.set(pointX, 2, 47)

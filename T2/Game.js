@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 
 import { Ball } from './entities/Ball.js';
-import { Hitter } from './entities/Hitter.js';
 import { Background } from './entities/Background.js';
 import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
@@ -9,11 +8,14 @@ import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
 import { Stage } from './entities/Stage.js';
+import { PowerUp } from './entities/PowerUp.js';
+
 
 export class Game {
     constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
+        this.scene = scene;
         this.hitterCSG = new HitterCSG();
         this.currentStage = 2;
         this.stage = new Stage(this.currentStage, scene);
@@ -26,18 +28,23 @@ export class Game {
         ballInitialPosition.z -= 2;
         // ballInitialPosition.x += 2.5;
 
-        this.ball = new Ball(ballInitialPosition);
+        this.balls = [new Ball(ballInitialPosition)];
         this.walls = [
             Wall.createLeftWall(),
             Wall.createRightWall(),
             Wall.createTopWall(),
             Wall.createBottomWall()
         ];
+        this.powerUps = [];
+
+        this.bricksAnimateDestruction = [];
         
         this.gameScreen = false;
         this.pausedGame = false;
         this.startGame = false;
         
+        this.timeIntervalIdToUpdateBallSpeed = null;
+
         this.eventHandler = new EventHandler(this);
         this.screenHandler = new ScreenHandler(this, this.renderCallback);
     }
@@ -59,50 +66,40 @@ export class Game {
     }
 
     getBall() {
-        return this.ball;
+        return this.balls[0];
     }
 
     getWalls() {
         return this.walls;
     }
 
+    getBottomWall() {
+        return this.walls[this.walls.length - 1];
+    }
+
     executeStep() {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
                 // move
-                this.getBall().move(() => this.collisionsDetection());
+                this.balls.forEach(ball => {
+                    ball.move();
+                });
+
+                // move power ups
+                this.powerUps.forEach(powerUp => {
+                    powerUp.move();
+                });
                 
+                this.bricksAnimateDestruction.forEach(brick => {
+                    brick.animateDestructionStep();
+                });
+
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
                     this.toggleEndGame();
                 }
             }
         }
-    }
-
-    collisionsDetection() {    
-        this.getWalls().forEach(wall => {
-            this.getBall().bounceWhenCollide(wall.boundingBox);
-
-            if (wall.direction === 'bottom') {
-                const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
-                
-                if (isCollidingBottomWall) {
-                    const hitterPosition = this.hitterCSG.getPosition();
-                    const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
-                    this.getBall().resetPosition(ballOverHitterPosition);
-                }
-            }
-        });
-        
-        this.getBall().bounceWhenCollideNormal(this.hitterCSG.boundingSphere);
-
-        for (let i = 0; i < this.stage.rows; i++) {
-            for (let j = 0; j < this.stage.columns; j++) {
-                const brick = this.getBrickArea().bricks[i][j];
-                this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
-            }
-        }        
     }
 
     addObjectsToScene(scene) {
@@ -118,6 +115,78 @@ export class Game {
 
         scene.add(this.hitterCSG.hitterMesh);
         scene.add(this.hitterCSG.sphere);
+    }
+
+    addPowerUp(position) {
+        if (this.balls.length > 1) {
+            return;
+        }
+        
+        const powerUp = new PowerUp(position);
+
+        this.powerUps.push(powerUp);
+        this.scene.add(powerUp.getTHREEObject());
+    }
+
+    deletePowerUp(powerUp) {
+        this.powerUps = this.powerUps.filter(currentPowerUp => currentPowerUp !== powerUp);
+        this.scene.remove(powerUp.getTHREEObject());
+    }
+
+    deleteAllPowerUps() {
+        this.powerUps.forEach(powerUp => {
+            this.scene.remove(powerUp.getTHREEObject());
+        });
+        this.powerUps = [];
+    }
+
+    duplicateBall() {
+        if (this.balls.length > 1) {
+            return;
+        }
+        
+        const originalBall = this.getBall();
+
+        const newBall = new Ball(originalBall.getTHREEObject().position);
+        
+        newBall.setIsLaunched(originalBall.isLauched);
+        
+        const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
+        newBallDirection.x += 0.2;
+        newBallDirection.normalize();
+        newBall.setDirection(newBallDirection);
+        
+        this.balls.push(newBall);
+        this.scene.add(newBall.getTHREEObject());
+    }
+
+    deleteBall(ball) {
+        this.balls = this.balls.filter(currentBall => currentBall !== ball);
+        this.scene.remove(ball.getTHREEObject());
+    }
+
+    deleteDuplicatedBalls() {
+        if (this.balls.length === 1) {
+            return;
+        }
+
+        for (let i = 1; i < this.balls.length; i++) {
+            this.scene.remove(this.balls[i].getTHREEObject());
+        }
+
+        this.balls = [this.balls[0]];
+    }
+
+    deleteBrickAnimation(brick) {
+        this.bricksAnimateDestruction = this.bricksAnimateDestruction.filter(currentBrick => currentBrick !== brick);
+    }
+
+    startTimerToUpdateBallSpeed() {
+        const timeDelayToCheckSpeedUpdateInMilliseconds = 50;
+        const timeIntervalId = setInterval(
+            () => Ball.updateSpeed(timeDelayToCheckSpeedUpdateInMilliseconds, this.pausedGame, timeIntervalId), 
+            timeDelayToCheckSpeedUpdateInMilliseconds
+        );
     }
 
     toggleFullScreen() {
@@ -143,23 +212,27 @@ export class Game {
     toggleStartGame() {
         if (this.pausedGame === false) {
             this.startGame = true;
-            this.ball.isLauched = true;
+            this.getBall().launch(() => this.startTimerToUpdateBallSpeed());
         }
     }
 
     toggleRestartGame() {
-        this.hitterCSG.resetPosition();
-        this.brickArea.resetBrickArea();
-        this.ball.resetPosition();
+        this.getHitter().resetPosition();
+        this.getBrickArea().resetBrickArea();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
+        this.getBall().resetPosition();
+        this.bricksAnimateDestruction = [];
+
         this.pausedGame = false;
         this.startGame = false;
     }
     
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
-        this.hitterCSG.resetPosition();
+        this.getHitter().resetPosition();
         //brickArea.resetBrickArea();
-        this.ball.resetPosition();
+        this.getBall().resetPosition();
         this.pausedGame = true;
     }
 

@@ -5,7 +5,7 @@ export class Wall {
     constructor(width, height, depth, position, direction) {
         this.width = width;
         this.height = height,
-            this.depth = depth;
+        this.depth = depth;
         this.position = position;
         this.direction = direction;
         this.createTHREEObject();
@@ -22,6 +22,10 @@ export class Wall {
         this.box.position.copy(this.position);
 
         this.boundingBox = new THREE.Box3().setFromObject(this.box);
+    }
+
+    getBoundingBox() {
+        return this.boundingBox;
     }
 
     static createLeftWall() {
