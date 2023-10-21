@@ -38,10 +38,14 @@ export class BrickArea {
     resetBrickArea() {
         for(let i = 0; i < 6; i++) {
             for(let j = 0; j < 13; j++) {
-                this.bricks[i][j].setVisible(true);
+                const brick = this.bricks[i][j];
+                brick.setVisible(true);
+                brick.collidable = true;
+                brick.getTHREEObject().scale.set(1, 1, 1);
             }
         }
         this.noBricks = false;
+        Brick.bricksDestroyedAtCurrentStage = 0;
     }
 
     checkEndGame() {
@@ -61,7 +65,4 @@ export class BrickArea {
             this.noBricks = true;
         }
     }
-
-
-
 }

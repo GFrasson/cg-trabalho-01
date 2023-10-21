@@ -33,6 +33,8 @@ export class Game {
             Wall.createBottomWall()
         ];
         this.powerUps = [];
+
+        this.bricksAnimateDestruction = [];
         
         this.gameScreen = false;
         this.pausedGame = false;
@@ -86,6 +88,10 @@ export class Game {
                     powerUp.move();
                 });
                 
+                this.bricksAnimateDestruction.forEach(brick => {
+                    brick.animateDestructionStep();
+                });
+
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
                     this.toggleEndGame();
@@ -157,6 +163,22 @@ export class Game {
         this.scene.remove(ball.getTHREEObject());
     }
 
+    deleteDuplicatedBalls() {
+        if (this.balls.length === 1) {
+            return;
+        }
+
+        for (let i = 1; i < this.balls.length; i++) {
+            this.scene.remove(this.balls[i].getTHREEObject());
+        }
+
+        this.balls = [this.balls[0]];
+    }
+
+    deleteBrickAnimation(brick) {
+        this.bricksAnimateDestruction = this.bricksAnimateDestruction.filter(currentBrick => currentBrick !== brick);
+    }
+
     startTimerToUpdateBallSpeed() {
         const timeDelayToCheckSpeedUpdateInMilliseconds = 50;
         const timeIntervalId = setInterval(
@@ -193,16 +215,20 @@ export class Game {
     }
 
     toggleRestartGame() {
-        this.hitterCSG.resetPosition();
-        this.brickArea.resetBrickArea();
+        this.getHitter().resetPosition();
+        this.getBrickArea().resetBrickArea();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
         this.getBall().resetPosition();
+        this.bricksAnimateDestruction = [];
+
         this.pausedGame = false;
         this.startGame = false;
     }
     
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
-        this.hitterCSG.resetPosition();
+        this.getHitter().resetPosition();
         //brickArea.resetBrickArea();
         this.getBall().resetPosition();
         this.pausedGame = true;

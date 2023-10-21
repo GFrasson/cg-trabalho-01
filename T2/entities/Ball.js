@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
 import { game } from '../index.js';
+import { Brick } from './Brick.js';
 
 export class Ball {
     static timePassedFromLaunchInMilliseconds = 0;
@@ -77,7 +78,9 @@ export class Ball {
         for (let i = 0; i < 6; i++) {
             for (let j = 0; j < 13; j++) {
                 const brick = game.getBrickArea().bricks[i][j];
-                this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
+                if (brick.collidable) {
+                    this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
+                }
             }
         }
     }
@@ -158,6 +161,7 @@ export class Ball {
 
         if (game.balls.length > 1) {
             game.deleteBall(this);
+            Brick.bricksDestroyedAtCurrentStage = 0;
         } else {
             const hitterPosition = game.getHitter().getPosition();
             const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
