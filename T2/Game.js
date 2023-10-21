@@ -8,16 +8,18 @@ import { Wall } from './entities/Wall.js';
 import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
-
+import { Stage } from './entities/Stage.js';
 
 export class Game {
     constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.hitterCSG = new HitterCSG();
+        this.numberStage = 2;
+        this.stage = new Stage(this.numberStage, scene);
 
         this.background = new Background();
-        this.brickArea = new BrickArea(scene);
+        this.brickArea = new BrickArea(scene, this.stage);
         
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
@@ -96,8 +98,8 @@ export class Game {
         
         this.getBall().bounceWhenCollideNormal(this.hitterCSG.boundingSphere);
 
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 13; j++) {
+        for (let i = 0; i < this.stage.rows; i++) {
+            for (let j = 0; j < this.stage.columns; j++) {
                 const brick = this.getBrickArea().bricks[i][j];
                 this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
             }

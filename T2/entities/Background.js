@@ -8,7 +8,7 @@ export class Background {
 
     createTHREEObject() {
         this.planeGeometry = new THREE.PlaneGeometry(50, window.innerHeight, 20, 20);
-        this.planeMaterial = new THREE.MeshLambertMaterial();
+        this.planeMaterial = new THREE.MeshLambertMaterial({color: '#47454E'});
         this.planeMaterial.side = THREE.DoubleSide;
         this.planeMaterial.transparent = true;
         this.plane = new THREE.Mesh(this.planeGeometry, this.planeMaterial);

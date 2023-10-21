@@ -15,7 +15,7 @@ const light = initDefaultBasicLight(scene);
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
 const game = new Game(camera, render, scene);
-const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement);
+//const orbit = new OrbitControls(camera.getTHREECamera(), renderer.domElement);
 
 game.addObjectsToScene(scene);
 

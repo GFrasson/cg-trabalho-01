@@ -6,38 +6,26 @@ import {
 import { Brick } from './Brick.js';
 
 export class BrickArea {
-    constructor(scene) {
+    constructor(scene, stage) {
         let brickIndex = 0;
         this.noBricks = false;
-        this.colors = ["gray", "red", "yellow", "blue", "purple", "green"];
         this.bricks = [];
         this.scene = scene;
-        let linha = -38;
-        for(let i = 0; i < 6; i++) {
-            let material = setDefaultMaterial(this.colors[i]);
-            let coluna = -21;
-            let arrayLinha = [];
-            for(let j = 0; j < 13; j++) {
-                let brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene);
-                arrayLinha.push(brick);
-                coluna = coluna + 3.5; 
-            }
-            this.bricks.push(arrayLinha);
-            linha = linha + 2.3;
-        }
+        this.stage = stage;
     }
 
     buildBrickArea(scene) {
-        for(let i = 0; i < 6; i++) {
-            for(let j = 0; j < 13; j++) {
+        this.bricks = this.stage.constructStage();
+        for(let i = 0; i < this.stage.rows; i++) {
+            for(let j = 0; j < this.stage.columns; j++) {
                 scene.add(this.bricks[i][j].block);
             } 
         }
     }
     
     resetBrickArea() {
-        for(let i = 0; i < 6; i++) {
-            for(let j = 0; j < 13; j++) {
+        for(let i = 0; i < this.stage.rows; i++) {
+            for(let j = 0; j < this.stage.columns; j++) {
                 this.bricks[i][j].setVisible(true);
             }
         }
@@ -46,8 +34,8 @@ export class BrickArea {
 
     checkEndGame() {
         let endGame = true;
-        for(let i = 0; i < 6; i++) {
-            for(let j = 0; j < 13; j++) {
+        for(let i = 0; i < this.stage.rows; i++) {
+            for(let j = 0; j < this.stage.columns; j++) {
                 if(this.bricks[i][j].visible === true) {
                     endGame = false;
                     break;
@@ -61,7 +49,4 @@ export class BrickArea {
             this.noBricks = true;
         }
     }
-
-
-
 }
