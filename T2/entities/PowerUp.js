@@ -31,6 +31,7 @@ export class PowerUp {
 
     move() {
         this.capsule.translateZ(this.direction.z * this.speed);
+        this.updateBoundingBox();
     }
 
     collectPowerUpWhenCollideHitter(hitterBoundingSphere) {
@@ -48,6 +49,6 @@ export class PowerUp {
     }
 
     checkCollisionWithHitter(hitterBoundingSphere) {
-        return this.boundingBox.intersectsBox(hitterBoundingSphere);
+        return this.boundingBox.intersectsSphere(hitterBoundingSphere);
     }
 }

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
+import { game } from '../index.js';
 
 export class Ball {
     static timePassedFromLaunchInMilliseconds = 0;
@@ -44,19 +45,44 @@ export class Ball {
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
     }
 
-    move(collisionsDetectionCallback) {
+    move() {
         const distanceToTranslate = 0.1;
         for (let i = 0; i < this.speed * 10; i += distanceToTranslate * 10) {
             this.sphere.translateX(this.direction.x * distanceToTranslate);
             this.sphere.translateZ(this.direction.z * distanceToTranslate);
             
             this.updateBoundingSphere();
-            collisionsDetectionCallback();
+            this.collisionsDetection();
         }
     }
 
     updateBoundingSphere() {
         this.boundingSphere.center.copy(this.sphere.position);
+    }
+
+    collisionsDetection() {
+        game.getWalls().forEach(wall => {
+            this.bounceWhenCollide(wall.boundingBox);
+
+            if (wall.direction === 'bottom') {
+                const isCollidingBottomWall = wall.collisionBottomWall(this);
+                
+                if (isCollidingBottomWall) {
+                    const hitterPosition = game.getHitter().getPosition();
+                    const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
+                    this.resetPosition(ballOverHitterPosition);
+                }
+            }
+        });
+        
+        this.bounceWhenCollideNormal(game.getHitter().boundingSphere);
+
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 13; j++) {
+                const brick = game.getBrickArea().bricks[i][j];
+                this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
+            }
+        }
     }
 
     bounceWhenCollide(collidedObjectBoundingBox, brick = null, brickArea = null) {
@@ -94,10 +120,21 @@ export class Ball {
         this.bounce(normalVectorFromCollidedFace);
     }
 
+    calculateCollisionNormal(sphere1, sphere2) {
+        // Calcula a diferença entre os centros das esferas
+        const center1 = sphere1.center;
+        const center2 = sphere2.center;
+        const collisionNormal = center2.clone().sub(center1);
     
-    bounceWhenCollideNormal(boundingBox, normalVector) {
-        const collisionWithBoundingBox = this.checkCollisionWithBoundingBox(boundingBox);
-        if (!collisionWithBoundingBox) {
+        collisionNormal.normalize();
+    
+        return collisionNormal;
+    }
+    
+    bounceWhenCollideNormal(boundingSphere) {
+        // console.log("this.boundingSphere.center.x = ", this.boundingSphere.center.x)
+        const collisionWithBoundingSphere = this.checkCollisionWithBoundingSphere(boundingSphere);
+        if (!collisionWithBoundingSphere) {
             return;
         }
 
@@ -105,6 +142,13 @@ export class Ball {
             return;
         }
 
+        // if (this.boundingSphere.center.x < -10) {
+        //     return;
+        // }
+
+        // Calcula o vetor normal a superfície no ponto de colisão
+        const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
+        
         this.bounce(normalVector);
         this.fixTrajectory();       
     }
@@ -130,6 +174,10 @@ export class Ball {
 
     checkCollisionWithBoundingBox(boundingBox) {
         return this.boundingSphere.intersectsBox(boundingBox);
+    }
+
+    checkCollisionWithBoundingSphere(boundingSphere) {
+        return this.boundingSphere.intersectsSphere(boundingSphere);
     }
 
     getNormalVectorFromCollidedFace(collidedObjectBoundingBox) {

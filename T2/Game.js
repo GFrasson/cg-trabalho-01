@@ -7,17 +7,20 @@ import { BrickArea } from './entities/BrickArea.js';
 import { Wall } from './entities/Wall.js';
 import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
+import { HitterCSG } from './entities/HitterCSG.js';
+
 
 export class Game {
     constructor(camera, renderCallback, scene) {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.scene = scene;
-        this.hitter = new Hitter();
+        this.hitterCSG = new HitterCSG();
+
         this.background = new Background();
-        this.brickArea = new BrickArea();
+        this.brickArea = new BrickArea(scene);
         
-        const hitterInitialPosition = this.hitter.getPosition();
+        const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
         ballInitialPosition.x += 2.5;
@@ -47,7 +50,7 @@ export class Game {
     }
 
     getHitter() {
-        return this.hitter;
+        return this.hitterCSG;
     }
 
     getBackground() {
@@ -70,13 +73,19 @@ export class Game {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
                 // move
-                this.getBall().move(() => this.collisionsDetection());
+                this.balls.forEach(ball => {
+                    ball.move();
+                });
 
                 // move power ups
                 this.powerUps.forEach(powerUp => {
                     powerUp.move();
                 });
-    
+
+                this.powerUps.forEach(powerUp => {
+                    powerUp.collectPowerUpWhenCollideHitter(this.getHitter().getBoundingSphere());
+                });
+                
                 // check end game
                 if (this.getBrickArea().noBricks && !this.pausedGame) {
                     this.toggleEndGame();
@@ -85,42 +94,7 @@ export class Game {
         }
     }
 
-    collisionsDetection() {
-        this.getWalls().forEach(wall => {
-            this.getBall().bounceWhenCollide(wall.boundingBox);
-
-            if (wall.direction === 'bottom') {
-                const isCollidingBottomWall = wall.collisionBottomWall(this.getBall());
-                
-                if (isCollidingBottomWall) {
-                    const hitterPosition = this.hitter.getPosition();
-                    const ballOverHitterPosition = this.getBall().getOverHitterPosition(hitterPosition);
-                    this.getBall().resetPosition(ballOverHitterPosition);
-                }
-            }
-        });
-
-        this.getHitter().segments.forEach(hitterSegment => {
-            this.getBall().bounceWhenCollideNormal(hitterSegment.boundingBox, hitterSegment.normalVector);
-        });
-
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 13; j++) {
-                const brick = this.getBrickArea().bricks[i][j];
-                this.getBall().bounceWhenCollide(brick.boundingBox, brick, this.getBrickArea());
-            }
-        }
-
-        this.powerUps.forEach(powerUp => {
-            powerUp.collectPowerUpWhenCollideHitter(this.getHitter().getBoundingSphere());
-        })
-    }
-
     addObjectsToScene(scene) {
-        this.getHitter().segments.forEach(segment => {
-            scene.add(segment.getTHREEObject());
-        });
-
         scene.add(this.getBackground().getTHREEObject());
         
         this.getBrickArea().buildBrickArea(scene);
@@ -130,6 +104,9 @@ export class Game {
         this.getWalls().forEach(wall => {
             scene.add(wall.getTHREEObject());
         });
+
+        scene.add(this.hitterCSG.hitterMesh);
+        scene.add(this.hitterCSG.sphere);
     }
 
     addPowerUp(powerUp) {
@@ -139,7 +116,7 @@ export class Game {
 
     deletePowerUp(powerUp) {
         this.powerUps = this.powerUps.filter(currentPowerUp => currentPowerUp !== powerUp);
-        powerUp.getTHREEObject().parent.remove(powerUp);
+        this.scene.remove(powerUp.getTHREEObject());
     }
 
     duplicateBall() {
@@ -147,16 +124,17 @@ export class Game {
             const originalBall = this.getBall();
 
             const newBall = new Ball(originalBall.getTHREEObject().position);
-
+            
             newBall.setSpeed(originalBall.speed);
             newBall.setIsLaunched(originalBall.isLauched);
-
+            
             const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
             newBallDirection.x += 0.2;
             newBallDirection.normalize();
             newBall.setDirection(newBallDirection);
             
             this.balls.push(newBall);
+            this.scene.add(newBall.getTHREEObject());
         }
     }
 
@@ -196,7 +174,7 @@ export class Game {
     }
 
     toggleRestartGame() {
-        this.hitter.resetPosition();
+        this.hitterCSG.resetPosition();
         this.brickArea.resetBrickArea();
         this.getBall().resetPosition();
         this.pausedGame = false;
@@ -205,7 +183,7 @@ export class Game {
     
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
-        this.hitter.resetPosition();
+        this.hitterCSG.resetPosition();
         //brickArea.resetBrickArea();
         this.getBall().resetPosition();
         this.pausedGame = true;
