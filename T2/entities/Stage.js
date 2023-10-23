@@ -54,24 +54,38 @@ export class Stage {
         var brickIndex = 0;
         var linha = -45;
         var bricks = [];
-        for(var i = 0; i < this.rows; i++) {
+        var padrao = [
+            [0, 3, 5, 4, 3, 5, 2, 0],
+            [2, 5, 3, 1, 5, 3, 0, 2],
+            [5, 4, 1, 3, 2, 0, 3, 5],
+            [3, 1, 4, 5, 0, 2, 5, 3],
+            [1, 3, 5, 2, 3, 5, 4, 1],
+            [4, 5, 3, 0, 5, 3, 1, 4],
+            [5, 2, 0, 3, 4, 1, 3, 5],
+            [3, 0, 2, 5, 1, 4, 5, 3]
+        ];
+    
+        for (var i = 0; i < this.rows; i++) {
             var coluna = -16;
             var arrayLinha = [];
-            for(var j = 0; j < this.columns; j++) {
-                let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
-                if(j == 4) {
-                    coluna = coluna + 4;  
+            for (var j = 0; j < this.columns; j++) {
+                var colorIndex = padrao[i % 8][j % 8];
+                let material = new THREE.MeshLambertMaterial({ color: this.colors[colorIndex] });
+    
+                if (j == 4) {
+                    coluna = coluna + 4;
                 }
-                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i], 2);
+    
+                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[colorIndex], this.scene, this.secondColors[colorIndex], 2);
                 arrayLinha.push(brick);
-                coluna = coluna + 4; 
-                
+                coluna = coluna + 4;
             }
             bricks.push(arrayLinha);
             linha = linha + 2.3;
         }
         return bricks;
     }
+
 
     constructStage() {
         switch (this.stage) {
