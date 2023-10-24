@@ -48,6 +48,7 @@ export class Ball {
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
+        this.sphere.castShadow = true;
     }
 
     move() {

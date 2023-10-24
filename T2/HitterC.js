@@ -16,6 +16,7 @@ var stats = new Stats();          // To show FPS information
 
 var renderer = initRenderer();    // View function in util/utils
 renderer.setClearColor("rgb(30, 30, 40)");
+
 var camera = initCamera(new THREE.Vector3(4, -8, 8)); // Init camera in this position
    camera.up.set( 0, 0, 1 );
 

@@ -30,7 +30,6 @@ export class HitterCSG {
         this.hitterMesh.rotation.y = Math.PI / -2;
         this.hitterMesh.position.set(0, 2, 40)
 
-        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.hitterMesh.position), 8);
         this.sphereGeometry = new THREE.SphereGeometry(8, 32, 16);
         this.sphereMaterial = setDefaultMaterial('red');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
@@ -38,8 +37,10 @@ export class HitterCSG {
         //this.sphere.material.opacity = 0.5;
         this.sphere.material.opacity = 0;
         this.sphere.material.transparent = true;
+        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), 8);
         // scene.add(hitterMesh)
         // scene.add(sphere)
+        this.hitterMesh.castShadow = true;
     }
 
     getPosition() {
@@ -64,5 +65,6 @@ export class HitterCSG {
 
     updateBoundingBox() {
         this.boundingSphere.center.copy(this.sphere.position);
+        //this.boundingSphere.center.copy(this.hitterMesh.position);
     }
 }

@@ -18,6 +18,7 @@ export class Brick {
         this.initialLife = initialLife;
         this.life = this.initialLife;
         this.block.material.transparent = true;
+        this.block.castShadow = true;
     }
 
     getTHREEObject() {

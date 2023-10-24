@@ -15,6 +15,10 @@ export class Background {
         this.plane.translateZ(6);
         this.plane.rotation.x = -Math.PI / 2;
         this.plane.layers.set(0);
+        this.plane.receiveShadow = true;
+
+        // this.plane.material.opacity = 0;
+        // this.plane.material.transparent = true;
     }
 
     getTHREEObject() {
