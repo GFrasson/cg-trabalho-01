@@ -28,13 +28,14 @@ export class HitterCSG {
         this.hitterMesh.material = new THREE.MeshLambertMaterial({color: "#5FA1AD"});
         this.hitterMesh.position.set(0, 0, 2.0)
         this.hitterMesh.rotation.y = Math.PI / -2;
-        this.hitterMesh.position.set(0, 2, 40)
+        this.hitterMesh.position.set(0, 1, 40)
 
-        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.hitterMesh.position), 8);
         this.sphereGeometry = new THREE.SphereGeometry(8, 32, 16);
         this.sphereMaterial = setDefaultMaterial('red');
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
-        this.sphere.position.set(0, 2, 47)
+        this.sphere.position.set(0, 1, 47)
+        this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), 8);
+
         //this.sphere.material.opacity = 0.5;
         this.sphere.material.opacity = 0;
         this.sphere.material.transparent = true;
@@ -51,14 +52,14 @@ export class HitterCSG {
     }
 
     move(pointX) {
-        this.hitterMesh.position.set(pointX, 2, 40);
-        this.sphere.position.set(pointX, 2, 47)
+        this.hitterMesh.position.set(pointX, 1, 40);
+        this.sphere.position.set(pointX, 1, 47)
         this.updateBoundingBox();
     }
 
     resetPosition() {
-       this.hitterMesh.position.set(0, 2, 40)
-       this.sphere.position.set(0, 2, 46.5)
+       this.hitterMesh.position.set(0, 1, 40)
+       this.sphere.position.set(0, 1, 46.5)
        this.updateBoundingBox();
     }
 

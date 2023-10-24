@@ -10,7 +10,7 @@ export class Stage {
         this.scene = scene;
         this.stage = stage;
         this.colors = ["lightgray", "red", "dodgerblue", "orange", "hotpink", "chartreuse"];
-        this.secondColors = ["#808080", "#B22222", "#00008B", "#DAA520", "#FF1493", "#228B22"];
+        this.secondColors = ["#808080"];
         this.createConfig(stage);
     }
 
@@ -22,7 +22,7 @@ export class Stage {
                 break;
             case 2:
                 this.columns = 8;
-                this.rows = 15;
+                this.rows = 14;
                 break;
         
             default:
@@ -39,7 +39,13 @@ export class Stage {
             var arrayLinha = [];
             for(var j = 0; j < this.columns; j++) {
                 let material = new THREE.MeshLambertMaterial({color: this.colors[i]});
-                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, this.secondColors[i], 2);
+                let initialLife = 1;
+                let secondColor = null;
+                if(i === 0) {
+                    initialLife = 2;
+                    secondColor = this.secondColors[0];
+                }
+                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, secondColor, initialLife);
                 arrayLinha.push(brick);
                 coluna = coluna + 4; 
             }
@@ -75,8 +81,13 @@ export class Stage {
                 if (j == 4) {
                     coluna = coluna + 4;
                 }
-    
-                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[colorIndex], this.scene, this.secondColors[colorIndex], 2);
+                var initialLife = 1;
+                var secondColor = null;
+                if(colorIndex === 0) {
+                    initialLife = 2;
+                    secondColor = this.secondColors[0];
+                }
+                var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[colorIndex], this.scene, secondColor, initialLife);
                 arrayLinha.push(brick);
                 coluna = coluna + 4;
             }

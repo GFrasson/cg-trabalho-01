@@ -26,7 +26,6 @@ export class Game {
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
         ballInitialPosition.z -= 2;
-        // ballInitialPosition.x += 2.5;
 
         this.balls = [new Ball(ballInitialPosition)];
         this.walls = [
@@ -231,7 +230,6 @@ export class Game {
     toggleEndGame() {
         this.screenHandler.showStageCompleteScreen();
         this.getHitter().resetPosition();
-        //brickArea.resetBrickArea();
         this.getBall().resetPosition();
         this.pausedGame = true;
     }

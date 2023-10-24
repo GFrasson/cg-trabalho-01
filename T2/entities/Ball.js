@@ -312,7 +312,6 @@ export class Ball {
     }
 
     resetPosition(newPosition = null) {
-        console.log("this.initialPosition = ", this.initialPosition)
         this.sphere.position.copy(newPosition || this.initialPosition);
         this.updateBoundingSphere();
 
