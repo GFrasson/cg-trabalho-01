@@ -29,6 +29,8 @@ export class HitterCSG {
         this.hitterMesh.position.set(0, 0, 2.0)
         this.hitterMesh.rotation.y = Math.PI / -2;
         this.hitterMesh.position.set(0, 1, 40)
+        this.hitterMesh.castShadow = true;
+        this.hitterMesh.receiveShadow = true;
 
         this.sphereGeometry = new THREE.SphereGeometry(8, 32, 16);
         this.sphereMaterial = setDefaultMaterial('red');

@@ -3,13 +3,15 @@ import { game } from '../index.js';
 
 export class Brick {
     static bricksDestroyedAtCurrentStage = 0;
-    static spawnPowerUpOnBricksDestroyed = 2;
+    static spawnPowerUpOnBricksDestroyed = 10;
 
     constructor(material, posX, posY, index, color, scene, secondColor, initialLife) {
         this.id = index;
         this.scene = scene;
         this.cubeGeometry = new THREE.BoxGeometry(3.6, 2, 2);
         this.block = new THREE.Mesh(this.cubeGeometry, material);
+        this.block.castShadow = true;
+        this.block.receiveShadow = true;
         this.block.position.set(posX, 1.0, posY);
         this.visible = true;
         this.color = color;

@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
-    initRenderer,
-    initDefaultBasicLight,
+    createLightSphere,
     SecondaryBox
 } from "../libs/util/util.js";
 
@@ -11,9 +10,36 @@ import { Game } from './Game.js';
 import { Ball } from './entities/Ball.js';
 
 const scene = new THREE.Scene();
-const renderer = initRenderer();
+
+const renderer = new THREE.WebGLRenderer();
+document.getElementById("webgl-output").appendChild(renderer.domElement);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
+
 const camera = new Camera();
-const light = initDefaultBasicLight(scene);
+
+const ambientLight = new THREE.AmbientLight('white', 0.45);
+scene.add(ambientLight);
+
+const directionalLightPosition = new THREE.Vector3(22, 50, -40);
+const directionalLight = new THREE.DirectionalLight('white', 0.6);
+directionalLight.position.copy(directionalLightPosition);
+directionalLight.castShadow = true;
+
+directionalLight.shadow.mapSize.width = 2048;
+directionalLight.shadow.mapSize.height = 2048;
+directionalLight.shadow.camera.near = 0.1;
+directionalLight.shadow.camera.far = 110;
+directionalLight.shadow.camera.left = -45;
+directionalLight.shadow.camera.right = 45;
+directionalLight.shadow.camera.bottom = -40;
+directionalLight.shadow.camera.top = 40;
+directionalLight.shadow.bias = -0.0005;
+directionalLight.shadow.radius = 1.0;
+
+scene.add(directionalLight);
+
 renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
 
 export const game = new Game(camera, render, scene);

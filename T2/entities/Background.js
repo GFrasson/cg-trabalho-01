@@ -13,8 +13,10 @@ export class Background {
         this.planeMaterial.transparent = true;
         this.plane = new THREE.Mesh(this.planeGeometry, this.planeMaterial);
         this.plane.translateZ(6);
+        this.plane.translateY(-0.5);
         this.plane.rotation.x = -Math.PI / 2;
         this.plane.layers.set(0);
+        this.plane.receiveShadow = true;
     }
 
     getTHREEObject() {
