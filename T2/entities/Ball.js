@@ -46,6 +46,8 @@ export class Ball {
                 specular: "rgb(255,255,255)"
             });
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
+        this.sphere.castShadow = true;
+        this.sphere.receiveShadow = true;
         this.sphere.position.copy(this.initialPosition);
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), this.radius);
     }
@@ -313,7 +315,7 @@ export class Ball {
 
     resetPosition(newPosition = null) {
         console.log("this.initialPosition = ", this.initialPosition)
-        this.sphere.position.copy(newPosition || this.initialPosition);
+        this.sphere.position.copy(newPosition || this.getOverHitterPosition(game.getHitter().getPosition()));
         this.updateBoundingSphere();
 
         this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();

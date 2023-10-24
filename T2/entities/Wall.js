@@ -19,6 +19,8 @@ export class Wall {
         this.boxGeometry = new THREE.BoxGeometry(this.width, this.height, this.depth);
         this.boxMaterial =  new THREE.MeshLambertMaterial({color:"gray"});
         this.box = new THREE.Mesh(this.boxGeometry, this.boxMaterial);
+        this.box.castShadow = true;
+        this.box.receiveShadow = true;
         this.box.position.copy(this.position);
 
         this.boundingBox = new THREE.Box3().setFromObject(this.box);
