@@ -117,7 +117,7 @@ export class Game {
     }
 
     addPowerUp(position) {
-        if (this.balls.length > 1) {
+        if (this.balls.length > 1 || this.powerUps.length > 0) {
             return;
         }
 
