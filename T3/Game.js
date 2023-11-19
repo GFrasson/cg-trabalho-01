@@ -235,10 +235,10 @@ export class Game {
     }
 
     nextStage() {
-        if (this.currentStage !== 1) {
-            return;
+        if (this.currentStage === 3) {
+            this.currentStage = 0;
         }
-        this.currentStage = 2;
+        this.currentStage = this.currentStage + 1;
         this.getBrickArea().deleteBrickArea();
         this.bricksAnimateDestruction = [];
         this.stage = new Stage(this.currentStage, this.scene);

@@ -5,7 +5,7 @@ export class Brick {
     static bricksDestroyedAtCurrentStage = 0;
     static spawnPowerUpOnBricksDestroyed = 10;
 
-    constructor(material, posX, posY, index, color, scene, secondColor, initialLife) {
+    constructor(material, posX, posY, index, color, scene, secondColor, initialLife, indestructible) {
         this.id = index;
         this.scene = scene;
         this.cubeGeometry = new THREE.BoxGeometry(3.6, 2, 2);
@@ -20,6 +20,7 @@ export class Brick {
         this.initialLife = initialLife;
         this.life = this.initialLife;
         this.block.material.transparent = true;
+        this.indestructible = indestructible;
     }
 
     getTHREEObject() {
@@ -27,6 +28,9 @@ export class Brick {
     }
 
     setVisible(visible) {
+        if(this.indestructible === 1) {
+            return;
+        }
         if (visible == true) {
             this.scene.add(this.block);
             this.block.material.opacity = 1;

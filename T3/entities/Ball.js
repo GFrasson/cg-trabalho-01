@@ -85,7 +85,7 @@ export class Ball {
         for (let i = 0; i < game.stage.rows; i++) {
             for (let j = 0; j < game.stage.columns; j++) {
                 const brick = game.getBrickArea().bricks[i][j];
-                if (brick.visible)
+                if (brick !== null && brick.visible)
                     this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
             }
         }

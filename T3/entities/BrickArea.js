@@ -18,7 +18,9 @@ export class BrickArea {
         this.bricks = this.stage.constructStage();
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
-                scene.add(this.bricks[i][j].block);
+                if(this.bricks[i][j] !== null) {
+                    scene.add(this.bricks[i][j].block);
+                }
             } 
         }
     }
@@ -26,8 +28,10 @@ export class BrickArea {
     resetBrickArea() {
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
-                this.bricks[i][j].setVisible(true);
-                this.bricks[i][j].getTHREEObject().scale.set(1, 1, 1);
+                if(this.bricks[i][j] !== null && this.bricks[i][j].indestructible === 0) {
+                    this.bricks[i][j].setVisible(true);
+                    this.bricks[i][j].getTHREEObject().scale.set(1, 1, 1);
+                }
             }
         }
         this.noBricks = false;
@@ -38,7 +42,7 @@ export class BrickArea {
         let endGame = true;
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
-                if(this.bricks[i][j].visible === true) {
+                if(this.bricks[i][j] !== null && this.bricks[i][j].indestructible === 0 && this.bricks[i][j].visible === true) {
                     endGame = false;
                     break;
                 }
@@ -55,7 +59,9 @@ export class BrickArea {
     deleteBrickArea() {
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
-                this.scene.remove(this.bricks[i][j].block);
+                if(this.bricks[i][j] !== null) {
+                    this.scene.remove(this.bricks[i][j].block);
+                }
             }
         }
     }
