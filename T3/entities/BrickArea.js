@@ -28,7 +28,7 @@ export class BrickArea {
     resetBrickArea() {
         for(let i = 0; i < this.stage.rows; i++) {
             for(let j = 0; j < this.stage.columns; j++) {
-                if(this.bricks[i][j] !== null && this.bricks[i][j].indestructible === 0) {
+                if(this.bricks[i][j] !== null) {
                     this.bricks[i][j].setVisible(true);
                     this.bricks[i][j].getTHREEObject().scale.set(1, 1, 1);
                 }

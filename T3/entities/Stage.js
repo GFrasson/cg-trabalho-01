@@ -101,6 +101,9 @@ export class Stage {
     }
 
     constructStage3() {
+        var textureLoader = new THREE.TextureLoader();
+        var brickwall = textureLoader.load('../../assets/textures/brickwall.jpg');
+
         var brickIndex = 0;
         var linha = -38;
         var bricks = [];
@@ -115,12 +118,15 @@ export class Stage {
                 var colorAux = this.colors[colorIndex[j]];
                 if((i == 9 || i === 3) && j !== 0 && j !== 5) {
                     colorAux = "gold";
-                    indestructible = 1;
+                    indestructible = 1;                    
                 }else if(i === 9 && ( j === 0 || j === 5)) {
                     colorAux = "salmon";
                 }
                 let material = new THREE.MeshLambertMaterial({color: colorAux});
                 var brick = new Brick(material, coluna, linha, brickIndex++, colorAux, this.scene, secondColor, initialLife, indestructible);
+                if((i == 9 || i === 3) && j !== 0 && j !== 5) {
+                    brick.block.material.map = brickwall;
+                }
                 arrayLinha.push(brick);             
                 coluna = coluna + 7.5; 
             }

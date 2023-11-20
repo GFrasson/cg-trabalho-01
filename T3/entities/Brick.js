@@ -28,16 +28,26 @@ export class Brick {
     }
 
     setVisible(visible) {
-        if(this.indestructible === 1) {
-            return;
-        }
-        if (visible == true) {
+        if (visible === true) {
+            if(this.indestructible === 1){
+                var textureLoader = new THREE.TextureLoader();
+                var brickwall = textureLoader.load('../../assets/textures/brickwall.jpg');
+                let material = new THREE.MeshLambertMaterial({color: "gold"});
+                this.block.material = material;
+                this.block.material.map = brickwall;
+                return;
+            }
+            this.visible = true;
             this.scene.add(this.block);
             this.block.material.opacity = 1;
-            this.visible = true;
             this.life = this.initialLife;
             this.block.material.color.set(this.color);
         } else {
+            if(this.indestructible === 1){
+                let material = new THREE.MeshLambertMaterial({color: "gold"});
+                this.block.material = material;
+                return;
+            }
             this.life -= 1;
             if (this.life <= 0) {
                 this.visible = false;
