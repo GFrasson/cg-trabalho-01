@@ -60,7 +60,7 @@ export class PowerUp {
 
     collect() {
         game.deletePowerUp(this);
-        game.duplicateBall();
+        game.addTwoBalls();
     }
 
     destroyPowerUpWhenCollideBottomWall() {

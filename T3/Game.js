@@ -139,24 +139,26 @@ export class Game {
         this.powerUps = [];
     }
 
-    duplicateBall() {
+    addTwoBalls() {
         if (this.balls.length > 1) {
             return;
         }
-
+        
+        const newBallsAmount = 2;
         const originalBall = this.getBall();
-
-        const newBall = new Ball(originalBall.getTHREEObject().position);
-
-        newBall.setIsLaunched(originalBall.isLauched);
-
-        const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
-        newBallDirection.x += 0.2;
-        newBallDirection.normalize();
-        newBall.setDirection(newBallDirection);
-
-        this.balls.push(newBall);
-        this.scene.add(newBall.getTHREEObject());
+        for (let i = 0; i < newBallsAmount; i++) {
+            const newBall = new Ball(originalBall.getTHREEObject().position);
+    
+            newBall.setIsLaunched(originalBall.isLauched);
+    
+            const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
+            newBallDirection.x += i % 2 === 0 ? 0.2 : -0.2;
+            newBallDirection.normalize();
+            newBall.setDirection(newBallDirection);
+    
+            this.balls.push(newBall);
+            this.scene.add(newBall.getTHREEObject());
+        }
     }
 
     deleteBall(ball) {
