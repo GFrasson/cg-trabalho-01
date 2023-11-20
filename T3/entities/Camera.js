@@ -3,6 +3,7 @@ import * as THREE from 'three';
 export class Camera {
     constructor() {
         this.initialPosition = new THREE.Vector3(0, 110, 0);
+        this.lookAt = new THREE.Vector3(0, 0, 0);
 
         this.aspectRatio = 1 / 2;
         this.near = 0.1;
@@ -21,11 +22,6 @@ export class Camera {
     }
 
     onWindowResize(renderer, rendererWidth, rendererHeight) {
-        this.camera.left = this.left;
-        this.camera.right = this.right;
-        this.camera.top = this.top;
-        this.camera.bottom = this.bottom;
-
         this.camera.updateProjectionMatrix();
         renderer.setSize(rendererWidth, rendererHeight);
     }

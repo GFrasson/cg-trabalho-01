@@ -51,6 +51,54 @@ export class EventHandler {
                 case 'g':
                     this.game.nextStage();
                     break;
+                case 'w':
+                    this.game.getCamera().getTHREECamera().position.z -= 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'a':
+                    this.game.getCamera().getTHREECamera().position.y -= 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 's':
+                    this.game.getCamera().getTHREECamera().position.z += 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'd':
+                    this.game.getCamera().getTHREECamera().position.y += 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'e':
+                    this.game.getCamera().lookAt.z += 1;
+                    this.game.getCamera().getTHREECamera().lookAt(this.game.getCamera().lookAt);
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'q':
+                    this.game.getCamera().lookAt.z -= 1;
+                    this.game.getCamera().getTHREECamera().lookAt(this.game.getCamera().lookAt);
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'i':
+                    this.game.getCamera().fov += 1;
+                    this.game.getCamera().getTHREECamera().fov = this.game.getCamera().fov;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'k':
+                    this.game.getCamera().fov -= 1;
+                    this.game.getCamera().getTHREECamera().fov = this.game.getCamera().fov;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case '8':
+                    console.log(this.game.getCamera().getTHREECamera().position);
+                    console.log(this.game.getCamera().lookAt);
+                    console.log(this.game.getCamera().fov);
                 default:
                     break;
             }
