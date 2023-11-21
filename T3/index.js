@@ -11,6 +11,7 @@ import { Ball } from './entities/Ball.js';
 
 const scene = new THREE.Scene();
 
+
 const renderer = new THREE.WebGLRenderer();
 document.getElementById("webgl-output").appendChild(renderer.domElement);
 renderer.shadowMap.enabled = true;
@@ -55,6 +56,8 @@ game.screenHandler.listenScreenEvents();
 const ballSpeedSecondaryBox = new SecondaryBox();
 ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
 ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
+
+const orbit = new OrbitControls(camera.camera, renderer.domElement);
 
 function render() {
     game.executeStep();

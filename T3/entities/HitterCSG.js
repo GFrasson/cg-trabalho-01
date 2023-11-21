@@ -2,7 +2,9 @@ import { CSG } from '../../libs/other/CSGMesh.js'
 import * as THREE from  'three'; 
 import {initRenderer, 
     setDefaultMaterial,
+    getMaxSize
 } from "../../libs/util/util.js";
+import {GLTFLoader} from '../../build/jsm/loaders/GLTFLoader.js';
 
 export class HitterCSG {
     constructor(scene) {
@@ -43,6 +45,57 @@ export class HitterCSG {
         this.sphere.material.transparent = true;
         // scene.add(hitterMesh)
         // scene.add(sphere)
+        
+        let asset = {
+            object: null,
+            loaded: false,
+            bb: new THREE.Box3()
+        }
+        this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
+    }
+
+    loadGLBFile(asset, file, desiredScale, scene)
+    {
+        let loader = new GLTFLoader( );
+        let self = this;
+        loader.load( file, function ( gltf ) {
+            let obj = gltf.scene;
+            obj.traverse( function ( child ) {
+            if ( child.isMesh ) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+            });
+            obj = self.normalizeAndRescaleAsset(obj, desiredScale);
+            obj = self.fixPositionAsset(obj);
+            obj.updateMatrixWorld( true )
+            scene.add(obj);
+
+            // Store loaded gltf in our js object
+            asset.object = gltf.scene;
+            self.assetObj = asset.object;
+        }, null, null);
+    }
+
+    normalizeAndRescaleAsset(obj, newScale)
+    {
+        var scale = getMaxSize(obj); // Available in 'utils.js'
+        obj.scale.set(newScale * (1.0/scale),
+                        newScale * (1.0/scale),
+                        newScale * (1.0/scale));
+        return obj;
+    }
+
+    fixPositionAsset(obj)
+    {
+        var box = new THREE.Box3().setFromObject( obj );
+        obj.rotation.y += Math.PI / 90;
+        obj.position.set(0, -8, 47)
+        if(box > 0)
+            obj.translateY(-box.min.y);
+        else
+            obj.translateY(-1*box.min.y);
+        return obj;
     }
 
     getPosition() {
@@ -56,6 +109,7 @@ export class HitterCSG {
     move(pointX) {
         this.hitterMesh.position.set(pointX, 1, 40);
         this.sphere.position.set(pointX, 1, 47)
+        this.assetObj.position.set(pointX, -8, 47)
         this.updateBoundingBox();
     }
 

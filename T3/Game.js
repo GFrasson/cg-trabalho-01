@@ -16,7 +16,7 @@ export class Game {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.scene = scene;
-        this.hitterCSG = new HitterCSG();
+        this.hitterCSG = new HitterCSG(scene);
         this.currentStage = 1;
         this.stage = new Stage(this.currentStage, scene);
 
