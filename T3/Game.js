@@ -9,6 +9,9 @@ import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
 import { Stage } from './entities/Stage.js';
 import { PowerUp } from './entities/PowerUp.js';
+import { AddBallsPowerUp } from './entities/AddBallsPowerUp.js';
+import { DrillPowerUp } from './entities/DrillPowerUp.js';
+import { Brick } from './entities/Brick.js';
 
 
 export class Game {
@@ -117,11 +120,15 @@ export class Game {
     }
 
     addPowerUp(position) {
-        if (this.balls.length > 1 || this.powerUps.length > 0) {
+        if (this.balls.length > 1 || this.powerUps.length > 0 || Ball.isDrillMode) {
             return;
         }
 
-        const powerUp = new PowerUp(position);
+        const powerUp = PowerUp.lastPowerUpSpawned instanceof AddBallsPowerUp
+            ? new DrillPowerUp(position)
+            : new AddBallsPowerUp(position);
+
+        PowerUp.lastPowerUpSpawned = powerUp;
 
         this.powerUps.push(powerUp);
         this.scene.add(powerUp.getTHREEObject());
@@ -137,28 +144,6 @@ export class Game {
             this.scene.remove(powerUp.getTHREEObject());
         });
         this.powerUps = [];
-    }
-
-    addTwoBalls() {
-        if (this.balls.length > 1) {
-            return;
-        }
-        
-        const newBallsAmount = 2;
-        const originalBall = this.getBall();
-        for (let i = 0; i < newBallsAmount; i++) {
-            const newBall = new Ball(originalBall.getTHREEObject().position);
-    
-            newBall.setIsLaunched(originalBall.isLauched);
-    
-            const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
-            newBallDirection.x += i % 2 === 0 ? 0.2 : -0.2;
-            newBallDirection.normalize();
-            newBall.setDirection(newBallDirection);
-    
-            this.balls.push(newBall);
-            this.scene.add(newBall.getTHREEObject());
-        }
     }
 
     deleteBall(ball) {

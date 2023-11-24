@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { game } from '../index.js';
+import { PowerUp } from './PowerUp.js';
 
 export class Brick {
     static bricksDestroyedAtCurrentStage = 0;
@@ -38,6 +39,11 @@ export class Brick {
             if (this.life <= 0) {
                 this.visible = false;
                 game.bricksAnimateDestruction.push(this);
+
+                if (!PowerUp.canIncreasePowerUpCounter()) {
+                    return;
+                }
+
                 Brick.bricksDestroyedAtCurrentStage += 1;
                 if (
                     Brick.bricksDestroyedAtCurrentStage > 0 &&

@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { game } from '../index.js';
+import { Ball } from './Ball.js';
 
 export class PowerUp {
+    static lastPowerUpSpawned = null;
+
     constructor(initialPosition) {
         this.initialPosition = initialPosition;
         this.direction = new THREE.Vector3(0, 0, 1).normalize();
@@ -13,15 +16,16 @@ export class PowerUp {
     createTHREEObject() {
         this.capsuleGeometry = new THREE.CapsuleGeometry(1, 3, 4, 20);
         this.capsuleMaterial = new THREE.MeshPhongMaterial({
-            color: "#2E8B57",
+            color: "gray",
             shininess: "200",
-            specular: "rgb(255, 255, 255)"
+            specular: "rgb(255, 255, 255)",
         });
         this.capsule = new THREE.Mesh(this.capsuleGeometry, this.capsuleMaterial);
         this.capsule.castShadow = true;
         this.capsule.receiveShadow = true;
         this.capsule.rotateZ(Math.PI / 2);
         this.capsule.position.copy(this.initialPosition);
+        this.addTexture();
         this.boundingBox = new THREE.Box3().setFromObject(this.capsule);
     }
 
@@ -31,11 +35,7 @@ export class PowerUp {
     
     move() {
         this.capsule.translateZ(this.direction.z * this.speed);
-        this.capsule.material.color.setRGB(
-            Math.abs(Math.sinh(this.capsule.position.z / 5)),
-            Math.abs(Math.cos(this.capsule.position.z / 5)),
-            Math.abs(Math.sin(this.capsule.position.z / 5))
-        );
+        this.updateColor();
         this.updateBoundingBox();
         this.collisionsDetection();
     }
@@ -60,7 +60,7 @@ export class PowerUp {
 
     collect() {
         game.deletePowerUp(this);
-        game.addTwoBalls();
+        this.powerUpAction();
     }
 
     destroyPowerUpWhenCollideBottomWall() {
@@ -79,4 +79,14 @@ export class PowerUp {
     checkCollisionWithBottomWall() {
         return this.boundingBox.intersectsBox(game.getBottomWall().getBoundingBox());
     }
+
+    static canIncreasePowerUpCounter() {
+        return game.balls.length === 1 && !Ball.isDrillMode;
+    }
+
+    updateColor() {}
+
+    powerUpAction() {}
+
+    addTexture() {}
 }
