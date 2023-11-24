@@ -1,3 +1,5 @@
+import { onWindowResize } from "../libs/util/util.js";
+
 export class EventHandler {
     constructor(game) {
         this.game = game;
@@ -71,34 +73,6 @@ export class EventHandler {
                     this.game.getCamera().getTHREECamera().updateProjectionMatrix();
 
                     break;
-                case 'e':
-                    this.game.getCamera().lookAt.z += 1;
-                    this.game.getCamera().getTHREECamera().lookAt(this.game.getCamera().lookAt);
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'q':
-                    this.game.getCamera().lookAt.z -= 1;
-                    this.game.getCamera().getTHREECamera().lookAt(this.game.getCamera().lookAt);
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'i':
-                    this.game.getCamera().fov += 1;
-                    this.game.getCamera().getTHREECamera().fov = this.game.getCamera().fov;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'k':
-                    this.game.getCamera().fov -= 1;
-                    this.game.getCamera().getTHREECamera().fov = this.game.getCamera().fov;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case '8':
-                    console.log(this.game.getCamera().getTHREECamera().position);
-                    console.log(this.game.getCamera().lookAt);
-                    console.log(this.game.getCamera().fov);
                 default:
                     break;
             }
@@ -108,7 +82,7 @@ export class EventHandler {
     listenResizeEvent(renderer) {
         window.addEventListener(
             'resize',
-            () => this.game.getCamera().onWindowResize(renderer, window.innerHeight * this.game.getCamera().aspectRatio, window.innerHeight),
+            () => onWindowResize(this.game.getCamera().getTHREECamera(), renderer),
             false
         );
     }

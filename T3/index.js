@@ -40,7 +40,7 @@ directionalLight.shadow.radius = 1.0;
 
 scene.add(directionalLight);
 
-renderer.setSize(window.innerHeight * camera.aspectRatio, window.innerHeight);
+renderer.setSize(window.innerWidth, window.innerHeight);
 
 export const game = new Game(camera, render, scene);
 
