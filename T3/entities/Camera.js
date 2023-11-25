@@ -19,4 +19,9 @@ export class Camera {
     getTHREECamera() {
         return this.camera;
     }
+
+    resetCamera() {
+        this.camera.position.copy(new THREE.Vector3(0, 50, 64));
+        this.camera.lookAt(new THREE.Vector3(0, 0, 19));
+    }
 }

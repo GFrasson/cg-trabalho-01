@@ -43,7 +43,7 @@ scene.add(directionalLight);
 
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-export const game = new Game(camera, render, scene);
+export const game = new Game(camera, render, scene, renderer);
 
 game.addObjectsToScene(scene);
 
@@ -56,8 +56,6 @@ game.screenHandler.listenScreenEvents();
 const ballSpeedSecondaryBox = new SecondaryBox();
 ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
 ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
-
-// const orbit = new OrbitControls(camera.camera, renderer.domElement);
 
 function render() {
     game.executeStep();

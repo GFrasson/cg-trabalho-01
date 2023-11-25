@@ -1,8 +1,15 @@
 import { onWindowResize } from "../libs/util/util.js";
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
 
 export class EventHandler {
-    constructor(game) {
+    constructor(game, camera, renderer) {
         this.game = game;
+        this.orbit = new OrbitControls(camera.camera, renderer.domElement);
+        this.orbit.enabled = false;
+
+        this.camera = camera;
+        this.camera.resetCamera();
     }
 
     listenMousedownEvent() {
@@ -40,17 +47,19 @@ export class EventHandler {
                     this.game.toggleFullScreen();
                     break;
                 case 'r':
-                    if (this.game.startGame) {
+                    if (this.game.startGame && this.orbit.enabled === false) {
                         this.game.toggleRestartGame();
                     }
                     break;
                 case ' ': // Space
-                    if (this.game.gameScreen) {
+                    if (this.game.gameScreen && this.orbit.enabled === false) {
                         this.game.togglePauseGame();
                     }
                     break;
                 case 'g':
-                    this.game.nextStage();
+                    if(this.orbit.enabled === false) {
+                        this.game.nextStage();
+                    }
                     break;
                 case 'w':
                     this.game.getCamera().getTHREECamera().position.z -= 1;
@@ -71,6 +80,16 @@ export class EventHandler {
                     this.game.getCamera().getTHREECamera().position.y += 1;
                     this.game.getCamera().getTHREECamera().updateProjectionMatrix();
 
+                    break;
+                case 'o':
+                    if(this.orbit.enabled === false) {
+                        this.orbit.enabled = true;
+                        this.game.pausedGame = true;                                              
+                    }else {
+                        this.orbit.enabled = false;
+                        this.game.pausedGame = false;
+                        this.camera.resetCamera();
+                    }
                     break;
                 default:
                     break;

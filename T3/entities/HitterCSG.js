@@ -30,7 +30,7 @@ export class HitterCSG {
         
         this.hitterMesh = CSG.toMesh(this.csgObject, this.auxMat)
         let vertices = this.csgObject
-        console.log(this.hitterMesh);
+        // console.log(this.hitterMesh);
         //this.hitterMesh.material = new THREE.MeshLambertMaterial({color: "#5FA1AD"});
 
         /* TENTATIVA DE COLOCAR TEXTURA COORDENADA UV */

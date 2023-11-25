@@ -12,7 +12,7 @@ import { PowerUp } from './entities/PowerUp.js';
 
 
 export class Game {
-    constructor(camera, renderCallback, scene) {
+    constructor(camera, renderCallback, scene, renderer) {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.scene = scene;
@@ -44,7 +44,7 @@ export class Game {
 
         this.timeIntervalIdToUpdateBallSpeed = null;
 
-        this.eventHandler = new EventHandler(this);
+        this.eventHandler = new EventHandler(this, camera, renderer);
         this.screenHandler = new ScreenHandler(this, this.renderCallback);
     }
 
