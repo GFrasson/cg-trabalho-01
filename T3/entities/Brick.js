@@ -44,11 +44,17 @@ export class Brick {
             this.block.material.color.set(this.color);
         } else {
             if(this.indestructible === 1){
+                const collisionSound = document.getElementById('collisionSoundBrick2');
+                collisionSound.currentTime = 0;
+                collisionSound.play();
                 let material = new THREE.MeshLambertMaterial({color: "gold"});
                 this.block.material = material;
                 return;
             }
             this.life -= 1;
+            const collisionSound = document.getElementById('collisionSoundBrick1');
+            collisionSound.currentTime = 0;
+            collisionSound.play();
             if (this.life <= 0) {
                 this.visible = false;
                 game.bricksAnimateDestruction.push(this);

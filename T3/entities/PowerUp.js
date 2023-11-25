@@ -54,7 +54,9 @@ export class PowerUp {
         if (!isCollidingWithHitter) {
             return;
         }
-
+        const collisionSound = document.getElementById('collisionSoundPower');
+        collisionSound.currentTime = 0;
+        collisionSound.play();
         this.collect();
     }
 

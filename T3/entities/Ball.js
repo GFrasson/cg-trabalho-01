@@ -127,6 +127,7 @@ export class Ball {
                 return;
             }
         }
+
         this.bounce(normalVectorFromCollidedFace, collidedObjectBoundingBox);
     }
 
@@ -161,6 +162,11 @@ export class Ball {
 
         // Calcula o vetor normal a superfície no ponto de colisão
         const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
+
+        const collisionSound = document.getElementById('collisionSoundHitter');
+        collisionSound.currentTime = 0;
+        collisionSound.play();
+
         this.bounce(normalVector, boundingSphere);
         this.fixTrajectory();
     }
