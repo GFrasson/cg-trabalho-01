@@ -27,7 +27,7 @@ export class Background {
 
     onMouseMove(event, camera, hitter) {
         let windowWidth = window.innerWidth;
-        let gameWidth = window.innerHeight * 0.5;
+        let gameWidth = window.innerWidth;
         let offsetX = (windowWidth - gameWidth) / 2;
 
         let pointer = new THREE.Vector2();
