@@ -47,32 +47,48 @@ export class Background {
     };
 
     createSkyBox(scene) {
-        const materialArray = this.createMaterialArray("space");
-        this.skyboxGeo = new THREE.BoxGeometry(50, 100, 120);
-        //this.skyboxGeo = new THREE.BoxGeometry(120, 120, 120);
-        this.skybox = new THREE.Mesh(this.skyboxGeo, materialArray);
-        this.skybox.position.set(0, 50, 10)
-        scene.add(this.skybox);
+        const urls = [
+            "./assets/skybox2/space_ft.png",
+            "./assets/skybox2/space_bk.png",
+            "./assets/skybox2/space_up.png",
+            "./assets/skybox2/space_dn.png",
+            "./assets/skybox2/space_rt.png",
+            "./assets/skybox2/space_lf.png"
+        ];
+
+        let cubeMapTexture = new THREE.CubeTextureLoader().load(urls);
+        scene.background = cubeMapTexture;
     }
 
-    createPathStrings(filename) {
-        const basePath = "./assets/skybox2/";
-        const baseFilename = basePath + filename;
-        const fileType = ".png";
-        const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
-        const pathStings = sides.map(side => {
-            return baseFilename + "_" + side + fileType;
-        });
-        return pathStings;
-    }
+    // createSkyBox(scene) {
+    //     const materialArray = this.createMaterialArray("space");
+    //     //console.log("materialArray = ", materialArray)
+    //     this.skyboxGeo = new THREE.BoxGeometry(50, 100, 120);
+    //     //this.skyboxGeo = new THREE.BoxGeometry(120, 120, 120);
+    //     this.skybox = new THREE.Mesh(this.skyboxGeo, materialArray);
+    //     this.skybox.position.set(0, 50, 10)
+    //     scene.add(this.skybox);
+    // }
 
-    createMaterialArray(filename) {
-        const skyboxImagepaths = this.createPathStrings(filename);
-        const materialArray = skyboxImagepaths.map(image => {
-            let texture = new THREE.TextureLoader().load(image);
-            return new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
-        });
-        return materialArray;
-    }
+    // createPathStrings(filename) {
+    //     const basePath = "./assets/skybox2/";
+    //     const baseFilename = basePath + filename;
+    //     const fileType = ".png";
+    //     const sides = ["ft", "bk", "up", "dn", "rt", "lf"];
+    //     const pathStings = sides.map(side => {
+    //         return baseFilename + "_" + side + fileType;
+    //     });
+    //     console.log("pathStings = ", pathStings)
+    //     return pathStings;
+    // }
+
+    // createMaterialArray(filename) {
+    //     const skyboxImagepaths = this.createPathStrings(filename);
+    //     const materialArray = skyboxImagepaths.map(image => {
+    //         let texture = new THREE.TextureLoader().load(image);
+    //         return new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
+    //     });
+    //     return materialArray;
+    // }
 
 }
