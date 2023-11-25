@@ -92,7 +92,6 @@ export class HitterCSG {
             obj.updateMatrixWorld( true )
             scene.add(obj);
 
-            // Store loaded gltf in our js object
             asset.object = gltf.scene;
             self.assetObj = asset.object;
         }, null, null);
@@ -100,7 +99,7 @@ export class HitterCSG {
 
     normalizeAndRescaleAsset(obj, newScale)
     {
-        var scale = getMaxSize(obj); // Available in 'utils.js'
+        var scale = getMaxSize(obj);
         obj.scale.set(newScale * (1.0/scale),
                         newScale * (1.0/scale),
                         newScale * (1.0/scale));
@@ -140,6 +139,9 @@ export class HitterCSG {
        this.hitterMesh.position.set(0, 1, 40)
        this.sphere.position.set(0, 1, 46.5)
        this.updateBoundingBox();
+       if(this.assetObj !== undefined) {
+            this.assetObj.position.set(0, -8, 47)
+        }
     }
 
     updateBoundingBox() {
