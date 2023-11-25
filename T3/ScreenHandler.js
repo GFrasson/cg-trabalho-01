@@ -69,4 +69,14 @@ export class ScreenHandler {
         const stageCompleteScreen = document.querySelector('#stage-complete-screen');
         stageCompleteScreen.style.display = 'none';
     }
+
+    showEndGameScreen() {
+        const endGameScreen = document.querySelector('#end-game-screen');
+        endGameScreen.style.display = 'flex';
+    }
+
+    hideEndGameScreen() {
+        const endGameScreen = document.querySelector('#end-game-screen');
+        endGameScreen.style.display = 'none';
+    }
 }

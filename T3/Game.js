@@ -228,17 +228,22 @@ export class Game {
     }
 
     toggleEndGame() {
-        this.screenHandler.showStageCompleteScreen();
+        if (this.currentStage >= Stage.totalNumberOfStages) {
+            this.screenHandler.showEndGameScreen();
+        } else {
+            this.screenHandler.showStageCompleteScreen();
+        }
+        
         this.getHitter().resetPosition();
         this.getBall().resetPosition();
         this.pausedGame = true;
     }
 
     nextStage() {
-        if (this.currentStage !== 1) {
+        if (this.currentStage >= Stage.totalNumberOfStages) {
             return;
         }
-        this.currentStage = 2;
+        this.currentStage++;
         this.getBrickArea().deleteBrickArea();
         this.bricksAnimateDestruction = [];
         this.stage = new Stage(this.currentStage, this.scene);

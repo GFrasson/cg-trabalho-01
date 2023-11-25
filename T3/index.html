@@ -6,6 +6,7 @@
    <link rel="shortcut icon" href="../favicon.ico">
    <link rel="stylesheet" href="../html/resources/default.css">
    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 </head>
 
 <body>
@@ -40,7 +41,21 @@
                </div>
          </div>
       </div>
+      <div id="end-game-screen">
+         <div class="end-game-content">
+               <h1 class="end-game-title">YOU WON!</h1>
+               <div class="buttons-container">
+                  <button id="celebrate">Celebrate!</button>
+               </div>
+         </div>
+      </div>
    </div>
+   <script>
+      const jsConfetti = new JSConfetti();
+      document.querySelector('#celebrate').addEventListener('click', () => {
+         jsConfetti.addConfetti();
+      });
+   </script>
 </body>
 
 </html>
