@@ -46,8 +46,8 @@ export class HitterCSG {
         var positionsX = positionBuffer.array.slice(0, positionBuffer.count);
         var positionsY = positionBuffer.array.slice(positionBuffer.count, 2 * positionBuffer.count);
         var positionsZ = positionBuffer.array.slice(2 * positionBuffer.count, 3 * positionBuffer.count);
-        console.log("Coordenadas X dos vértices:", positionsX[0]);
-        console.log("Coordenadas Y dos vértices:", positionsY[0]);
+        // console.log("Coordenadas X dos vértices:", positionsX[0]);
+        // console.log("Coordenadas Y dos vértices:", positionsY[0]);
         //console.log("Coordenadas Z dos vértices:", positionsZ[0]);
         //this.setTexture(this.hitterMesh);
         /* TENTATIVA DE COLOCAR TEXTURA COORDENADA UV */

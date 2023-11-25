@@ -20,7 +20,7 @@ export class Game {
         this.currentStage = 1;
         this.stage = new Stage(this.currentStage, scene);
 
-        this.background = new Background();
+        this.background = new Background(scene);
         this.brickArea = new BrickArea(scene, this.stage);
 
         const hitterInitialPosition = this.hitterCSG.getPosition();
