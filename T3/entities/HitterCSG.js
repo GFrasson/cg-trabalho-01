@@ -26,8 +26,32 @@ export class HitterCSG {
         this.cylinderCSG = CSG.fromMesh(this.cylinderMesh)
         this.cubeCSG = CSG.fromMesh(this.cubeMesh)   
         this.csgObject = this.cubeCSG.intersect(this.cylinderCSG) // Execute intersection
+
+        
         this.hitterMesh = CSG.toMesh(this.csgObject, this.auxMat)
-        this.hitterMesh.material = new THREE.MeshLambertMaterial({color: "#5FA1AD"});
+        let vertices = this.csgObject
+        console.log(this.hitterMesh);
+        //this.hitterMesh.material = new THREE.MeshLambertMaterial({color: "#5FA1AD"});
+
+        /* TENTATIVA DE COLOCAR TEXTURA COORDENADA UV */
+        let texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
+        //console.log(this.getUVCoordinates(texture));
+        this.hitterMesh.material = new THREE.MeshPhongMaterial({
+            color: "#5FA1AD",
+            shininess: "10",
+            specular: "rgb(255, 255, 255)",
+            map: texture
+        });
+        var positionBuffer = this.hitterMesh.geometry.attributes.position;
+        var positionsX = positionBuffer.array.slice(0, positionBuffer.count);
+        var positionsY = positionBuffer.array.slice(positionBuffer.count, 2 * positionBuffer.count);
+        var positionsZ = positionBuffer.array.slice(2 * positionBuffer.count, 3 * positionBuffer.count);
+        console.log("Coordenadas X dos vértices:", positionsX[0]);
+        console.log("Coordenadas Y dos vértices:", positionsY[0]);
+        //console.log("Coordenadas Z dos vértices:", positionsZ[0]);
+        //this.setTexture(this.hitterMesh);
+        /* TENTATIVA DE COLOCAR TEXTURA COORDENADA UV */
+
         this.hitterMesh.position.set(0, 0, 2.0)
         this.hitterMesh.rotation.y = Math.PI / -2;
         this.hitterMesh.position.set(0, 1, 40)
@@ -39,12 +63,9 @@ export class HitterCSG {
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.position.set(0, 1, 47)
         this.boundingSphere = new THREE.Sphere(new THREE.Vector3().copy(this.sphere.position), 8);
-
-        //this.sphere.material.opacity = 0.5;
         this.sphere.material.opacity = 0;
         this.sphere.material.transparent = true;
-        // scene.add(hitterMesh)
-        // scene.add(sphere)
+
         
         let asset = {
             object: null,
@@ -109,7 +130,9 @@ export class HitterCSG {
     move(pointX) {
         this.hitterMesh.position.set(pointX, 1, 40);
         this.sphere.position.set(pointX, 1, 47)
-        this.assetObj.position.set(pointX, -8, 47)
+        if(this.assetObj !== undefined) {
+            this.assetObj.position.set(pointX, -8, 47)
+        }
         this.updateBoundingBox();
     }
 
@@ -122,4 +145,44 @@ export class HitterCSG {
     updateBoundingBox() {
         this.boundingSphere.center.copy(this.sphere.position);
     }
+
+    setTexture(mesh) {
+        let geometry = mesh.geometry;
+        let material = mesh.material;
+
+        var positionBuffer = this.hitterMesh.geometry.attributes.position;
+        // Obtenha os arrays de posição x, y e z
+        var positionsX = positionBuffer.array.slice(0, positionBuffer.count);
+        var positionsY = positionBuffer.array.slice(positionBuffer.count, 2 * positionBuffer.count);
+        var positionsZ = positionBuffer.array.slice(2 * positionBuffer.count, 3 * positionBuffer.count);
+
+      
+        // You must set an individual UV coordinate for each vertex of your scene
+        // Learn more here:
+        // https://discoverthreejs.com/book/first-steps/textures-intro/
+        var uvCoords = [];
+        var j = 0;
+        for(let i = 0; i < positionsX.length; i++) {
+            uvCoords[j] = positionsX[i];
+            j = j+2;
+        }
+
+        var j = 1;
+        for(let i = 0; i < positionsY.length; i++) {
+            uvCoords[j] = positionsX[i];
+            j = j+2;
+        }
+
+        // var uvCoords = [2, -0.4,
+        //     0.8999999761581421, 0.8999999761581421,
+        //     -6.241202354431152, -2.9449963569641113
+        //                 ];
+      
+        geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( uvCoords), 2 ) );
+      
+        // Load the texture and set to the material of the mesh
+        let texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
+        material.map =  texture;
+      }
+      
 }

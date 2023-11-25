@@ -57,7 +57,7 @@ const ballSpeedSecondaryBox = new SecondaryBox();
 ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
 ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
 
-const orbit = new OrbitControls(camera.camera, renderer.domElement);
+// const orbit = new OrbitControls(camera.camera, renderer.domElement);
 
 function render() {
     game.executeStep();
