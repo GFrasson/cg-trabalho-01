@@ -29,7 +29,7 @@
          <div class="game-paused-content">
              <h1 class="game-paused-title">GAME PAUSED</h1>
              <div class="buttons-container">
-                 <button id="restart-game">Restart</button>
+                 <button id="restart-stage">Restart</button>
              </div>
          </div>
      </div>
@@ -49,13 +49,15 @@
                </div>
          </div>
       </div>
+      <div id="game-over-screen">
+         <div class="game-over-content">
+               <h1 class="game-over-title">GAME OVER</h1>
+               <div class="buttons-container">
+                  <button id="restart-game">Restart</button>                  
+               </div>
+         </div>
+      </div>
    </div>
-   <script>
-      const jsConfetti = new JSConfetti();
-      document.querySelector('#celebrate').addEventListener('click', () => {
-         jsConfetti.addConfetti();
-      });
-   </script>
 </body>
 
 </html>

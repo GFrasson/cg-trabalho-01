@@ -44,6 +44,9 @@ export class Game {
 
         this.timeIntervalIdToUpdateBallSpeed = null;
 
+        this.initialLives = 5;
+        this.lives = this.initialLives;
+
         this.eventHandler = new EventHandler(this);
         this.screenHandler = new ScreenHandler(this, this.renderCallback);
     }
@@ -74,6 +77,18 @@ export class Game {
 
     getBottomWall() {
         return this.walls[this.walls.length - 1];
+    }
+
+    getLives() {
+        return this.lives;
+    }
+
+    loseOneLife() {
+        this.lives--;
+
+        if (this.lives <= 0) {
+            this.toggleGameOver();
+        }
     }
 
     executeStep() {
@@ -215,7 +230,7 @@ export class Game {
         }
     }
 
-    toggleRestartGame() {
+    toggleRestartStage() {
         this.getHitter().resetPosition();
         this.getBrickArea().resetBrickArea();
         this.deleteAllPowerUps();
@@ -225,6 +240,23 @@ export class Game {
 
         this.pausedGame = false;
         this.startGame = false;
+    }
+
+    toggleRestartGame() {
+        this.currentStage = 1;
+        this.lives = this.initialLives;
+        this.bricksAnimateDestruction = [];
+        this.pausedGame = false;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
+        this.getBrickArea().deleteBrickArea();
+        this.stage = new Stage(this.currentStage, this.scene);
+        this.brickArea = new BrickArea(this.scene, this.stage);
+        this.getBrickArea().buildBrickArea(this.scene);
     }
 
     toggleEndGame() {
@@ -237,6 +269,20 @@ export class Game {
         this.getHitter().resetPosition();
         this.getBall().resetPosition();
         this.pausedGame = true;
+    }
+
+    toggleGameOver() {
+        if (this.lives > 0) {
+            return;
+        }
+
+        this.screenHandler.showGameOverScreen();
+
+        this.pausedGame = true;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
     }
 
     nextStage() {

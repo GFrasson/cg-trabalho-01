@@ -179,6 +179,7 @@ export class Ball {
             const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
             this.resetPosition(ballOverHitterPosition);
             game.deleteAllPowerUps();
+            game.loseOneLife();
         }
     }
 
@@ -275,7 +276,6 @@ export class Ball {
     getOverHitterPosition(hitterPosition) {
         const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
         ballOverHitterPosition.z -= 2;
-        // ballOverHitterPosition.x += 2.5;
 
         return ballOverHitterPosition;
     }

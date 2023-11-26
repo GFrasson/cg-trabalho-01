@@ -71,7 +71,8 @@ button:hover {
 #starting-screen .game-title,
 #game-paused-screen .game-paused-content .game-paused-title,
 #stage-complete-screen .stage-complete-content .stage-complete-title, 
-#end-game-screen .end-game-content .end-game-title {
+#end-game-screen .end-game-content .end-game-title,
+#game-over-screen .game-over-content .game-over-title {
     color: #FFFFFF;
     text-transform: uppercase;
     font-size: 2.5rem;
@@ -91,7 +92,8 @@ button:hover {
 
 #game-paused-screen,
 #stage-complete-screen, 
-#end-game-screen {
+#end-game-screen,
+#game-over-screen {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -109,7 +111,8 @@ button:hover {
 
 #game-paused-screen .game-paused-content,
 #stage-complete-screen .stage-complete-content, 
-#end-game-screen .end-game-content {
+#end-game-screen .end-game-content,
+#game-over-screen .game-over-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -126,7 +129,8 @@ button:hover {
 
 #game-paused-screen .game-paused-content .buttons-container,
 #stage-complete-screen .stage-complete-content .buttons-container, 
-#end-game-screen .end-game-content .buttons-container {
+#end-game-screen .end-game-content .buttons-container,
+#game-over-screen .game-over-content .buttons-container {
     width: 100%;
     height: auto;
     display: flex;

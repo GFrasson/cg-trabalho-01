@@ -40,7 +40,7 @@ export class EventHandler {
                     break;
                 case 'r':
                     if (this.game.startGame) {
-                        this.game.toggleRestartGame();
+                        this.game.toggleRestartStage();
                     }
                     break;
                 case ' ': // Space

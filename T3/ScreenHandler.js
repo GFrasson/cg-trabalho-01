@@ -6,12 +6,18 @@ export class ScreenHandler {
 
     listenScreenEvents() {
         this.listenStartGameButtonClick();
+        this.listenRestartStageButtonClick();
         this.listenRestartGameButtonClick();
         this.listenNextStageButtonClick();
+        this.listenCelebrateButtonClick();
     }
 
     listenStartGameButtonClick() {
         document.getElementById('startButton').addEventListener('click', () => this.onStartGameButtonClick());
+    }
+
+    listenRestartStageButtonClick() {
+        document.getElementById('restart-stage').addEventListener('click', () => this.onRestartStageButtonClick());
     }
 
     listenRestartGameButtonClick() {
@@ -22,6 +28,10 @@ export class ScreenHandler {
         document.getElementById('next-stage').addEventListener('click', () => this.onNextStageButtonClick());
     }
 
+    listenCelebrateButtonClick() {
+        document.getElementById('celebrate').addEventListener('click', () => new JSConfetti().addConfetti());
+    }
+
     onStartGameButtonClick() {
         this.game.eventHandler.listenMousedownEvent();
         this.game.gameScreen = true;
@@ -30,8 +40,13 @@ export class ScreenHandler {
         this.renderCallback();
     }
 
-    onRestartGameButtonClick() {
+    onRestartStageButtonClick() {
         this.hideGamePausedScreen();
+        this.game.toggleRestartStage();
+    }
+
+    onRestartGameButtonClick() {
+        this.hideGameOverScreen();
         this.game.toggleRestartGame();
     }
 
@@ -78,5 +93,15 @@ export class ScreenHandler {
     hideEndGameScreen() {
         const endGameScreen = document.querySelector('#end-game-screen');
         endGameScreen.style.display = 'none';
+    }
+
+    showGameOverScreen() {
+        const gameOverScreen = document.querySelector('#game-over-screen');
+        gameOverScreen.style.display = 'flex';
+    }
+
+    hideGameOverScreen() {
+        const gameOverScreen = document.querySelector('#game-over-screen');
+        gameOverScreen.style.display = 'none';
     }
 }
