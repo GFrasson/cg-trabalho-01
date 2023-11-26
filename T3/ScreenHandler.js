@@ -37,6 +37,7 @@ export class ScreenHandler {
         this.game.gameScreen = true;
     
         this.hideStartingScreen();
+        this.showLivesIndicator();
         this.renderCallback();
     }
 
@@ -103,5 +104,15 @@ export class ScreenHandler {
     hideGameOverScreen() {
         const gameOverScreen = document.querySelector('#game-over-screen');
         gameOverScreen.style.display = 'none';
+    }
+
+    showLivesIndicator() {
+        const livesIndicator = document.getElementById('lives-indicator-container');
+        livesIndicator.style.visibility = 'visible';
+    }
+
+    updateLivesIndicator() {
+        const livesIndicator = document.getElementById('lives-indicator');
+        livesIndicator.style.transform = `translateX(-${2.1 * (this.game.initialLives - this.game.lives)}rem)`;
     }
 }

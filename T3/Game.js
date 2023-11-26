@@ -86,6 +86,7 @@ export class Game {
     loseOneLife() {
         this.lives--;
 
+        this.screenHandler.updateLivesIndicator();
         if (this.lives <= 0) {
             this.toggleGameOver();
         }
@@ -245,6 +246,7 @@ export class Game {
     toggleRestartGame() {
         this.currentStage = 1;
         this.lives = this.initialLives;
+        this.screenHandler.updateLivesIndicator();
         this.bricksAnimateDestruction = [];
         this.pausedGame = false;
         this.startGame = false;

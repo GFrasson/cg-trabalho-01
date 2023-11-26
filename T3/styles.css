@@ -141,3 +141,34 @@ button:hover {
 #game-paused-screen .game-paused-content .buttons-container #restart-game {
     margin-right: 1rem;
 }
+
+#lives-indicator-container {
+    visibility: hidden;
+    width: calc(5 * 2rem + 4 * 0.1rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    position: absolute;
+    gap: 0.1rem;
+    top: 0.5rem;
+    right: 0.5rem;
+    overflow: hidden;
+
+    transition: all 0.5s;
+}
+
+#lives-indicator {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.1rem;
+    height: 100%;
+    width: 100%;
+    transition: all 0.5s;
+}
+
+#lives-indicator img {
+    width: 2rem;
+    height: 2rem;
+}
