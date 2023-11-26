@@ -62,11 +62,11 @@ var dragControl = new DragControls(objects, camera, renderer.domElement);
 
 // add event listener to highlight dragged objects
 dragControl.addEventListener('dragstart', function (event) {
-    event.object.material.emissive.set(0x333333);
+    //event.object.material.emissive.set(0x333333);
 });
 
 dragControl.addEventListener('dragend', function (event) {
-    event.object.material.emissive.set(0x000000);
+    //event.object.material.emissive.set(0x000000);
 });
 
 render();

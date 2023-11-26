@@ -27,7 +27,7 @@ export class EventHandler {
     listenMousemoveEvent() {
         window.addEventListener('mousemove', (event) => {
             if (!this.game.pausedGame) {
-                this.game.getBackground().onMouseMove(event, this.game.getCamera(), this.game.getHitter());
+                //this.game.getBackground().onMouseMove(event, this.game.getCamera(), this.game.getHitter());
 
                 const ball = this.game.getBall();
                 if (!ball.isLauched) {

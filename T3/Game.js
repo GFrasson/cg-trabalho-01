@@ -7,6 +7,7 @@ import { Wall } from './entities/Wall.js';
 import { EventHandler } from './EventHandler.js';
 import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
+import { HitterWithDrag } from './entities/HitterWithDrag.js';
 import { Stage } from './entities/Stage.js';
 import { PowerUp } from './entities/PowerUp.js';
 
@@ -16,7 +17,8 @@ export class Game {
         this.camera = camera;
         this.renderCallback = renderCallback;
         this.scene = scene;
-        this.hitterCSG = new HitterCSG(scene);
+        //this.hitterCSG = new HitterCSG(scene);
+        this.hitterCSG = new HitterWithDrag(scene, camera.camera, renderer);
         this.currentStage = 1;
         this.stage = new Stage(this.currentStage, scene);
 
