@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+import { SecondaryBox } from "../libs/util/util.js";
 
+import { Camera } from './entities/Camera.js';
 import { Ball } from './entities/Ball.js';
 import { Background } from './entities/Background.js';
 import { BrickArea } from './entities/BrickArea.js';
@@ -12,16 +14,23 @@ import { PowerUp } from './entities/PowerUp.js';
 
 
 export class Game {
-    constructor(camera, renderCallback, scene) {
-        this.camera = camera;
-        this.renderCallback = renderCallback;
-        this.scene = scene;
+    static instance = null;
+
+    constructor() {
+        this.camera = new Camera();
+        this.createRenderer();
+
+        this.scene = new THREE.Scene();
+
+        this.createAmbientLight();
+        this.createDirectionalLight();
+
         this.hitterCSG = new HitterCSG();
         this.currentStage = 1;
-        this.stage = new Stage(this.currentStage, scene);
+        this.stage = new Stage(this.currentStage, this.scene);
 
         this.background = new Background();
-        this.brickArea = new BrickArea(scene, this.stage);
+        this.brickArea = new BrickArea(this.scene, this.stage);
 
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
@@ -44,8 +53,25 @@ export class Game {
 
         this.timeIntervalIdToUpdateBallSpeed = null;
 
-        this.eventHandler = new EventHandler(this);
-        this.screenHandler = new ScreenHandler(this, this.renderCallback);
+        this.eventHandler = new EventHandler();
+        this.screenHandler = new ScreenHandler();
+
+        this.addObjectsToScene();
+
+        this.eventHandler.listenResizeEvent(this.renderer);
+        this.eventHandler.listenKeydownEvent();
+        this.eventHandler.listenMousemoveEvent();
+
+        this.screenHandler.listenScreenEvents();
+        this.createBallSpeedInfo();
+    }
+
+    static getInstance() {
+        if (Game.instance === null) {
+            Game.instance = new Game();
+        }
+
+        return Game.instance;
     }
 
     getCamera() {
@@ -76,6 +102,48 @@ export class Game {
         return this.walls[this.walls.length - 1];
     }
 
+    createRenderer() {
+        this.renderer = new THREE.WebGLRenderer();
+        document.getElementById("webgl-output").appendChild(this.renderer.domElement);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.VSMShadowMap;
+        this.renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
+        this.renderer.setSize(window.innerHeight * this.camera.aspectRatio, window.innerHeight);
+    }
+
+    createAmbientLight() {
+        const ambientLight = new THREE.AmbientLight('white', 0.45);
+        this.scene.add(ambientLight);
+    }
+
+    createDirectionalLight() {
+        const directionalLightPosition = new THREE.Vector3(22, 50, -40);
+        this.directionalLight = new THREE.DirectionalLight('white', 0.6);
+        this.directionalLight.position.copy(directionalLightPosition);
+        this.directionalLight.castShadow = true;
+        
+        this.directionalLight.shadow.mapSize.width = 2048;
+        this.directionalLight.shadow.mapSize.height = 2048;
+        this.directionalLight.shadow.camera.near = 0.1;
+        this.directionalLight.shadow.camera.far = 110;
+        this.directionalLight.shadow.camera.left = -45;
+        this.directionalLight.shadow.camera.right = 45;
+        this.directionalLight.shadow.camera.bottom = -40;
+        this.directionalLight.shadow.camera.top = 40;
+        this.directionalLight.shadow.bias = -0.0005;
+        this.directionalLight.shadow.radius = 1.0;
+        
+        this.scene.add(this.directionalLight);
+    }
+
+    createBallSpeedInfo() {
+        this.ballSpeedSecondaryBox = new SecondaryBox();
+        this.ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
+        this.ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
+    }
+
+    render() {}
+
     executeStep() {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
@@ -101,19 +169,19 @@ export class Game {
         }
     }
 
-    addObjectsToScene(scene) {
-        scene.add(this.getBackground().getTHREEObject());
+    addObjectsToScene() {
+        this.scene.add(this.getBackground().getTHREEObject());
 
-        this.getBrickArea().buildBrickArea(scene);
+        this.getBrickArea().buildBrickArea(this.scene);
 
-        scene.add(this.getBall().getTHREEObject());
+        this.scene.add(this.getBall().getTHREEObject());
 
         this.getWalls().forEach(wall => {
-            scene.add(wall.getTHREEObject());
+            this.scene.add(wall.getTHREEObject());
         });
 
-        scene.add(this.hitterCSG.hitterMesh);
-        scene.add(this.hitterCSG.sphere);
+        this.scene.add(this.hitterCSG.hitterMesh);
+        this.scene.add(this.hitterCSG.sphere);
     }
 
     addPowerUp(position) {

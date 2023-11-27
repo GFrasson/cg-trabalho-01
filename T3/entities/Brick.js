@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { game } from '../index.js';
+import { Game } from '../Game.js';
 
 export class Brick {
     static bricksDestroyedAtCurrentStage = 0;
@@ -37,13 +37,13 @@ export class Brick {
             this.life -= 1;
             if (this.life <= 0) {
                 this.visible = false;
-                game.bricksAnimateDestruction.push(this);
+                Game.getInstance().bricksAnimateDestruction.push(this);
                 Brick.bricksDestroyedAtCurrentStage += 1;
                 if (
                     Brick.bricksDestroyedAtCurrentStage > 0 &&
                     Brick.bricksDestroyedAtCurrentStage % Brick.spawnPowerUpOnBricksDestroyed === 0
                 ) {
-                    game.addPowerUp(this.block.position);
+                    Game.getInstance().addPowerUp(this.block.position);
                 }
             } else {
                 this.block.material.opacity = 0.8;
@@ -60,8 +60,8 @@ export class Brick {
             this.block.scale.y <= scaleDownFactor ||
             this.block.scale.z <= scaleDownFactor
         ) {
-            game.deleteBrickAnimation(this);
-            game.scene.remove(this.block);
+            Game.getInstance().deleteBrickAnimation(this);
+            Game.getInstance().scene.remove(this.block);
             return;
         }
 

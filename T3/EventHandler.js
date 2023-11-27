@@ -1,15 +1,15 @@
+import { Game } from "./Game.js";
+
 export class EventHandler {
-    constructor(game) {
-        this.game = game;
-    }
+    constructor() {}
 
     listenMousedownEvent() {
         window.addEventListener('mousedown', (event) => {
             if (event.button === 0) {
-                if (!this.game.startGame) {
-                    this.game.toggleStartGame();
-                } else if (!this.game.getBall().isLauched) {
-                    this.game.getBall().launch(() => this.game.startTimerToUpdateBallSpeed());
+                if (!Game.getInstance().startGame) {
+                    Game.getInstance().toggleStartGame();
+                } else if (!Game.getInstance().getBall().isLauched) {
+                    Game.getInstance().getBall().launch(() => Game.getInstance().startTimerToUpdateBallSpeed());
                 }
             }
         });
@@ -17,12 +17,12 @@ export class EventHandler {
 
     listenMousemoveEvent() {
         window.addEventListener('mousemove', (event) => {
-            if (!this.game.pausedGame) {
-                this.game.getBackground().onMouseMove(event, this.game.getCamera(), this.game.getHitter());
+            if (!Game.getInstance().pausedGame) {
+                Game.getInstance().getBackground().onMouseMove(event, Game.getInstance().getCamera(), Game.getInstance().getHitter());
 
-                const ball = this.game.getBall();
+                const ball = Game.getInstance().getBall();
                 if (!ball.isLauched) {
-                    const hitterPosition = this.game.getHitter().getPosition();
+                    const hitterPosition = Game.getInstance().getHitter().getPosition();
                     const ballTHREEObject = ball.getTHREEObject();
                     ballTHREEObject.position.copy(hitterPosition);
                     ballTHREEObject.position.z -= 2;
@@ -36,20 +36,20 @@ export class EventHandler {
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'Enter':
-                    this.game.toggleFullScreen();
+                    Game.getInstance().toggleFullScreen();
                     break;
                 case 'r':
-                    if (this.game.startGame) {
-                        this.game.toggleRestartGame();
+                    if (Game.getInstance().startGame) {
+                        Game.getInstance().toggleRestartGame();
                     }
                     break;
                 case ' ': // Space
-                    if (this.game.gameScreen) {
-                        this.game.togglePauseGame();
+                    if (Game.getInstance().gameScreen) {
+                        Game.getInstance().togglePauseGame();
                     }
                     break;
                 case 'g':
-                    this.game.nextStage();
+                    Game.getInstance().nextStage();
                     break;
                 default:
                     break;
@@ -60,7 +60,7 @@ export class EventHandler {
     listenResizeEvent(renderer) {
         window.addEventListener(
             'resize',
-            () => this.game.getCamera().onWindowResize(renderer, window.innerHeight * this.game.getCamera().aspectRatio, window.innerHeight),
+            () => Game.getInstance().getCamera().onWindowResize(renderer, window.innerHeight * Game.getInstance().getCamera().aspectRatio, window.innerHeight),
             false
         );
     }

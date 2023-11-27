@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { game } from '../index.js';
+import { Game } from '../Game.js';
 
 export class PowerUp {
     constructor(initialPosition) {
@@ -59,8 +59,8 @@ export class PowerUp {
     }
 
     collect() {
-        game.deletePowerUp(this);
-        game.duplicateBall();
+        Game.getInstance().deletePowerUp(this);
+        Game.getInstance().duplicateBall();
     }
 
     destroyPowerUpWhenCollideBottomWall() {
@@ -69,14 +69,14 @@ export class PowerUp {
             return;
         }
 
-        game.deletePowerUp(this);
+        Game.getInstance().deletePowerUp(this);
     }
 
     checkCollisionWithHitter() {
-        return this.boundingBox.intersectsSphere(game.getHitter().getBoundingSphere());
+        return this.boundingBox.intersectsSphere(Game.getInstance().getHitter().getBoundingSphere());
     }
 
     checkCollisionWithBottomWall() {
-        return this.boundingBox.intersectsBox(game.getBottomWall().getBoundingBox());
+        return this.boundingBox.intersectsBox(Game.getInstance().getBottomWall().getBoundingBox());
     }
 }

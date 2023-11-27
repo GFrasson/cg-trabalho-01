@@ -1,8 +1,7 @@
+import { Game } from "./Game.js";
+
 export class ScreenHandler {
-    constructor(game, renderCallback) {
-        this.game = game;
-        this.renderCallback = renderCallback;
-    }
+    constructor() {}
 
     listenScreenEvents() {
         this.listenStartGameButtonClick();
@@ -23,21 +22,21 @@ export class ScreenHandler {
     }
 
     onStartGameButtonClick() {
-        this.game.eventHandler.listenMousedownEvent();
-        this.game.gameScreen = true;
+        Game.getInstance().eventHandler.listenMousedownEvent();
+        Game.getInstance().gameScreen = true;
     
         this.hideStartingScreen();
-        this.renderCallback();
+        Game.getInstance().render();
     }
 
     onRestartGameButtonClick() {
         this.hideGamePausedScreen();
-        this.game.toggleRestartGame();
+        Game.getInstance().toggleRestartGame();
     }
 
     onNextStageButtonClick() {
         this.hideStageCompleteScreen();
-        this.game.nextStage();
+        Game.getInstance().nextStage();
     }
 
     showGamePausedScreen() {

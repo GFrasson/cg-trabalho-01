@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { setDefaultMaterial } from '../../libs/util/util.js';
-import { game } from '../index.js';
 import { Brick } from './Brick.js';
+import { Game } from '../Game.js';
 
 export class Ball {
     static timePassedFromLaunchInMilliseconds = 0;
@@ -55,7 +55,7 @@ export class Ball {
     move() {
         const distanceToTranslate = 0.1;
         for (let i = 0; i < Ball.speed * 10; i += distanceToTranslate * 10) {
-            if (!game.balls.includes(this)) {
+            if (!Game.getInstance().balls.includes(this)) {
                 break;
             }
 
@@ -72,7 +72,7 @@ export class Ball {
     }
 
     collisionsDetection() {
-        game.getWalls().forEach(wall => {
+        Game.getInstance().getWalls().forEach(wall => {
             if (wall.direction !== 'bottom') {
                 this.bounceWhenCollide(wall.boundingBox);
             }
@@ -80,13 +80,13 @@ export class Ball {
 
         this.resetWhenCollideBottomWall();
 
-        this.bounceWhenCollideNormal(game.getHitter().boundingSphere);
+        this.bounceWhenCollideNormal(Game.getInstance().getHitter().boundingSphere);
 
-        for (let i = 0; i < game.stage.rows; i++) {
-            for (let j = 0; j < game.stage.columns; j++) {
-                const brick = game.getBrickArea().bricks[i][j];
+        for (let i = 0; i < Game.getInstance().stage.rows; i++) {
+            for (let j = 0; j < Game.getInstance().stage.columns; j++) {
+                const brick = Game.getInstance().getBrickArea().bricks[i][j];
                 if (brick.visible)
-                    this.bounceWhenCollide(brick.boundingBox, brick, game.getBrickArea());
+                    this.bounceWhenCollide(brick.boundingBox, brick, Game.getInstance().getBrickArea());
             }
         }
     }
@@ -171,14 +171,14 @@ export class Ball {
             return;
         }
 
-        if (game.balls.length > 1) {
-            game.deleteBall(this);
+        if (Game.getInstance().balls.length > 1) {
+            Game.getInstance().deleteBall(this);
             Brick.bricksDestroyedAtCurrentStage = 0;
         } else {
-            const hitterPosition = game.getHitter().getPosition();
+            const hitterPosition = Game.getInstance().getHitter().getPosition();
             const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
             this.resetPosition(ballOverHitterPosition);
-            game.deleteAllPowerUps();
+            Game.getInstance().deleteAllPowerUps();
         }
     }
 
@@ -210,7 +210,7 @@ export class Ball {
     }
 
     checkCollisionWithBottomWall() {
-        return this.boundingSphere.intersectsBox(game.getBottomWall().getBoundingBox());
+        return this.boundingSphere.intersectsBox(Game.getInstance().getBottomWall().getBoundingBox());
     }
 
     getNormalVectorFromCollidedFace(collidedObjectBoundingBox) {
@@ -314,7 +314,7 @@ export class Ball {
     }
 
     resetPosition(newPosition = null) {
-        this.sphere.position.copy(newPosition || this.getOverHitterPosition(game.getHitter().getPosition()));
+        this.sphere.position.copy(newPosition || this.getOverHitterPosition(Game.getInstance().getHitter().getPosition()));
         this.updateBoundingSphere();
 
         this.direction = new THREE.Vector3(0.0, 0.0, -1.0).normalize();
