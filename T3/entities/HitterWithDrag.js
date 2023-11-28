@@ -28,9 +28,6 @@ export class HitterWithDrag {
         this.csgObject = this.cubeCSG.intersect(this.cylinderCSG)
         this.hitterMesh = CSG.toMesh(this.csgObject, this.auxMat)
 
-     
-        this.texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
-        
         this.constructTexture(scene);
 
         this.hitterMesh.material = new THREE.MeshPhongMaterial({
@@ -76,56 +73,57 @@ export class HitterWithDrag {
 
     constructTexture(scene) {
         let v = [
-            -7.5, -2.0, 0.0, // 0
-            -6.0, -0.5, 0.0, // 1
-            -4.5, 0.5, 0.0,  // 2 
-            -2.5, 1.5, 0.0,  // 3 
-            -1.0,  2.0, 0.0, // 4 
-             0.0, -2.0, 0.0, // 5 MEIO
-             1.0,  2.0, 0.0, // 6 
-             2.5,  1.5, 0.0, // 7 
-             4.5,  0.5, 0.0, // 8 
-             6.0, -0.5, 0.0, // 9
-             7.5, -2.0, 0.0, // 10 
-            ];
-               
-          
-            // Create the triangular faces
-            // In this example we have 3 triangular faces
-            let f =  [
-              0, 1, 5,
-              1, 2, 5,
-              2, 3, 5,
-              3, 4 ,5,
-              4, 6, 5,
-              6, 7, 5,
-              7, 8, 5,
-              8, 9, 5,
-              9, 10, 5, 
-            ];
-          
-            const n = v;
-          
-            var vertices = new Float32Array( v );
-            var normals = new Float32Array( n );  
-            var indices = new Uint32Array( f );
+            -6.3, -2.0, 0.0, // 0
+            -5.5, -1.0, 0.0, // 1
+            -4.5, 0.2, 0.0,  // 2 
+            -3.0, 0.8, 0.0,  // 3 
+            -1.0, 1.5, 0.0, // 4 
+            0.0, -2.0, 0.0, // 5 MEIO
+            1.0, 1.5, 0.0, // 6 
+            3.0, 0.8, 0.0, // 7 
+            4.5, 0.2, 0.0, // 8 
+            5.5, -1.0, 0.0, // 9
+            6.3, -2.0, 0.0, // 10 
+        ];
 
-            let geometry = new THREE.BufferGeometry();
-          
-            geometry.setAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) ); 
-            geometry.setAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) ); 
-            geometry.setIndex( new THREE.BufferAttribute( indices, 1 ) );
-            geometry.computeVertexNormals(); 
-          
-            let material = new THREE.MeshPhongMaterial({color:"rgb(255,255,255)"});
-            material.side =  THREE.DoubleSide; 
-            material.flatShading = true;
-            const mesh = new THREE.Mesh( geometry, material );
-            mesh.rotation.x = Math.PI / -2;
-            mesh.position.set(0, 2, 40)
-            this.setTexture(mesh);
-            scene.add(mesh);
-gi
+        let f = [
+            0, 1, 5,
+            1, 2, 5,
+            2, 3, 5,
+            3, 4, 5,
+            4, 6, 5,
+            6, 7, 5,
+            7, 8, 5,
+            8, 9, 5,
+            9, 10, 5,
+        ];
+
+        const n = v;
+        var vertices = new Float32Array(v);
+        var normals = new Float32Array(n);
+        var indices = new Uint32Array(f);
+        let geometry = new THREE.BufferGeometry();
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+        geometry.computeVertexNormals();
+
+        let material = new THREE.MeshPhongMaterial({ color: "rgb(255,255,255)" });
+        material.side = THREE.DoubleSide;
+        material.flatShading = true;
+        this.meshTextureTop = new THREE.Mesh(geometry, material);
+        this.meshTextureTop.rotation.x = Math.PI / -2;
+        this.meshTextureTop.position.set(0, 2, 40.2)
+        this.meshTextureTop.material.opacity = 0.5
+        this.setTexture(this.meshTextureTop);
+
+        let geometry2 = new THREE.BoxGeometry(12.5, 2, 0);
+        this.meshTextureBack = new THREE.Mesh(geometry2, material);
+        this.meshTextureBack.position.set(0, 1, 42.2)
+
+        scene.add(this.meshTextureBack);
+        scene.add(this.meshTextureTop);
     }
 
     loadGLBFile(asset, file, desiredScale, scene) {
@@ -160,11 +158,7 @@ gi
     fixPositionAsset(obj) {
         var box = new THREE.Box3().setFromObject(obj);
         obj.rotation.y += Math.PI / 90;
-        obj.position.set(0, 0, 47)
-        if (box > 0)
-            obj.translateY(-box.min.y);
-        else
-            obj.translateY(-1 * box.min.y);
+        obj.position.set(0, -8, 47)
         return obj;
     }
 
@@ -182,15 +176,27 @@ gi
         if (this.assetObj !== undefined) {
             this.assetObj.position.set(pointX, -8, 47)
         }
+        if (this.meshTextureTop !== undefined) {
+            this.meshTextureTop.position.set(pointX, 2, 40.2);
+        }
+        if(this.meshTextureBack !== undefined) {
+            this.meshTextureBack.position.set(pointX, 1, 42.2)
+        }
         this.updateBoundingBox();
     }
 
     resetPosition() {
         this.hitterMesh.position.set(0, 1, 40)
-        this.sphere.position.set(0, 1, 46.5)
+        this.sphere.position.set(0, 1, 47)
         this.updateBoundingBox();
         if (this.assetObj !== undefined) {
             this.assetObj.position.set(0, -8, 47)
+        }
+        if (this.meshTextureTop !== undefined) {
+            this.meshTextureTop.position.set(0, 2, 40.2);
+        }
+        if(this.meshTextureBack !== undefined) {
+            this.meshTextureBack.position.set(0, 1, 42.2)
         }
     }
 
@@ -201,28 +207,24 @@ gi
     setTexture(mesh) {
         let geometry = mesh.geometry;
         let material = mesh.material;
-      
-        // You must set an individual UV coordinate for each vertex of your scene
-        // Learn more here:
-        // https://discoverthreejs.com/book/first-steps/textures-intro/
+
         var uvCoords = [
-        0.0, 0.0,   // 0
-        0.2, 0.5,   // 1
-        0.4, 0.0,   // 2
-        0.6, 0.5,   // 3
-        0.8, 0.0,   // 4
-        1.0, 0.5,   // 5 (MEIO)
-        0.8, 0.0,   // 6
-        0.6, 0.5,   // 7
-        0.4, 0.0,   // 8
-        0.2, 0.5,   
-        0.0, 0.0]; 
-      
-        geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( uvCoords), 2 ) );
-      
-        // Load the texture and set to the material of the mesh
+            0.0, 0.0,   // 0
+            0.2, 0.5,   // 1
+            0.4, 0.0,   // 2
+            0.6, 0.5,   // 3
+            0.8, 0.0,   // 4
+            1.0, 0.5,   // 5 (MEIO)
+            0.8, 0.0,   // 6
+            0.6, 0.5,   // 7
+            0.4, 0.0,   // 8
+            0.2, 0.5,
+            0.0, 0.0];
+
+        geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvCoords), 2));
+
         let texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
-        material.map =  texture;
+        material.map = texture;
     }
 
 
