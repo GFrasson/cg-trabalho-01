@@ -5,8 +5,9 @@ import { Ball } from './Ball.js';
 export class PowerUp {
     static lastPowerUpSpawned = null;
 
-    constructor(initialPosition) {
+    constructor(initialPosition, textureFilePath) {
         this.initialPosition = initialPosition;
+        this.textureFilePath = textureFilePath;
         this.direction = new THREE.Vector3(0, 0, 1).normalize();
         this.speed = 0.4;
 
@@ -15,10 +16,8 @@ export class PowerUp {
 
     createTHREEObject() {
         this.capsuleGeometry = new THREE.CapsuleGeometry(1, 3, 4, 20);
-        this.capsuleMaterial = new THREE.MeshPhongMaterial({
-            color: "gray",
-            shininess: "200",
-            specular: "rgb(255, 255, 255)",
+        this.capsuleMaterial = new THREE.MeshLambertMaterial({
+            color: "white",
         });
         this.capsule = new THREE.Mesh(this.capsuleGeometry, this.capsuleMaterial);
         this.capsule.castShadow = true;
@@ -34,7 +33,8 @@ export class PowerUp {
     }
     
     move() {
-        this.capsule.translateZ(this.direction.z * this.speed);
+        this.capsule.position.z += this.direction.z * this.speed;
+        this.capsule.rotateY(-0.1);        
         this.updateColor();
         this.updateBoundingBox();
         this.collisionsDetection();
@@ -84,9 +84,20 @@ export class PowerUp {
         return game.balls.length === 1 && !Ball.isDrillMode;
     }
 
+    addTexture() {
+        const object = this.getTHREEObject();
+        const textureLoader = new THREE.TextureLoader();
+        
+        object.material.map = textureLoader.load(this.textureFilePath);
+        object.material.map.wrapS = THREE.RepeatWrapping;
+        object.material.map.wrapT = THREE.RepeatWrapping;
+        object.material.map.minFilter = THREE.LinearFilter;
+        object.material.map.magFilter = THREE.LinearFilter;
+        object.material.map.rotation = -Math.PI / 2;
+        object.material.map.repeat.set(9, 1);
+    }
+
     updateColor() {}
 
     powerUpAction() {}
-
-    addTexture() {}
 }

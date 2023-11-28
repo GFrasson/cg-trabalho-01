@@ -9,7 +9,7 @@ export class DrillPowerUp extends PowerUp {
     static timeIntervalId = null;
 
     constructor(initialPosition) {
-        super(initialPosition);
+        super(initialPosition, './assets/drill-power-up-texture.png');
     }
 
     powerUpAction() {
@@ -56,7 +56,7 @@ export class DrillPowerUp extends PowerUp {
         object.material.color.setRGB(
             Math.abs(Math.sin(object.position.z / 5)),
             Math.abs(Math.cos(object.position.z / 5)),
-            Math.abs(Math.sinh(object.position.z / 5))
+            Math.abs(Math.tanh(object.position.z / 5))
         );
     }
 }
