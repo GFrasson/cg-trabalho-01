@@ -11,6 +11,9 @@ import { ScreenHandler } from './ScreenHandler.js';
 import { HitterCSG } from './entities/HitterCSG.js';
 import { Stage } from './entities/Stage.js';
 import { PowerUp } from './entities/PowerUp.js';
+import { AddBallsPowerUp } from './entities/AddBallsPowerUp.js';
+import { DrillPowerUp } from './entities/DrillPowerUp.js';
+import { Brick } from './entities/Brick.js';
 
 
 export class Game {
@@ -52,6 +55,9 @@ export class Game {
         this.startGame = false;
 
         this.timeIntervalIdToUpdateBallSpeed = null;
+
+        this.initialLives = 5;
+        this.lives = this.initialLives;
 
         this.eventHandler = new EventHandler();
         this.screenHandler = new ScreenHandler();
@@ -144,6 +150,19 @@ export class Game {
 
     render() {}
 
+    getLives() {
+        return this.lives;
+    }
+
+    loseOneLife() {
+        this.lives--;
+
+        this.screenHandler.updateLivesIndicator();
+        if (this.lives <= 0) {
+            this.toggleGameOver();
+        }
+    }
+
     executeStep() {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
@@ -185,11 +204,15 @@ export class Game {
     }
 
     addPowerUp(position) {
-        if (this.balls.length > 1 || this.powerUps.length > 0) {
+        if (this.balls.length > 1 || this.powerUps.length > 0 || Ball.isDrillMode) {
             return;
         }
 
-        const powerUp = new PowerUp(position);
+        const powerUp = PowerUp.lastPowerUpSpawned instanceof AddBallsPowerUp
+            ? new DrillPowerUp(position)
+            : new AddBallsPowerUp(position);
+
+        PowerUp.lastPowerUpSpawned = powerUp;
 
         this.powerUps.push(powerUp);
         this.scene.add(powerUp.getTHREEObject());
@@ -205,26 +228,6 @@ export class Game {
             this.scene.remove(powerUp.getTHREEObject());
         });
         this.powerUps = [];
-    }
-
-    duplicateBall() {
-        if (this.balls.length > 1) {
-            return;
-        }
-
-        const originalBall = this.getBall();
-
-        const newBall = new Ball(originalBall.getTHREEObject().position);
-
-        newBall.setIsLaunched(originalBall.isLauched);
-
-        const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
-        newBallDirection.x += 0.2;
-        newBallDirection.normalize();
-        newBall.setDirection(newBallDirection);
-
-        this.balls.push(newBall);
-        this.scene.add(newBall.getTHREEObject());
     }
 
     deleteBall(ball) {
@@ -283,7 +286,7 @@ export class Game {
         }
     }
 
-    toggleRestartGame() {
+    toggleRestartStage() {
         this.getHitter().resetPosition();
         this.getBrickArea().resetBrickArea();
         this.deleteAllPowerUps();
@@ -295,18 +298,57 @@ export class Game {
         this.startGame = false;
     }
 
+    toggleRestartGame() {
+        this.currentStage = 1;
+        this.lives = this.initialLives;
+        this.screenHandler.updateLivesIndicator();
+        this.bricksAnimateDestruction = [];
+        this.pausedGame = false;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
+        this.getBrickArea().deleteBrickArea();
+        this.stage = new Stage(this.currentStage, this.scene);
+        this.brickArea = new BrickArea(this.scene, this.stage);
+        this.getBrickArea().buildBrickArea(this.scene);
+    }
+
     toggleEndGame() {
-        this.screenHandler.showStageCompleteScreen();
+        if (this.currentStage >= Stage.totalNumberOfStages) {
+            this.screenHandler.showEndGameScreen();
+        } else {
+            this.screenHandler.showStageCompleteScreen();
+        }
+        
         this.getHitter().resetPosition();
         this.getBall().resetPosition();
         this.pausedGame = true;
     }
 
-    nextStage() {
-        if (this.currentStage !== 1) {
+    toggleGameOver() {
+        if (this.lives > 0) {
             return;
         }
-        this.currentStage = 2;
+
+        this.screenHandler.showGameOverScreen();
+
+        this.pausedGame = true;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
+    }
+
+    nextStage() {
+        if (this.currentStage >= Stage.totalNumberOfStages) {
+            return;
+        }
+        this.currentStage++;
+        this.pausedGame = false;
+        this.startGame = false;
         this.getBrickArea().deleteBrickArea();
         this.bricksAnimateDestruction = [];
         this.stage = new Stage(this.currentStage, this.scene);
@@ -316,7 +358,5 @@ export class Game {
         this.deleteAllPowerUps();
         this.deleteDuplicatedBalls();
         this.getBall().resetPosition();
-        this.pausedGame = false;
-        this.startGame = false;
     }
 }

@@ -5,12 +5,18 @@ export class ScreenHandler {
 
     listenScreenEvents() {
         this.listenStartGameButtonClick();
+        this.listenRestartStageButtonClick();
         this.listenRestartGameButtonClick();
         this.listenNextStageButtonClick();
+        this.listenCelebrateButtonClick();
     }
 
     listenStartGameButtonClick() {
         document.getElementById('startButton').addEventListener('click', () => this.onStartGameButtonClick());
+    }
+
+    listenRestartStageButtonClick() {
+        document.getElementById('restart-stage').addEventListener('click', () => this.onRestartStageButtonClick());
     }
 
     listenRestartGameButtonClick() {
@@ -21,16 +27,26 @@ export class ScreenHandler {
         document.getElementById('next-stage').addEventListener('click', () => this.onNextStageButtonClick());
     }
 
+    listenCelebrateButtonClick() {
+        document.getElementById('celebrate').addEventListener('click', () => new JSConfetti().addConfetti());
+    }
+
     onStartGameButtonClick() {
         Game.getInstance().eventHandler.listenMousedownEvent();
         Game.getInstance().gameScreen = true;
     
         this.hideStartingScreen();
+        this.showLivesIndicator();
         Game.getInstance().render();
     }
 
-    onRestartGameButtonClick() {
+    onRestartStageButtonClick() {
         this.hideGamePausedScreen();
+        Game.getInstance().toggleRestartStage();
+    }
+
+    onRestartGameButtonClick() {
+        this.hideGameOverScreen();
         Game.getInstance().toggleRestartGame();
     }
 
@@ -67,5 +83,35 @@ export class ScreenHandler {
     hideStageCompleteScreen() {
         const stageCompleteScreen = document.querySelector('#stage-complete-screen');
         stageCompleteScreen.style.display = 'none';
+    }
+
+    showEndGameScreen() {
+        const endGameScreen = document.querySelector('#end-game-screen');
+        endGameScreen.style.display = 'flex';
+    }
+
+    hideEndGameScreen() {
+        const endGameScreen = document.querySelector('#end-game-screen');
+        endGameScreen.style.display = 'none';
+    }
+
+    showGameOverScreen() {
+        const gameOverScreen = document.querySelector('#game-over-screen');
+        gameOverScreen.style.display = 'flex';
+    }
+
+    hideGameOverScreen() {
+        const gameOverScreen = document.querySelector('#game-over-screen');
+        gameOverScreen.style.display = 'none';
+    }
+
+    showLivesIndicator() {
+        const livesIndicator = document.getElementById('lives-indicator-container');
+        livesIndicator.style.visibility = 'visible';
+    }
+
+    updateLivesIndicator() {
+        const livesIndicator = document.getElementById('lives-indicator');
+        livesIndicator.style.transform = `translateX(-${2.1 * (Game.getInstance().initialLives - Game.getInstance().lives)}rem)`;
     }
 }

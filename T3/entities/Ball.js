@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { setDefaultMaterial } from '../../libs/util/util.js';
-import { Brick } from './Brick.js';
 import { Game } from '../Game.js';
+import { Brick } from './Brick.js';
+import { DrillPowerUp } from './DrillPowerUp.js';
 
 export class Ball {
     static timePassedFromLaunchInMilliseconds = 0;
@@ -10,6 +10,7 @@ export class Ball {
     static maxSpeed = Ball.baseSpeed * 2;
     static speed = Ball.baseSpeed;
     static timeToMaxSpeedInSeconds = 15;
+    static isDrillMode = false;
 
     constructor(initialPosition) {
         this.initialPosition = initialPosition;
@@ -39,12 +40,11 @@ export class Ball {
 
     createTHREEObject() {
         this.sphereGeometry = new THREE.SphereGeometry(this.radius, 32, 16);
-        this.sphereMaterial = new THREE.MeshPhongMaterial
-            ({
-                color: "white",
-                shininess: "200",
-                specular: "rgb(255,255,255)"
-            });
+        this.sphereMaterial = new THREE.MeshPhongMaterial({
+            color: "white",
+            shininess: "200",
+            specular: "rgb(255,255,255)"
+        });
         this.sphere = new THREE.Mesh(this.sphereGeometry, this.sphereMaterial);
         this.sphere.castShadow = true;
         this.sphere.receiveShadow = true;
@@ -123,6 +123,10 @@ export class Ball {
                 if (brickArea !== null) {
                     brickArea.checkEndGame();
                 }
+
+                if (Ball.isDrillMode) {
+                    return;
+                }
             } else {
                 return;
             }
@@ -173,13 +177,15 @@ export class Ball {
 
         if (Game.getInstance().balls.length > 1) {
             Game.getInstance().deleteBall(this);
-            Brick.bricksDestroyedAtCurrentStage = 0;
         } else {
             const hitterPosition = Game.getInstance().getHitter().getPosition();
             const ballOverHitterPosition = this.getOverHitterPosition(hitterPosition);
             this.resetPosition(ballOverHitterPosition);
             Game.getInstance().deleteAllPowerUps();
+            Game.getInstance().loseOneLife();
         }
+
+        Brick.bricksDestroyedAtCurrentStage = 0;
     }
 
     isMovingDown() {
@@ -275,7 +281,6 @@ export class Ball {
     getOverHitterPosition(hitterPosition) {
         const ballOverHitterPosition = new THREE.Vector3().copy(hitterPosition);
         ballOverHitterPosition.z -= 2;
-        // ballOverHitterPosition.x += 2.5;
 
         return ballOverHitterPosition;
     }
@@ -321,9 +326,52 @@ export class Ball {
         this.isLauched = false;
         Ball.timePassedFromLaunchInMilliseconds = 0;
         Ball.resetTimeIntervalToUpdateSpeed();
+        
+        if (Ball.isDrillMode) {
+            Ball.stopDrillMode();
+            DrillPowerUp.stopDrillMode();
+        }
 
         Ball.speed = Ball.baseSpeed;
         this.lastReflectionNormalVector = null;
         this.lastReflectedObj = null;
+    }
+
+    static addTwoBalls() {
+        if (Game.getInstance().balls.length > 1) {
+            return;
+        }
+        
+        const newBallsAmount = 2;
+        const originalBall = Game.getInstance().getBall();
+        for (let i = 0; i < newBallsAmount; i++) {
+            const newBall = new Ball(originalBall.getTHREEObject().position);
+    
+            newBall.setIsLaunched(originalBall.isLauched);
+    
+            const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
+            newBallDirection.x += i % 2 === 0 ? 0.2 : -0.2;
+            newBallDirection.normalize();
+            newBall.setDirection(newBallDirection);
+    
+            Game.getInstance().balls.push(newBall);
+            Game.getInstance().scene.add(newBall.getTHREEObject());
+        }
+    }
+
+    static startDrillMode() {
+        Ball.isDrillMode = true;
+        
+        Game.getInstance().balls.forEach(ball => {
+            ball.getTHREEObject().material.color.set('red');
+        });
+    }
+
+    static stopDrillMode() {
+        Ball.isDrillMode = false;
+
+        Game.getInstance().balls.forEach(ball => {
+            ball.getTHREEObject().material.color.set('white');
+        });
     }
 }

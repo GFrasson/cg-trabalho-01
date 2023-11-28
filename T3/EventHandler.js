@@ -1,11 +1,12 @@
 import { Game } from "./Game.js";
+import { onWindowResize } from "../libs/util/util.js";
 
 export class EventHandler {
     constructor() {}
 
     listenMousedownEvent() {
         window.addEventListener('mousedown', (event) => {
-            if (event.button === 0) {
+            if (event.button === 0 && !Game.getInstance().pausedGame) {
                 if (!Game.getInstance().startGame) {
                     Game.getInstance().toggleStartGame();
                 } else if (!Game.getInstance().getBall().isLauched) {
@@ -40,7 +41,7 @@ export class EventHandler {
                     break;
                 case 'r':
                     if (Game.getInstance().startGame) {
-                        Game.getInstance().toggleRestartGame();
+                        Game.getInstance().toggleRestartStage();
                     }
                     break;
                 case ' ': // Space
@@ -60,7 +61,7 @@ export class EventHandler {
     listenResizeEvent(renderer) {
         window.addEventListener(
             'resize',
-            () => Game.getInstance().getCamera().onWindowResize(renderer, window.innerHeight * Game.getInstance().getCamera().aspectRatio, window.innerHeight),
+            () => onWindowResize(Game.getInstance().getCamera().getTHREECamera(), renderer),
             false
         );
     }
