@@ -41,17 +41,34 @@ function createCustomGeometry()
 {
   // Create all vertices of the object
   // In this example, we have five vertices
-  let v = [-4.0, -2.0, -1.5, // p0
-           -2.0,  2.0,  0.0, // p1 
-            0.0, -2.0,  1.5, // p2  
-            2.0,  2.0,  0.0, // p4
-            4.0, -2.0,  -1.5] // p3            
+  let v = [
+  -7.5, -2.0, 0.0, // 0
+  -6.0, -0.5, 0.0, // 1
+  -4.5, 0.5, 0.0,  // 2 
+  -2.5, 1.5, 0.0,  // 3 
+  -1.0,  2.0, 0.0, // 4 
+   0.0, -2.0, 0.0, // 5 MEIO
+   1.0,  2.0, 0.0, // 6 
+   2.5,  1.5, 0.0, // 7 
+   4.5,  0.5, 0.0, // 8 
+   6.0, -0.5, 0.0, // 9
+   7.5, -2.0, 0.0, // 10 
+  ];
+     
 
   // Create the triangular faces
   // In this example we have 3 triangular faces
-  let f =  [0, 2, 1,   
-            1, 2, 3,
-            4, 3, 2];
+  let f =  [
+    0, 1, 5,
+    1, 2, 5,
+    2, 3, 5,
+    3, 4 ,5,
+    4, 6, 5,
+    6, 7, 5,
+    7, 8, 5,
+    8, 9, 5,
+    9, 10, 5, 
+  ];
 
   // In this example normals = vertices because the center of the object is the origin. 
   // You may have to compute your normals manually.
@@ -91,11 +108,18 @@ function setTexture(mesh) {
   // You must set an individual UV coordinate for each vertex of your scene
   // Learn more here:
   // https://discoverthreejs.com/book/first-steps/textures-intro/
-  var uvCoords = [0.0, 0.0,
-                  0.3, 1.0,
-                  0.5, 0.0,
-                  0.7, 1.0,
-                  1.0, 0.0];
+  var uvCoords = [
+  0.0, 0.0,   // 0
+  0.2, 0.5,   // 1
+  0.4, 0.0,   // 2
+  0.6, 0.5,   // 3
+  0.8, 0.0,   // 4
+  1.0, 0.5,   // 5 (MEIO)
+  0.8, 0.0,   // 6
+  0.6, 0.5,   // 7
+  0.4, 0.0,   // 8
+  0.2, 0.5,   
+  0.0, 0.0]; 
 
   geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( uvCoords), 2 ) );
 
