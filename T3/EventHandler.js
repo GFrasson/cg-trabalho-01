@@ -1,3 +1,5 @@
+import { onWindowResize } from "../libs/util/util.js";
+
 export class EventHandler {
     constructor(game) {
         this.game = game;
@@ -51,6 +53,26 @@ export class EventHandler {
                 case 'g':
                     this.game.nextStage();
                     break;
+                case 'w':
+                    this.game.getCamera().getTHREECamera().position.z -= 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'a':
+                    this.game.getCamera().getTHREECamera().position.y -= 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 's':
+                    this.game.getCamera().getTHREECamera().position.z += 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
+                case 'd':
+                    this.game.getCamera().getTHREECamera().position.y += 1;
+                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
+
+                    break;
                 default:
                     break;
             }
@@ -60,7 +82,7 @@ export class EventHandler {
     listenResizeEvent(renderer) {
         window.addEventListener(
             'resize',
-            () => this.game.getCamera().onWindowResize(renderer, window.innerHeight * this.game.getCamera().aspectRatio, window.innerHeight),
+            () => onWindowResize(this.game.getCamera().getTHREECamera(), renderer),
             false
         );
     }
