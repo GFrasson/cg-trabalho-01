@@ -279,6 +279,8 @@ export class Game {
             return;
         }
         this.currentStage++;
+        this.pausedGame = false;
+        this.startGame = false;
         this.getBrickArea().deleteBrickArea();
         this.bricksAnimateDestruction = [];
         this.stage = new Stage(this.currentStage, this.scene);
@@ -288,7 +290,5 @@ export class Game {
         this.deleteAllPowerUps();
         this.deleteDuplicatedBalls();
         this.getBall().resetPosition();
-        this.pausedGame = false;
-        this.startGame = false;
     }
 }

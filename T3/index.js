@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
     SecondaryBox
 } from "../libs/util/util.js";
@@ -40,8 +39,6 @@ directionalLight.shadow.radius = 1.0;
 scene.add(directionalLight);
 
 renderer.setSize(window.innerWidth, window.innerHeight);
-
-const orbit = new OrbitControls( camera.getTHREECamera(), renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 export const game = new Game(camera, render, scene);
 

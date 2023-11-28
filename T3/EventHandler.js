@@ -7,7 +7,7 @@ export class EventHandler {
 
     listenMousedownEvent() {
         window.addEventListener('mousedown', (event) => {
-            if (event.button === 0) {
+            if (event.button === 0 && !this.game.pausedGame) {
                 if (!this.game.startGame) {
                     this.game.toggleStartGame();
                 } else if (!this.game.getBall().isLauched) {
@@ -52,26 +52,6 @@ export class EventHandler {
                     break;
                 case 'g':
                     this.game.nextStage();
-                    break;
-                case 'w':
-                    this.game.getCamera().getTHREECamera().position.z -= 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'a':
-                    this.game.getCamera().getTHREECamera().position.y -= 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 's':
-                    this.game.getCamera().getTHREECamera().position.z += 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'd':
-                    this.game.getCamera().getTHREECamera().position.y += 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
                     break;
                 default:
                     break;
