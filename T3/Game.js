@@ -1,5 +1,7 @@
 import * as THREE from 'three';
+import { SecondaryBox } from "../libs/util/util.js";
 
+import { Camera } from './entities/Camera.js';
 import { Ball } from './entities/Ball.js';
 import { Background } from './entities/Background.js';
 import { BrickArea } from './entities/BrickArea.js';
@@ -10,20 +12,35 @@ import { HitterCSG } from './entities/HitterCSG.js';
 import { HitterWithDrag } from './entities/HitterWithDrag.js';
 import { Stage } from './entities/Stage.js';
 import { PowerUp } from './entities/PowerUp.js';
+import { AddBallsPowerUp } from './entities/AddBallsPowerUp.js';
+import { DrillPowerUp } from './entities/DrillPowerUp.js';
+import { Brick } from './entities/Brick.js';
 
 
 export class Game {
-    constructor(camera, renderCallback, scene, renderer) {
-        this.camera = camera;
-        this.renderCallback = renderCallback;
-        this.scene = scene;
-        //this.hitterCSG = new HitterCSG(scene);
-        this.hitterCSG = new HitterWithDrag(scene, camera.camera, renderer);
-        this.currentStage = 1;
-        this.stage = new Stage(this.currentStage, scene);
+    static instance = null;
 
-        this.background = new Background(scene);
-        this.brickArea = new BrickArea(scene, this.stage);
+    constructor(isWeb) {
+        this.camera = new Camera();
+        this.createRenderer();
+
+        this.scene = new THREE.Scene();
+
+        this.createAmbientLight();
+        this.createDirectionalLight();
+
+        this.hitterCSG = null;        
+        if (isWeb) {
+            this.hitterCSG = new HitterCSG(this.scene);
+        } else {
+            this.hitterCSG = new HitterWithDrag(this.scene, this.camera, this.renderer);
+        }
+
+        this.currentStage = 1;
+        this.stage = new Stage(this.currentStage, this.scene);
+
+        this.background = new Background(this.scene);
+        this.brickArea = new BrickArea(this.scene, this.stage);
 
         const hitterInitialPosition = this.hitterCSG.getPosition();
         const ballInitialPosition = new THREE.Vector3().copy(hitterInitialPosition);
@@ -46,8 +63,28 @@ export class Game {
 
         this.timeIntervalIdToUpdateBallSpeed = null;
 
-        this.eventHandler = new EventHandler(this, camera, renderer);
-        this.screenHandler = new ScreenHandler(this, this.renderCallback);
+        this.initialLives = 5;
+        this.lives = this.initialLives;
+
+        this.eventHandler = new EventHandler(this, this.camera, this.renderer);
+        this.screenHandler = new ScreenHandler();
+
+        this.addObjectsToScene();
+
+        this.eventHandler.listenResizeEvent(this.renderer);
+        this.eventHandler.listenKeydownEvent();
+        this.eventHandler.listenMousemoveEvent();
+
+        this.screenHandler.listenScreenEvents();
+        this.createBallSpeedInfo();
+    }
+
+    static getInstance() {
+        if (Game.instance === null) {
+            Game.instance = new Game();
+        }
+
+        return Game.instance;
     }
 
     getCamera() {
@@ -78,6 +115,61 @@ export class Game {
         return this.walls[this.walls.length - 1];
     }
 
+    createRenderer() {
+        this.renderer = new THREE.WebGLRenderer();
+        document.getElementById("webgl-output").appendChild(this.renderer.domElement);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    createAmbientLight() {
+        const ambientLight = new THREE.AmbientLight('white', 0.45);
+        this.scene.add(ambientLight);
+    }
+
+    createDirectionalLight() {
+        const directionalLightPosition = new THREE.Vector3(22, 50, -40);
+        this.directionalLight = new THREE.DirectionalLight('white', 0.6);
+        this.directionalLight.position.copy(directionalLightPosition);
+        this.directionalLight.castShadow = true;
+        
+        this.directionalLight.shadow.mapSize.width = 2048;
+        this.directionalLight.shadow.mapSize.height = 2048;
+        this.directionalLight.shadow.camera.near = 0.1;
+        this.directionalLight.shadow.camera.far = 110;
+        this.directionalLight.shadow.camera.left = -45;
+        this.directionalLight.shadow.camera.right = 45;
+        this.directionalLight.shadow.camera.bottom = -40;
+        this.directionalLight.shadow.camera.top = 40;
+        this.directionalLight.shadow.bias = -0.0005;
+        this.directionalLight.shadow.radius = 1.0;
+        
+        this.scene.add(this.directionalLight);
+    }
+
+    createBallSpeedInfo() {
+        this.ballSpeedSecondaryBox = new SecondaryBox();
+        this.ballSpeedSecondaryBox.changeStyle('rgba(100,100,255,0.3)', 'white', '20px');
+        this.ballSpeedSecondaryBox.changeMessage('Ball speed: 0');
+    }
+
+    render() {}
+
+    getLives() {
+        return this.lives;
+    }
+
+    loseOneLife() {
+        this.lives--;
+
+        this.screenHandler.updateLivesIndicator();
+        if (this.lives <= 0) {
+            this.toggleGameOver();
+        }
+    }
+
     executeStep() {
         if (!this.pausedGame && this.startGame) {
             if (this.getBall().isLauched) {
@@ -103,27 +195,31 @@ export class Game {
         }
     }
 
-    addObjectsToScene(scene) {
-        scene.add(this.getBackground().getTHREEObject());
+    addObjectsToScene() {
+        this.scene.add(this.getBackground().getTHREEObject());
 
-        this.getBrickArea().buildBrickArea(scene);
+        this.getBrickArea().buildBrickArea(this.scene);
 
-        scene.add(this.getBall().getTHREEObject());
+        this.scene.add(this.getBall().getTHREEObject());
 
         this.getWalls().forEach(wall => {
-            scene.add(wall.getTHREEObject());
+            this.scene.add(wall.getTHREEObject());
         });
 
-        scene.add(this.hitterCSG.hitterMesh);
-        scene.add(this.hitterCSG.sphere);
+        this.scene.add(this.hitterCSG.hitterMesh);
+        this.scene.add(this.hitterCSG.sphere);
     }
 
     addPowerUp(position) {
-        if (this.balls.length > 1 || this.powerUps.length > 0) {
+        if (this.balls.length > 1 || this.powerUps.length > 0 || Ball.isDrillMode) {
             return;
         }
 
-        const powerUp = new PowerUp(position);
+        const powerUp = PowerUp.lastPowerUpSpawned instanceof AddBallsPowerUp
+            ? new DrillPowerUp(position)
+            : new AddBallsPowerUp(position);
+
+        PowerUp.lastPowerUpSpawned = powerUp;
 
         this.powerUps.push(powerUp);
         this.scene.add(powerUp.getTHREEObject());
@@ -139,26 +235,6 @@ export class Game {
             this.scene.remove(powerUp.getTHREEObject());
         });
         this.powerUps = [];
-    }
-
-    duplicateBall() {
-        if (this.balls.length > 1) {
-            return;
-        }
-
-        const originalBall = this.getBall();
-
-        const newBall = new Ball(originalBall.getTHREEObject().position);
-
-        newBall.setIsLaunched(originalBall.isLauched);
-
-        const newBallDirection = new THREE.Vector3().copy(originalBall.direction);
-        newBallDirection.x += 0.2;
-        newBallDirection.normalize();
-        newBall.setDirection(newBallDirection);
-
-        this.balls.push(newBall);
-        this.scene.add(newBall.getTHREEObject());
     }
 
     deleteBall(ball) {
@@ -217,7 +293,7 @@ export class Game {
         }
     }
 
-    toggleRestartGame() {
+    toggleRestartStage() {
         this.getHitter().resetPosition();
         this.getBrickArea().resetBrickArea();
         this.deleteAllPowerUps();
@@ -229,18 +305,57 @@ export class Game {
         this.startGame = false;
     }
 
+    toggleRestartGame() {
+        this.currentStage = 1;
+        this.lives = this.initialLives;
+        this.screenHandler.updateLivesIndicator();
+        this.bricksAnimateDestruction = [];
+        this.pausedGame = false;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
+        this.deleteAllPowerUps();
+        this.deleteDuplicatedBalls();
+        this.getBrickArea().deleteBrickArea();
+        this.stage = new Stage(this.currentStage, this.scene);
+        this.brickArea = new BrickArea(this.scene, this.stage);
+        this.getBrickArea().buildBrickArea(this.scene);
+    }
+
     toggleEndGame() {
-        this.screenHandler.showStageCompleteScreen();
+        if (this.currentStage >= Stage.totalNumberOfStages) {
+            this.screenHandler.showEndGameScreen();
+        } else {
+            this.screenHandler.showStageCompleteScreen();
+        }
+        
         this.getHitter().resetPosition();
         this.getBall().resetPosition();
         this.pausedGame = true;
     }
 
+    toggleGameOver() {
+        if (this.lives > 0) {
+            return;
+        }
+
+        this.screenHandler.showGameOverScreen();
+
+        this.pausedGame = true;
+        this.startGame = false;
+        
+        this.getHitter().resetPosition();
+        this.getBall().resetPosition();
+    }
+
     nextStage() {
-        if (this.currentStage === 3) {
+        if (this.currentStage >= Stage.totalNumberOfStages) {
             this.currentStage = 0;
         }
-        this.currentStage = this.currentStage + 1;
+        this.currentStage++;
+        this.pausedGame = false;
+        this.startGame = false;
         this.getBrickArea().deleteBrickArea();
         this.bricksAnimateDestruction = [];
         this.stage = new Stage(this.currentStage, this.scene);
@@ -250,7 +365,5 @@ export class Game {
         this.deleteAllPowerUps();
         this.deleteDuplicatedBalls();
         this.getBall().resetPosition();
-        this.pausedGame = false;
-        this.startGame = false;
     }
 }

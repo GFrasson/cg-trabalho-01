@@ -1,6 +1,6 @@
 import { CSG } from '../../libs/other/CSGMesh.js'    
 import * as THREE from  'three'; 
-import {initRenderer, 
+import { 
     setDefaultMaterial,
     getMaxSize
 } from "../../libs/util/util.js";

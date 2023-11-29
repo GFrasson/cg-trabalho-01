@@ -1,9 +1,13 @@
 import * as THREE from 'three';
-import { game } from '../index.js';
+import { Game } from '../Game.js';
+import { Ball } from './Ball.js';
 
 export class PowerUp {
-    constructor(initialPosition) {
+    static lastPowerUpSpawned = null;
+
+    constructor(initialPosition, textureFilePath) {
         this.initialPosition = initialPosition;
+        this.textureFilePath = textureFilePath;
         this.direction = new THREE.Vector3(0, 0, 1).normalize();
         this.speed = 0.4;
 
@@ -12,16 +16,15 @@ export class PowerUp {
 
     createTHREEObject() {
         this.capsuleGeometry = new THREE.CapsuleGeometry(1, 3, 4, 20);
-        this.capsuleMaterial = new THREE.MeshPhongMaterial({
-            color: "#2E8B57",
-            shininess: "200",
-            specular: "rgb(255, 255, 255)"
+        this.capsuleMaterial = new THREE.MeshLambertMaterial({
+            color: "white",
         });
         this.capsule = new THREE.Mesh(this.capsuleGeometry, this.capsuleMaterial);
         this.capsule.castShadow = true;
         this.capsule.receiveShadow = true;
         this.capsule.rotateZ(Math.PI / 2);
         this.capsule.position.copy(this.initialPosition);
+        this.addTexture();
         this.boundingBox = new THREE.Box3().setFromObject(this.capsule);
     }
 
@@ -30,12 +33,9 @@ export class PowerUp {
     }
     
     move() {
-        this.capsule.translateZ(this.direction.z * this.speed);
-        this.capsule.material.color.setRGB(
-            Math.abs(Math.sinh(this.capsule.position.z / 5)),
-            Math.abs(Math.cos(this.capsule.position.z / 5)),
-            Math.abs(Math.sin(this.capsule.position.z / 5))
-        );
+        this.capsule.position.z += this.direction.z * this.speed;
+        this.capsule.rotateY(-0.1);        
+        this.updateColor();
         this.updateBoundingBox();
         this.collisionsDetection();
     }
@@ -61,8 +61,8 @@ export class PowerUp {
     }
 
     collect() {
-        game.deletePowerUp(this);
-        game.duplicateBall();
+        Game.getInstance().deletePowerUp(this);
+        this.powerUpAction();
     }
 
     destroyPowerUpWhenCollideBottomWall() {
@@ -71,14 +71,35 @@ export class PowerUp {
             return;
         }
 
-        game.deletePowerUp(this);
+        Game.getInstance().deletePowerUp(this);
     }
 
     checkCollisionWithHitter() {
-        return this.boundingBox.intersectsSphere(game.getHitter().getBoundingSphere());
+        return this.boundingBox.intersectsSphere(Game.getInstance().getHitter().getBoundingSphere());
     }
 
     checkCollisionWithBottomWall() {
-        return this.boundingBox.intersectsBox(game.getBottomWall().getBoundingBox());
+        return this.boundingBox.intersectsBox(Game.getInstance().getBottomWall().getBoundingBox());
     }
+
+    static canIncreasePowerUpCounter() {
+        return Game.getInstance().balls.length === 1 && !Ball.isDrillMode;
+    }
+
+    addTexture() {
+        const object = this.getTHREEObject();
+        const textureLoader = new THREE.TextureLoader();
+        
+        object.material.map = textureLoader.load(this.textureFilePath);
+        object.material.map.wrapS = THREE.RepeatWrapping;
+        object.material.map.wrapT = THREE.RepeatWrapping;
+        object.material.map.minFilter = THREE.LinearFilter;
+        object.material.map.magFilter = THREE.LinearFilter;
+        object.material.map.rotation = -Math.PI / 2;
+        object.material.map.repeat.set(9, 1);
+    }
+
+    updateColor() {}
+
+    powerUpAction() {}
 }

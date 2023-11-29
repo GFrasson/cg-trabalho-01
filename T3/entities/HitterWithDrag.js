@@ -1,12 +1,12 @@
 import { CSG } from '../../libs/other/CSGMesh.js'
 import * as THREE from 'three';
 import {
-    initRenderer,
     setDefaultMaterial,
     getMaxSize
 } from "../../libs/util/util.js";
 import { DragControls } from '../../build/jsm/controls/DragControls.js'
 import { GLTFLoader } from '../../build/jsm/loaders/GLTFLoader.js';
+import { Game } from '../Game.js';
 
 export class HitterWithDrag {
     constructor(scene, camera, renderer) {
@@ -57,7 +57,7 @@ export class HitterWithDrag {
         }
         this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
 
-        this.dragControl = new DragControls([this.sphere], camera, renderer.domElement);
+        this.dragControl = new DragControls([this.sphere], camera.camera, renderer.domElement);
         var self = this;
         this.dragControl.addEventListener('drag', function (event) {
             var posX = event.object.position.x;

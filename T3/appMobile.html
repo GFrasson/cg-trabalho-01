@@ -6,7 +6,6 @@
    <link rel="shortcut icon" href="../favicon.ico">
    <link rel="stylesheet" href="../html/resources/default.css">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
 </head>
 
 <body>
@@ -15,8 +14,8 @@
    <script type="importmap">
          {"imports": {"three": "../build/three.module.js"}} 
       </script>
-   <script type="module" src="index.js"></script>
-   <link rel="stylesheet" href="./styles.css">
+   <script type="module" src="appMobile.js"></script>
+   <link rel="stylesheet" href="./styles.css">      
 
    <div id="webgl-output">
       <div id="starting-screen">
@@ -56,7 +55,7 @@
                   <button id="restart-game">Restart</button>                  
                </div>
          </div>
-      </div> 
+      </div>
       <div id="lives-indicator-container">
          <div id="lives-indicator">
             <img src="./assets/heart-full.png" alt="coração cheio">
@@ -72,6 +71,14 @@
             <img src="./assets/heart-empty.png" alt="coração vazio">
          </div>
       </div>
+
+      <button id="launch" class="launch-button">
+         <img src="./assets/launch-ball-icon.png" alt="Bola">
+      </button>
+
+      <button id="fullscreen" class="fullscreen-button">
+         <img src="./assets/full-screen-icon.png" alt="Fullscreen">
+      </button>    
    </div>
    <audio id="collisionSoundBrick1" src="./assets/sounds/bloco1.mp3"></audio>
    <audio id="collisionSoundBrick2" src="./assets/sounds/bloco2.mp3"></audio>

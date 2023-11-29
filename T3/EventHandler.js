@@ -1,6 +1,6 @@
+import { Game } from "./Game.js";
 import { onWindowResize } from "../libs/util/util.js";
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
-import * as THREE from 'three';
 
 export class EventHandler {
     constructor(game, camera, renderer) {
@@ -14,11 +14,11 @@ export class EventHandler {
 
     listenMousedownEvent() {
         window.addEventListener('mousedown', (event) => {
-            if (event.button === 0) {
-                if (!this.game.startGame) {
-                    this.game.toggleStartGame();
-                } else if (!this.game.getBall().isLauched) {
-                    this.game.getBall().launch(() => this.game.startTimerToUpdateBallSpeed());
+            if (event.button === 0 && !Game.getInstance().pausedGame) {
+                if (!Game.getInstance().startGame) {
+                    Game.getInstance().toggleStartGame();
+                } else if (!Game.getInstance().getBall().isLauched) {
+                    Game.getInstance().getBall().launch(() => Game.getInstance().startTimerToUpdateBallSpeed());
                 }
             }
         });
@@ -26,12 +26,12 @@ export class EventHandler {
 
     listenMousemoveEvent() {
         window.addEventListener('mousemove', (event) => {
-            if (!this.game.pausedGame) {
-                //this.game.getBackground().onMouseMove(event, this.game.getCamera(), this.game.getHitter());
+            if (!Game.getInstance().pausedGame) {
+                Game.getInstance().getBackground().onMouseMove(event, Game.getInstance().getCamera(), Game.getInstance().getHitter());
 
-                const ball = this.game.getBall();
+                const ball = Game.getInstance().getBall();
                 if (!ball.isLauched) {
-                    const hitterPosition = this.game.getHitter().getPosition();
+                    const hitterPosition = Game.getInstance().getHitter().getPosition();
                     const ballTHREEObject = ball.getTHREEObject();
                     ballTHREEObject.position.copy(hitterPosition);
                     ballTHREEObject.position.z -= 2;
@@ -44,42 +44,22 @@ export class EventHandler {
         window.addEventListener('keydown', (event) => {
             switch (event.key) {
                 case 'Enter':
-                    this.game.toggleFullScreen();
+                    Game.getInstance().toggleFullScreen();
                     break;
                 case 'r':
-                    if (this.game.startGame && this.orbit.enabled === false) {
-                        this.game.toggleRestartGame();
+                    if (Game.getInstance().startGame && this.orbit.enabled === false) {
+                        Game.getInstance().toggleRestartStage();
                     }
                     break;
                 case ' ': // Space
-                    if (this.game.gameScreen && this.orbit.enabled === false) {
-                        this.game.togglePauseGame();
+                    if (Game.getInstance().gameScreen && this.orbit.enabled === false) {
+                        Game.getInstance().togglePauseGame();
                     }
                     break;
                 case 'g':
-                    if(this.orbit.enabled === false) {
-                        this.game.nextStage();
+                    if (this.orbit.enabled === false) {
+                        Game.getInstance().nextStage();
                     }
-                    break;
-                case 'w':
-                    this.game.getCamera().getTHREECamera().position.z -= 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'a':
-                    this.game.getCamera().getTHREECamera().position.y -= 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 's':
-                    this.game.getCamera().getTHREECamera().position.z += 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
-                    break;
-                case 'd':
-                    this.game.getCamera().getTHREECamera().position.y += 1;
-                    this.game.getCamera().getTHREECamera().updateProjectionMatrix();
-
                     break;
                 case 'o':
                     if(this.orbit.enabled === false) {
@@ -100,7 +80,7 @@ export class EventHandler {
     listenResizeEvent(renderer) {
         window.addEventListener(
             'resize',
-            () => onWindowResize(this.game.getCamera().getTHREECamera(), renderer),
+            () => onWindowResize(Game.getInstance().getCamera().getTHREECamera(), renderer),
             false
         );
     }

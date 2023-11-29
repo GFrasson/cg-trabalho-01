@@ -1,11 +1,10 @@
 import * as THREE from 'three';
-import {
-    setDefaultMaterial
-} from "../../libs/util/util.js";
 
 import { Brick } from './Brick.js';
 
 export class Stage {
+    static totalNumberOfStages = 3;
+    
     constructor(stage, scene) {
         this.scene = scene;
         this.stage = stage;

@@ -1,8 +1,3 @@
-import * as THREE from 'three';
-import {
-    setDefaultMaterial
-} from "../../libs/util/util.js";
-
 import { Brick } from './Brick.js';
 
 export class BrickArea {
@@ -23,6 +18,7 @@ export class BrickArea {
                 }
             } 
         }
+        Brick.bricksDestroyedAtCurrentStage = 0;
     }
     
     resetBrickArea() {
