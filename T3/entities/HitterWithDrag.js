@@ -60,6 +60,13 @@ export class HitterWithDrag {
         this.dragControl = new DragControls([this.sphere], camera.camera, renderer.domElement);
         var self = this;
         this.dragControl.addEventListener('drag', function (event) {
+            const ball = Game.getInstance().getBall();
+            if (!ball.isLauched) {
+                const hitterPosition = Game.getInstance().getHitter().getPosition();
+                const ballTHREEObject = ball.getTHREEObject();
+                ballTHREEObject.position.copy(hitterPosition);
+                ballTHREEObject.position.z -= 2;
+            }
             var posX = event.object.position.x;
             if (posX > 16.7) {
                 posX = 16.7;
@@ -109,7 +116,11 @@ export class HitterWithDrag {
         geometry.setIndex(new THREE.BufferAttribute(indices, 1));
         geometry.computeVertexNormals();
 
-        let material = new THREE.MeshPhongMaterial({ color: "rgb(255,255,255)" });
+        let material = new THREE.MeshPhongMaterial({
+            color: "#5FA1AD",
+            shininess: "10",
+            specular: "rgb(255, 255, 255)"
+        });
         material.side = THREE.DoubleSide;
         material.flatShading = true;
         this.meshTextureTop = new THREE.Mesh(geometry, material);
