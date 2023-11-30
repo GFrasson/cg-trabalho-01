@@ -56,8 +56,6 @@ export class HitterWithDrag {
             bb: new THREE.Box3()
         }
         this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
-        //this.loadGLBFile(asset, './assets/Spaceship.glb', 8.0, scene);
-        //Spaceship
 
         this.dragControl = new DragControls([this.sphere], camera.camera, renderer.domElement);
         var self = this;
@@ -236,7 +234,7 @@ export class HitterWithDrag {
 
         geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvCoords), 2));
 
-        let texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
+        let texture = new THREE.TextureLoader().load('./assets/texture-lego2.jpg');
         material.map = texture;
     }
 

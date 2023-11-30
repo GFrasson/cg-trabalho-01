@@ -54,7 +54,6 @@ export class HitterCSG {
             bb: new THREE.Box3()
         }
         this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
-        //this.loadGLBFile(asset, './assets/Spaceship.glb', 4.0, scene);
     }
 
     loadGLBFile(asset, file, desiredScale, scene)
@@ -129,6 +128,12 @@ export class HitterCSG {
        this.updateBoundingBox();
        if(this.assetObj !== undefined) {
             this.assetObj.position.set(0, -8, 47)
+        }
+        if (this.meshTextureTop !== undefined) {
+            this.meshTextureTop.position.set(0, 2, 40.2);
+        }
+        if(this.meshTextureBack !== undefined) {
+            this.meshTextureBack.position.set(0, 1, 42.2)
         }
     }
 
