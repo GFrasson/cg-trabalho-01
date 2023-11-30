@@ -54,6 +54,7 @@ export class HitterCSG {
             bb: new THREE.Box3()
         }
         this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
+        //this.loadGLBFile(asset, './assets/Spaceship.glb', 4.0, scene);
     }
 
     loadGLBFile(asset, file, desiredScale, scene)
@@ -136,6 +137,7 @@ export class HitterCSG {
     }    
 
       constructTexture(scene) {
+
         let v = [
             -6.3, -2.0, 0.0, // 0
             -5.5, -1.0, 0.0, // 1
@@ -148,6 +150,8 @@ export class HitterCSG {
             4.5, 0.2, 0.0, // 8 
             5.5, -1.0, 0.0, // 9
             6.3, -2.0, 0.0, // 10 
+            -0,5, 1.5, 0.0,
+            0,5, 1.5, 0.0,
         ];
 
         let f = [
@@ -174,7 +178,7 @@ export class HitterCSG {
         geometry.computeVertexNormals();
 
         let material = new THREE.MeshPhongMaterial({
-            color: "#5FA1AD",
+            color: "gray",
             shininess: "10",
             specular: "rgb(255, 255, 255)"
         });
@@ -202,18 +206,17 @@ export class HitterCSG {
             0.0, 0.0,   // 0
             0.2, 0.5,   // 1
             0.4, 0.0,   // 2
-            0.6, 0.5,   // 3
+            0.6, 0.8,   // 3
             0.8, 0.0,   // 4
-            1.0, 0.5,   // 5 (MEIO)
+            1.0, 1,   // 5 (MEIO)
             0.8, 0.0,   // 6
-            0.6, 0.5,   // 7
+            0.6, 0.8,   // 7
             0.4, 0.0,   // 8
             0.2, 0.5,
             0.0, 0.0];
 
         geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvCoords), 2));
-
-        let texture = new THREE.TextureLoader().load('../../assets/textures/displacement/Stylized_blocks_001_roughness.jpg');
+        let texture = new THREE.TextureLoader().load('./assets/texture-lego2.jpg');
         material.map = texture;
     }
 }

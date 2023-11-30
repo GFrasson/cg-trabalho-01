@@ -56,6 +56,8 @@ export class HitterWithDrag {
             bb: new THREE.Box3()
         }
         this.loadGLBFile(asset, './assets/lego_spacecraft.glb', 8.0, scene);
+        //this.loadGLBFile(asset, './assets/Spaceship.glb', 8.0, scene);
+        //Spaceship
 
         this.dragControl = new DragControls([this.sphere], camera.camera, renderer.domElement);
         var self = this;

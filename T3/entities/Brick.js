@@ -29,10 +29,13 @@ export class Brick {
     }
 
     setVisible(visible) {
+        var listener = new THREE.AudioListener();
+        var sound = new THREE.Audio( listener );  
+        var audioLoader = new THREE.AudioLoader();
         if (visible === true) {
             if(this.indestructible === 1){
                 var textureLoader = new THREE.TextureLoader();
-                var brickwall = textureLoader.load('../../assets/textures/brickwall.jpg');
+                var brickwall = textureLoader.load('./assets/texture-gold.png');
                 let material = new THREE.MeshLambertMaterial({color: "gold"});
                 this.block.material = material;
                 this.block.material.map = brickwall;
@@ -45,17 +48,21 @@ export class Brick {
             this.block.material.color.set(this.color);
         } else {
             if(this.indestructible === 1){
-                const collisionSound = document.getElementById('collisionSoundBrick2');
-                collisionSound.currentTime = 0;
-                collisionSound.play();
+                audioLoader.load('./assets/sounds/bloco2.mp3', function( buffer ) {
+                    sound.setBuffer( buffer );
+                    sound.setVolume(1);
+                    sound.play(); 
+                });
                 let material = new THREE.MeshLambertMaterial({color: "gold"});
                 this.block.material = material;
                 return;
             }
             this.life -= 1;
-            const collisionSound = document.getElementById('collisionSoundBrick1');
-            collisionSound.currentTime = 0;
-            collisionSound.play();
+            audioLoader.load('./assets/sounds/bloco1.mp3', function( buffer ) {
+                sound.setBuffer( buffer );
+                sound.setVolume(1);
+                sound.play(); 
+            });
             if (this.life <= 0) {
                 this.visible = false;
                 Game.getInstance().bricksAnimateDestruction.push(this);

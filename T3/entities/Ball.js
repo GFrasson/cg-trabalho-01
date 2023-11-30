@@ -167,10 +167,15 @@ export class Ball {
         // Calcula o vetor normal a superfície no ponto de colisão
         const normalVector = this.calculateCollisionNormal(this.boundingSphere, boundingSphere);
 
-        const collisionSound = document.getElementById('collisionSoundHitter');
-        collisionSound.currentTime = 0;
-        collisionSound.play();
-
+        var listener = new THREE.AudioListener();
+        var sound = new THREE.Audio( listener );  
+        var audioLoader = new THREE.AudioLoader();
+        audioLoader.load('./assets/sounds/rebatedor.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setVolume(1);
+            sound.play(); 
+        });
+        
         this.bounce(normalVector, boundingSphere);
         this.fixTrajectory();
     }

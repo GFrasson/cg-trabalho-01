@@ -101,7 +101,7 @@ export class Stage {
 
     constructStage3() {
         var textureLoader = new THREE.TextureLoader();
-        var brickwall = textureLoader.load('../../assets/textures/brickwall.jpg');
+        var brickwall = textureLoader.load('./assets/texture-gold.png');
 
         var brickIndex = 0;
         var linha = -38;

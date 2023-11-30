@@ -54,9 +54,16 @@ export class PowerUp {
         if (!isCollidingWithHitter) {
             return;
         }
-        const collisionSound = document.getElementById('collisionSoundPower');
-        collisionSound.currentTime = 0;
-        collisionSound.play();
+
+        var listener = new THREE.AudioListener();
+        var sound = new THREE.Audio( listener );  
+        var audioLoader = new THREE.AudioLoader();
+        audioLoader.load('./assets/sounds/bloco3.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setVolume(1);
+            sound.play(); 
+        });
+
         this.collect();
     }
 
