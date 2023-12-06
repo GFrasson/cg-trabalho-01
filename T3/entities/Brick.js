@@ -33,19 +33,18 @@ export class Brick {
         var sound = new THREE.Audio( listener );  
         var audioLoader = new THREE.AudioLoader();
         if (visible === true) {
-            if(this.indestructible === 1){
-                var textureLoader = new THREE.TextureLoader();
-                var brickwall = textureLoader.load('./assets/texture-gold.png');
-                let material = new THREE.MeshLambertMaterial({color: "gold"});
-                this.block.material = material;
-                this.block.material.map = brickwall;
-                return;
-            }
             this.visible = true;
             this.scene.add(this.block);
             this.block.material.opacity = 1;
             this.life = this.initialLife;
             this.block.material.color.set(this.color);
+            if(this.initialLife === 2){
+                var textureLoader = new THREE.TextureLoader();
+                var brickwall = textureLoader.load('./assets/textureBrick2.png');
+                let material = new THREE.MeshLambertMaterial({color: "lightgray"});
+                this.block.material = material;
+                this.block.material.map = brickwall;
+            }
         } else {
             if(this.indestructible === 1){
                 audioLoader.load('./assets/sounds/bloco2.mp3', function( buffer ) {
@@ -53,9 +52,11 @@ export class Brick {
                     sound.setVolume(1);
                     sound.play(); 
                 });
-                let material = new THREE.MeshLambertMaterial({color: "gold"});
-                this.block.material = material;
                 return;
+            }
+            if(this.initialLife === 2){
+                let material = new THREE.MeshLambertMaterial({color: "lightgray"});
+                this.block.material = material;
             }
             this.life -= 1;
             audioLoader.load('./assets/sounds/bloco1.mp3', function( buffer ) {

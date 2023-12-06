@@ -36,6 +36,8 @@ export class Stage {
         var brickIndex = 0;
         var linha = -38;
         var bricks = [];
+        var textureLoader = new THREE.TextureLoader();
+        var brickTexture = textureLoader.load('./assets/textureBrick2.png');
         for(var i = 0; i < this.rows; i++) {
             var coluna = -20;
             var arrayLinha = [];
@@ -48,6 +50,9 @@ export class Stage {
                     secondColor = this.secondColors[0];
                 }
                 var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[i], this.scene, secondColor, initialLife, 0);
+                if(brick.initialLife === 2) {
+                    brick.block.material.map = brickTexture;
+                }
                 arrayLinha.push(brick);
                 coluna = coluna + 4; 
             }
@@ -72,6 +77,8 @@ export class Stage {
             [5, 2, 0, 3, 4, 1, 3, 5],
             [3, 0, 2, 5, 1, 4, 5, 3]
         ];
+        var textureLoader = new THREE.TextureLoader();
+        var brickTexture = textureLoader.load('./assets/textureBrick2.png');
     
         for (var i = 0; i < this.rows; i++) {
             var coluna = -16;
@@ -90,6 +97,9 @@ export class Stage {
                     secondColor = this.secondColors[0];
                 }
                 var brick = new Brick(material, coluna, linha, brickIndex++, this.colors[colorIndex], this.scene, secondColor, initialLife, 0);
+                if(brick.initialLife === 2) {
+                    brick.block.material.map = brickTexture;
+                }
                 arrayLinha.push(brick);
                 coluna = coluna + 4;
             }
